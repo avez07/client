@@ -1,0 +1,268 @@
+@import url('https://fonts.googleapis.com/css2?family=Playball&display=swap');
+.search-icon {
+    position: absolute;
+    top: 16px;
+    left: 81px;
+}
+.toggle{
+    font-size: 33px;
+    margin-left: 10px;
+    margin-bottom: 5px;
+}
+nav{
+    height: 62px;
+}
+.sidebar-main >.sidebar-inner {
+    background: #362465 !important;
+    border-radius: 0 86px 0 0;
+    height: 100vh;
+}
+.sidebar-main >.sidebar-inner > .sidebar-ul{
+    overflow: hidden;
+    list-style-type: none;
+    padding: 0;
+}
+.sidebar-main > .sidebar-inner > .sidebar-ul {
+    overflow: hidden;
+}
+.website-logo{   
+    height: 55px;
+    width: auto;   
+    padding: 4px;
+    /* margin-top: 30px; */
+}
+.pro-item-content{
+    padding-left: 20px;
+    font-size: 18px;
+}
+.sidebar-ul > li{
+    position: relative;
+    left: 16px;
+    top: 4px;
+    font-size: 20px !important;
+    padding: 10px 7px;
+}
+.pro-menu-item:hover{
+    background: whitesmoke;
+    color: black !important;
+}
+.sidebar-ul > li> a{
+    color: whitesmoke;    
+    font-weight: 550;
+    display: flex;
+    position: relative;
+    width: 100%;
+}
+.menu-items{
+    padding: 0 7px;
+}
+.sidebar-ul > li> a:hover{
+    color: #464545;
+    font-weight: 600;
+
+
+}
+.website-name{
+    font-family: 'Playball', cursive;
+    font-size: 30px;
+    color: white;
+    vertical-align: middle;
+}
+.website-name {
+    display: inline-block;
+    margin-left: 10px; /* Adjust the spacing between logo and name */
+  }
+  
+  .pro-sidebar.collapsed .website-name {
+    display: none; /* Hide the name when collapsed if needed */
+  }
+  .language-logo a{
+    display: flex;
+    align-items: center;
+  }
+  .divider{
+    border-left: 1px solid #000; /* Adjust the color and thickness as needed */
+    height: 23px; /* Adjust the height as needed */
+    margin: 0 7px; 
+    vertical-align: middle;
+  }
+  .night-mode{
+    color: #b8bbc3;
+  }
+.night-mode-nav{
+    background: #0c1220 !important;
+    color: #b8bbc3 !important;
+    border-bottom: 3px solid #1a202e
+}
+.pro-sidebar-night,.pro-sidebar-night>.pro-sidebar-inner{
+    background: #0c1220 !important;
+    
+}
+.pro-sidebar-night{
+    border-right: 3px solid #1a202e !important;
+}
+.website-web{
+    margin-top: 3.5px;
+    border-bottom: 3px solid #1a202e
+}
+.searh-night,.searh-night::placeholder{
+    background: #1a202e!important;
+    border: none !important;
+    color: #b8bbc3!important;
+}
+.laguage-logo-night a div , .laguage-logo-night a::after{
+    color:#b8bbc3 !important;
+}
+.content-night{
+    background: #0c1220 url('../assets/transparent-backgroung.png') no-repeat center center fixed !important;
+    background-size: cover;
+
+}
+.content-night .card{
+    background-color: #24293726;
+    box-shadow: 0 3px 5px 0.3px #0000001a;
+    backdrop-filter: blur(8px) !important;
+    color:#b8bbc3
+}
+.content-night .card  .f-card-tittle{
+    font-size: 30px;
+    font-weight: 700;
+    color: white;
+    
+  }
+  .content-night .card  .sub-tittle{
+color: #b8bbc3;
+font-size: 15px;
+  }
+  .website-progress,.branch-progress,.other-progress{
+    margin: 20px 0;
+    padding: 20px;
+    border: 1.5px solid #b8bbc3;
+    background-color: #ffffff;
+}
+ .content-night .website-progress,.content-night .branch-progress,.content-night .other-progress{
+    margin: 20px 0;
+    padding: 20px;
+    border:none;
+    border-radius: 7px;
+    background-color: #2429373e;
+    box-shadow: 0 3px 5px 0.3px #0000001a;
+    backdrop-filter: blur(8px) !important;
+    color:#b8bbc3
+}
+.website-progress,.branch-progress,.other-progress{
+    margin: 20px 0;
+    padding: 20px;
+    border:1px solid #a4a7ad66;
+    border-radius: 7px;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+}
+.content-night .website-progress .progress,.content-night .branch-progress .progress,.content-night .other-progress .progress{
+    background: #a4a7ad66;
+}
+.website-progress .progress,.branch-progress .progress,.other-progress .progress{
+    height: 7px;
+    width: 80%;
+}
+.website-progress  .progress-bar{ background: #ffa1b5 !important;} .branch-progress .progress-bar{ background: #541b87 !important;} .other-progress .progress-bar{ background: #1c851c !important;}
+.progress-div{
+    border: none !important;
+    background: transparent;
+    backdrop-filter: blur(0px);
+}
+.website-progres-icon svg{color: #ffa1b5; font-size: 29px;} .branch-progres-icon svg{color: #541b87; font-size: 29px;} .other-progres-icon svg{color: #1c851c; font-size: 29px;}
+
+.content-night .main .rdt_Table , .content-night .rdt_Pagination {
+    background-color: #24293726 !important;
+    box-shadow: 0 3px 5px 0.3px #0000001a;
+    backdrop-filter: blur(8px) !important;
+    color: #b8bbc3 !important;
+  }
+ .content-night .jQWwAJ , .content-night .nCTcL{
+    background-color: #24293726 !important;
+    box-shadow: 0 3px 5px 0.3px #0000001a;
+    backdrop-filter: blur(8px) !important;
+    color: #b8bbc3 !important;
+    border-bottom: none !important;
+  }
+  
+  .content-night .mYSul .CjBYJ{
+    background: #d8d8d8 !important;
+    color: #000 !important;
+  }
+   .content-night .CjBYJ .jcIA-dp{
+    color:#000 !important
+  }
+   .content-night .dvyAZW{ /*table head*/
+    background-color: #ffffff2b !important;
+  }
+ .content-night .rdt_Pagination .MLcXO{
+fill: #b8bbc3 !important;
+  }
+.content-night  .ofEne ,.filter-text{
+    color: #e5e5e5 !important;
+  }
+  .data-table-extensions-action{display: none;}
+  .action-icon {
+    position: absolute;
+    right: 5px;
+    top: 27%;
+    font-size: 22px;
+}
+.table-head{
+    
+    font-size: 40px;
+    text-align: left;
+    font-weight: 600;
+}
+.content-night .table-head{
+    color: #e5e5e5;
+}
+.product-name{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+    margin: 0;
+    padding-left: 10px;   
+}
+.content-night .action-btn button{
+    border-color: #b8bbc3 !important;
+    color: #b8bbc3;
+}
+/* discription quil style  */
+.content-night .ql-snow .ql-picker ,
+.content-night .ql-snow .ql-stroke,
+.content-night .ql-editor{
+    color: #e4e5e8 !important;
+    stroke: #e4e5e8 !important;
+}
+ .content-night .add-name{
+    background: #1a202e!important;
+    border: none !important;
+    color: #b8bbc3!important;
+}
+.content-night .add-name::placeholder{
+    color: #8a8b8f!important;
+}
+.ql-editor{
+   min-height: 250px !important;
+}
+.content-night .quill, .content-night .ql-toolbar.ql-snow , .content-night .ql-editor, .content-night .ql-toolbar.ql-snow {
+    background :#1a202e!important;
+    border: 0.5px solid #626262 !important;
+
+}
+.content-night .ql-container.ql-snow {
+    border: none !important;
+}
+.content-night .inputgroup-text , .content-night .checkbox span{
+    background:#565656;
+    border: none !important;
+    color: #b8bbc3;
+    font-weight: 600;
+
+
+}

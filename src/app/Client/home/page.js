@@ -1,42 +1,39 @@
 "use client"
 import React from "react";
 import Image from "next/image";
-import Container from "react-bootstrap/Container";
-import Carousel from "react-bootstrap/Carousel";
-import Card from "react-bootstrap/Card";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
-import carousal_img_1 from "../../public/assets/caurosal/Diwali_Banner-carosal.jpg";
-import carousal_img_2 from "../../public/assets/caurosal/Diwali-banner_carousal.jpg";
-import carousal_img_3 from "../../public/assets/caurosal/Boss-Day_Desk-carousal.jpg";
-import carousal_img_4 from "../../public/assets/caurosal/Cake-Banner_Desk-carousal.jpg";
+import {Container,Carousel,Card,Col,Row} from "react-bootstrap";
+
+import carousal_img_1 from "/public/assets/caurosal/Diwali_Banner-carosal.jpg";
+import carousal_img_2 from "/public/assets/caurosal/Diwali-banner_carousal.jpg";
+import carousal_img_3 from "/public/assets/caurosal/Boss-Day_Desk-carousal.jpg";
+import carousal_img_4 from "/public/assets/caurosal/Cake-Banner_Desk-carousal.jpg";
 // import carousal_img_5 from "../assets/caurosal/caraosal-imge.jpg";
 
 
-import sameday from "../../public/assets/same-day.jpg";
-import midnight from "../../public/assets/Midnight-Delivery.jpg";
-import bestseller from "../../public/assets/Bestseller.jpg";
-import newAraival from "../../public/assets/New-Arrival.jpg";
-import wedding from "../../public/assets/wedding.jpg";
-import birthday from "../../public/assets/Birthday.jpg";
-import chocolate from "../../public/assets/Chocolate-Cakes.jpg";
-import butterscorh from "../../public/assets/Butterscotch-Cakes.jpg";
-import redvalvet from "../../public/assets/Red-Velvet-Cakes.jpg";
-import truffle from "../../public/assets/Truffle-Cakes.jpg";
-import vanila from "../../public/assets/Vanila-Cakes.jpg";
-import freshfruit from "../../public/assets/Fresh-Fruit-Cakes.jpg";
-import blackforest from "../../public/assets/Black-Forest-Cakes.jpg";
-import pinapple from "../../public/assets/Pineapple-Cakes.jpg";
-import flowerAndcake from "../../public/assets/Flowers-N-Cakes.jpg";
-import creamcake from "../../public/assets/Cream-Cakes.jpg";
-import fountant from "../../public/assets/Fondant-Cakes.jpg";
-import kids from "../../public/assets/Kids.jpg";
-import photo from "../../public/assets/Photo-Cakes.jpg";
-import pintacake from "../../public/assets/Pinata-Cakes.jpg";
-import white from "../../public/assets/white.jpg";
-import red from "../../public/assets/red.jpg";
-import brown from "../../public/assets/brown.jpg";
-import blue from "../../public/assets/blue.jpg";
+import sameday from "/public/assets/same-day.jpg";
+import midnight from "/public/assets/Midnight-Delivery.jpg";
+import bestseller from "/public/assets/Bestseller.jpg";
+import newAraival from "/public/assets/New-Arrival.jpg";
+import wedding from "/public/assets/wedding.jpg";
+import birthday from "/public/assets/Birthday.jpg";
+import chocolate from "/public/assets/Chocolate-Cakes.jpg";
+import butterscorh from "/public/assets/Butterscotch-Cakes.jpg";
+import redvalvet from "/public/assets/Red-Velvet-Cakes.jpg";
+import truffle from "/public/assets/Truffle-Cakes.jpg";
+import vanila from "/public/assets/Vanila-Cakes.jpg";
+import freshfruit from "/public/assets/Fresh-Fruit-Cakes.jpg";
+import blackforest from "/public/assets/Black-Forest-Cakes.jpg";
+import pinapple from "/public/assets/Pineapple-Cakes.jpg";
+import flowerAndcake from "/public/assets/Flowers-N-Cakes.jpg";
+import creamcake from "/public/assets/Cream-Cakes.jpg";
+import fountant from "/public/assets/Fondant-Cakes.jpg";
+import kids from "/public/assets/Kids.jpg";
+import photo from "/public/assets/Photo-Cakes.jpg";
+import pintacake from "/public/assets/Pinata-Cakes.jpg";
+import white from "/public/assets/white.jpg";
+import red from "/public/assets/red.jpg";
+import brown from "/public/assets/brown.jpg";
+import blue from "/public/assets/blue.jpg";
 
 function home() {
   return (

@@ -1,0 +1,160 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+body{
+    font-family: 'Roboto', sans-serif;
+}
+.authentication form{
+    border: 1px dashed #ff7f7f;
+border-radius: 40px;
+padding: 35px 40px;
+width: 30vw;
+}
+.authentication_border{
+    border-radius: 40px;
+    padding: 35px 40px;
+background: #fee8eb;
+box-shadow: -4px 4px 25px #cccccc;
+
+
+}
+.authentication h5{
+    text-align: center;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 700;
+    font-size: 35px;
+}
+.authentication button{
+    width: 100%;
+    background-color: #ff7f7f !important;
+    border: none;
+    
+}
+.carousel-control-prev,.carousel-control-next{
+    display: none;
+}
+.footer-image{
+    padding-top: 100px;
+}
+.icons{
+    list-style: none;
+    padding: 0;
+    width: 100%;
+}
+.icons li a{
+color: #6e6e6e;
+text-decoration: none;
+margin-right: 10px;
+}
+.nav_bar{
+    flex-direction: column !important;
+}
+.category{
+    margin-top: 63px;
+}
+.head{
+    font-family: 'Times New Roman', Times, serif !important;
+}
+.filters{
+    list-style: none;
+    padding: 0;
+}
+.filters li {
+    text-decoration: none;
+    margin-left: 10px;
+    color: #1c1c1c;
+    padding: 2px 5px;
+    display: block;
+    cursor: pointer;
+    position: relative; /* Add this */
+}
+
+.filters li::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: #d76957;
+    transition: transform .3s, width .3s; /* Add transform property */
+    transform-origin: 50%; /* Set transform origin to center */
+    position: absolute; /* Position the ::after element relative to its parent */
+    bottom: 0; /* Adjust this if needed to position the line properly */
+    left: 50%; /* Move the line to the center horizontally */
+}
+
+.filters li:hover::after:not(.active) {
+    width: 100%;
+    transform: translateX(-50%); /* Move it back to the center */
+}
+
+.filters li.active {
+    color: #d76957 !important;
+    border-bottom: 2px solid #d76957;
+}
+
+/* admin dashboard */
+.sidebar-main{
+    position: fixed !important;
+    top: 0;
+    width: 240px !important;    
+    min-width: 60px !important;
+    overflow: hidden;
+    transition: width 0.3s ease !important;
+    background: #f8f9fa;
+  
+  }
+  .sidebar-ul > li{
+
+  }
+  .sidebar-ul > li> a{
+    list-style-type: none;
+    text-decoration: none;
+    color: black;
+    font-weight: 600;
+    font-size: 20px;
+  }
+
+   #sidebar-collapese {
+    width: 60px !important;
+  }
+  .box-data{
+    position: relative;
+    float: right;
+    width: calc(100% - 240px);
+    transition: width 0.3s ease !important;
+    /* border: 1.5px solid black; */
+    min-height: 100vhh;
+    
+  }
+ 
+  .content{
+    padding: 10px;
+    min-height: 100vh;
+    padding-top: 100px;
+    /* box-shadow: 6px 6px 20px #cfcfcf; */
+    background: white;
+  }
+  .admin-navbar{
+    position: fixed;
+    width: -webkit-fill-available !important;
+    z-index: 1;
+  }
+  .f-card-tittle{
+    font-size: 30px;
+    font-weight: 500;    
+  }
+  .sub-tittle{
+    margin-left: 48px;
+    font-size: 15px;
+    color: #0a0a0a;
+    font-weight: 700;
+  }
+  .piechart{
+    height: 300px;
+    width: auto;
+    float: right;
+  }
+  .chart-container .chartjs-render-monitor ul.legend-list li span.chart-legend {
+    width: 8px !important; /* Adjust the width to make the legend points smaller */
+    height: 8px !important; /* Adjust the height to make the legend points smaller */
+  }
+  
+ 
