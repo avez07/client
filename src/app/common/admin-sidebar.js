@@ -2,10 +2,13 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import {Playball} from "next/font/google"
 import { FaHome, FaBoxOpen, FaCartPlus, FaUserFriends } from "react-icons/fa";
 import { RiFilePaper2Fill } from "react-icons/ri";
 import logo from "../../../public/assets/wesite-logo.png";
 
+
+const playball = Playball({ weight:'400', style: 'normal',subsets: ['latin'],display: 'swap',})
 
 const Sidebar = ({ isOpen, isNightMode }) => {
 
@@ -13,8 +16,8 @@ const Sidebar = ({ isOpen, isNightMode }) => {
     <>
       <div id={`${!isOpen ? 'sidebar-collapese' : 'none'}`} className={`sidebar-main ${isNightMode ? 'pro-sidebar-night' : 'pro-sidebar-day'}`}>
         <div className="sidebar-inner">
-          <div className={`${isNightMode ? 'website-web' : 'mt-4'}`}>
-            <Image src={logo} alt="website-logo" className="website-logo" /><span className="website-name">Sweet delight</span>
+          <div className={`d-flex align-items-center ${isNightMode ? 'website-web' : 'pt-4'}`}>
+            <Image src={logo} alt="website-logo" className="website-logo" /><span className={`${playball.className} website-name`}>Sweet delight</span>
           </div>
           <ul className="sidebar-ul">
             <li>

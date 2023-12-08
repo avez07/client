@@ -3,7 +3,7 @@ import React, { useContext } from "react";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
 import ProgressBar from "react-bootstrap/ProgressBar";
-
+import Image from "next/image";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 // import { AuthContext } from "../authentication/auth";
@@ -27,7 +27,7 @@ const NewName = 'avez';
           <Card.Body>
             <Card.Title className="f-card-tittle d-flex justify-content-between">
               <div style={{ width: "60%" }}>
-                <img src={default_img} height={40} alt="owner" /> Welcome back{" "}
+                <Image src={default_img} height={40} alt="owner" /> Welcome back{" "}
                 <span className="fw-bolder text-capitalize"> {NewName} !</span>
                 <div className="sub-tittle">
                   Your CRM is Oasis: come back and explore the power of data

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playball&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Courgette&display=swap');
 .search-icon {
     position: absolute;
     top: 16px;
@@ -37,10 +37,9 @@ nav{
 }
 .sidebar-ul > li{
     position: relative;
-    left: 16px;
+    left: 3px;
     top: 4px;
     font-size: 20px !important;
-    padding: 10px 7px;
 }
 .pro-menu-item:hover{
     background: whitesmoke;
@@ -52,21 +51,29 @@ nav{
     display: flex;
     position: relative;
     width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 10px 20px 10px 7px;
+
 }
 .menu-items{
-    padding: 0 7px;
+    padding: 0 18px 0 7px;
 }
 .sidebar-ul > li> a:hover{
     color: #464545;
     font-weight: 600;
-
-
 }
-.website-name{
-    font-family: 'Playball', cursive;
-    font-size: 30px;
+.sidebar-ul > li:hover{
+    background: whitesmoke;
+    color: currentColor;
+}
+.website-name{   
+    font-size: 30px !important;
     color: white;
     vertical-align: middle;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .website-name {
     display: inline-block;
@@ -94,7 +101,7 @@ nav{
     color: #b8bbc3 !important;
     border-bottom: 3px solid #1a202e
 }
-.pro-sidebar-night,.pro-sidebar-night>.pro-sidebar-inner{
+.pro-sidebar-night,.pro-sidebar-night>.sidebar-inner{
     background: #0c1220 !important;
     
 }
@@ -113,11 +120,7 @@ nav{
 .laguage-logo-night a div , .laguage-logo-night a::after{
     color:#b8bbc3 !important;
 }
-.content-night{
-    background: #0c1220 url('../assets/transparent-backgroung.png') no-repeat center center fixed !important;
-    background-size: cover;
 
-}
 .content-night .card{
     background-color: #24293726;
     box-shadow: 0 3px 5px 0.3px #0000001a;

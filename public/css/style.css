@@ -101,13 +101,11 @@ margin-right: 10px;
     background: #f8f9fa;
   
   }
-  .sidebar-ul > li{
-
-  }
+ 
   .sidebar-ul > li> a{
     list-style-type: none;
     text-decoration: none;
-    color: black;
+    /* color: black; */
     font-weight: 600;
     font-size: 20px;
   }
@@ -128,7 +126,7 @@ margin-right: 10px;
   .content{
     padding: 10px;
     min-height: 100vh;
-    padding-top: 100px;
+    padding-top: 65px;
     /* box-shadow: 6px 6px 20px #cfcfcf; */
     background: white;
   }
