@@ -13,7 +13,7 @@ function header() {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
             <Link href="/dashboard" className = "text-dark text-decoration-none fw-semibold fs-6 text-capitalize me-3">Home</Link>
-            <Link href="/dashboard/About" className ="text-dark text-decoration-none fw-semibold fs-6 text-capitalize me-3">about us</Link>
+            <Link href="/dashboard/about" className ="text-dark text-decoration-none fw-semibold fs-6 text-capitalize me-3">about us</Link>
             <Link href="/contact" className ="text-dark text-decoration-none fw-semibold fs-6 text-capitalize me-3">services</Link>
             <Link href="/login" className ="text-dark text-decoration-none fw-semibold fs-6 text-capitalize me-3">login</Link>
             <Link href="/signup" className ="text-dark text-decoration-none fw-semibold fs-6 text-capitalize me-3">signup</Link>

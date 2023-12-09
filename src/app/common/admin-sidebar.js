@@ -21,10 +21,10 @@ const Sidebar = ({ isOpen, isNightMode }) => {
           </div>
           <ul className="sidebar-ul">
             <li>
-              <Link href="/"><span className="menu-items"><FaHome /></span> Home</Link>
+              <Link href="/admin"><span className="menu-items"><FaHome /></span> Home</Link>
             </li>
             <li>
-              <Link href="/product"><span className="menu-items"><FaBoxOpen /></span>Product Details</Link>
+              <Link href="/admin/product"><span className="menu-items"><FaBoxOpen /></span>Product Details</Link>
             </li>
             <li>
               <Link href="/"><span className="menu-items"><FaCartPlus /></span>Order Details</Link>

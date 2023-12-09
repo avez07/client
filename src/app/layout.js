@@ -18,6 +18,7 @@ export const metadata = {
 
 export default function ClientLayout({ children }) {
   return (
+    
     <html lang="en">
       <body className={inter.className}>
  

@@ -41,16 +41,16 @@ function home() {
       <Container fluid className="px-0 py-3" style={{ background: "#f7f0f1" }}>
         <Carousel className="mt-4">
           <Carousel.Item>
-            <Image src={carousal_img_1} className="img-fluid" alt="" />
+            <Image src={carousal_img_1}  priority={true} className="img-fluid" alt="" />
           </Carousel.Item>
           <Carousel.Item>
-            <Image src={carousal_img_2} className="img-fluid" alt="" />
+            <Image src={carousal_img_2}  priority={true} className="img-fluid" alt="" />
           </Carousel.Item>
           <Carousel.Item>
-            <Image src={carousal_img_3} className="img-fluid" alt="" />
+            <Image src={carousal_img_3}  priority={true} className="img-fluid" alt="" />
           </Carousel.Item>
           <Carousel.Item>
-            <Image src={carousal_img_4} className="img-fluid" alt="" />
+            <Image src={carousal_img_4}  priority={true} className="img-fluid" alt="" />
           </Carousel.Item>
           {/* <Carousel.Item>
             <img src={carousal_img_5} className="img-fluid" alt="" />
