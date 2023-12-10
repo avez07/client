@@ -8,9 +8,9 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 // import { AuthContext } from "../authentication/auth";
 import default_img from "/public/assets/Default_pfp.svg.png";
-import Piechart from "./pie-chart/home-pie";
-import BarChart from "./pie-chart/bar-chart";
-import LineChart from "./pie-chart/line-chart";
+import Piechart from "/public/pie-chart/home-pie";
+import BarChart from "/public/pie-chart/bar-chart";
+import LineChart from "/public/pie-chart/line-chart";
 import { FaGlobeAmericas, FaShoppingCart } from "react-icons/fa";
 import { MdOtherHouses } from "react-icons/md";
 
