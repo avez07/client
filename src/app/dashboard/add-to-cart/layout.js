@@ -2,6 +2,8 @@
 
 import Progress from "../../common/step-progressbar"
 import { Inter } from 'next/font/google'
+import '/public/css/style.css';
+
 
 
 

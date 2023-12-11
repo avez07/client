@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-const AddCart = () => {
+const AddCart = (isactive) => {
   const router = useRouter();
   const [quantities, setQuantities] = useState(
     Array.from({ length: 4 }, () => 0)

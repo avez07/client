@@ -177,12 +177,12 @@ border-radius: 50%;
 padding: 15px 23px;
 position: relative;
   }
-  #steps .step:not(:last-child)::before{
+  #steps .step:not(:last-child)::after{
     content: '';
     width: 0px;
     height: 7px;
     display: block;
-    left: 67px;
+    left: 57px;
     top: 25px;
     position: absolute;
     background: red;
@@ -191,12 +191,11 @@ position: relative;
   /* #steps .done:not(:last-child)::before{
     width: 340px !important;
     transition: all 3s;
-  } */
-  #steps .done:nth-child(n+1):before{
-    width: 340px !important;
-    background: blue;
-    transition: all 3s;
+  }*/
+  #steps .done:last-child{
+    padding: 200px;
   }
+ 
 
   
   
