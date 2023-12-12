@@ -24,13 +24,12 @@ export default function ClientLayout({ children }) {
   const pathname = usePathname();
 
   return  (
-    <html lang="en">
-      <body className={inter.className}>
-       {pathname !== '/dashboard/checkout' ? <Header />: ''} 
+    <>
+     {pathname !== '/dashboard/checkout' ? <Header />: ''} 
         {children}
         {pathname !== '/dashboard/checkout' ? <Footer />: ''} 
-      </body>
-    </html>
+    </>
+   
   )
 }
 
