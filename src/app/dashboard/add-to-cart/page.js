@@ -6,12 +6,11 @@ import { FaThumbsUp, FaPlus, FaMinus } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+// import Progressbar from "../../common/step-progressbar"
 
-const AddCart = (isactive) => {
+const AddCart = () => {
   const router = useRouter();
-  const [quantities, setQuantities] = useState(
-    Array.from({ length: 4 }, () => 0)
-  );
+  const [quantities, setQuantities] = useState(Array.from({ length: 4 }, () => 0));
 
   const handleQuantityChange = (operation, idx) => {
     setQuantities((prevQuantities) => {
@@ -29,10 +28,10 @@ const AddCart = (isactive) => {
   };
   return (
     <>
-      <Container fluid className="my-5 pt-5">
+      <Container fluid className="my-3 pt-5">
+      {/* <Progressbar isactive={isactive} /> */}
         <Row xs={2} md={2} className="g-4">
           <Col key={1} xs={12} md={9}>
-            {/* <Row xs={1} md={1} className="g-4"> */}
             {Array.from({ length: 4 }).map((_, idx) => (
               <Col key={idx} className="my-3">
                 <Card>
@@ -129,17 +128,14 @@ const AddCart = (isactive) => {
                 </Card>
               </Col>
             ))}
-            {/* </Row> */}
           </Col>
           <Col key={2} xs={12} md={3}>
-            <Card>
+            <Card className="mt-3">
               <Card.Body>
                 <Card.Title>Product details</Card.Title>
                 <Card.Text>Sub total (3 items) : &#8377;55000.00</Card.Text>
                 <Button
-                  variant="danger"
-                  onClick={() => router.push("../dashboard")}
-                >
+                  variant="danger" style={{width:'100%'}} onClick={() => { router.push("../dashboard");}}>
                   Continue
                 </Button>
               </Card.Body>

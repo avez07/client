@@ -188,12 +188,20 @@ position: relative;
     background: red;
     border-radius: 7px;
   }
-  /* #steps .done:not(:last-child)::before{
+  /* #steps .step:not(:last-child)::after{
     width: 340px !important;
     transition: all 3s;
-  }*/
-  #steps .done:last-child{
-    padding: 200px;
+  } */
+  #steps .active:before  { 
+    font-family: FontAwesome; 
+    font-size: 30px; 
+    display: inline-block; 
+    content: '\f137';
+}
+ 
+  #steps .step.done::after {
+    width: 340px !important;
+    transition: all 3s;
   }
  
 
