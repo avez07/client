@@ -2,18 +2,16 @@ import * as React from "react";
 import {
   Box,
   Button,
-  Typography,
   TextField,
-  InputAdornment,
   Modal,
   useMediaQuery,
   useTheme,
   FormControl,
-  InputLabel,
   Select,
   MenuItem,
+  Alert
 } from "@mui/material";
-import { MdClose } from "react-icons/md";
+import { MdClose,MdAdd } from "react-icons/md";
 import { Country, State, City } from "country-state-city";
 import { Key } from "@mui/icons-material";
 
@@ -21,8 +19,16 @@ export default function BasicModal() {
   const theme = useTheme();
   const isMpbile = useMediaQuery(theme.breakpoints.down("sm"));
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleModal = () => setOpen(!open);
+
+  const [fullname, setFullNmae] = React.useState("");
+  const [phoneNo, setPhoneNo] = React.useState("");
+  const [pinCode, setPinCode] = React.useState("");
+  
+  const [addresslin1, setAddresslin1] = React.useState("");
+  const [addresslin2, setAddresslin2] = React.useState("");
+  const [addresslin3, setAddresslin3] = React.useState("");
+  
   const [selectedCountry, setSelectedCountry] = React.useState("");
   const [selectedState, setSelectedState] = React.useState("");
   const [selectedcity, setSelectedcity] = React.useState("");
@@ -37,21 +43,25 @@ export default function BasicModal() {
     borderRadius: "7px",
     boxShadow: 24,
     overflow: "auto",
+    marginBottom:"20px"
     // padding: '16px 20px',
   };
  
 
   const country = Country.getAllCountries();
-  const state = State.getAllStates();
-  const city = City.getAllCities();
-  // console.log(country);
+  const state = State.getStatesOfCountry(selectedCountry);
+  const city = City.getCitiesOfState(selectedCountry,selectedState);
+
+  
+  // console.log(city);
 
   return (
     <div>
-      <Button onClick={handleOpen}>Open modal</Button>
+      <Alert severity="error">This is an error alert — check it out!</Alert>
+      <Button style={{alignItems:'baseline'}} onClick={handleModal}><span style={{fontSize:'15px'}}><MdAdd /></span>Add new Address</Button>
       <Modal
         open={open}
-        onClose={handleClose}
+        onClose={handleModal}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
         style={{ overflowY: "auto" }}
@@ -63,7 +73,7 @@ export default function BasicModal() {
               <MdClose
                 className="fs-4"
                 style={{ cursor: "pointer" }}
-                onClick={handleClose}
+                onClick={handleModal}
               />
             </span>
           </div>
@@ -105,6 +115,7 @@ export default function BasicModal() {
                 sx={{ width: "100%" }}
                 id="outlined-multiline-flexible"
                 size="small"
+                onChange={(e)=>setFullNmae(e.target.value)}
               />
             </div>
             <div className="phone number">
@@ -113,6 +124,7 @@ export default function BasicModal() {
                 sx={{ width: "100%" }}
                 id="outlined-multiline-flexible"
                 size="small"
+                onChange={(e)=>setPhoneNo(e.target.value)}
               />
             </div>
             <div className="pincode">
@@ -121,6 +133,7 @@ export default function BasicModal() {
                 sx={{ width: "100%" }}
                 id="outlined-multiline-flexible"
                 size="small"
+                onChange={(e)=>setPinCode(e.target.value)}
               />
             </div>
             <div className="addressline 1">
@@ -131,6 +144,7 @@ export default function BasicModal() {
                 sx={{ width: "100%" }}
                 id="outlined-multiline-flexible"
                 size="small"
+                onChange={(e)=>setAddresslin1(e.target.value)}
               />
             </div>
             <div className="address-line-2">
@@ -139,6 +153,7 @@ export default function BasicModal() {
                 sx={{ width: "100%" }}
                 id="outlined-multiline-flexible"
                 size="small"
+                onChange={(e)=>setAddresslin2(e.target.value)}
               />
             </div>
             <div className="addressline-3">
@@ -147,6 +162,7 @@ export default function BasicModal() {
                 sx={{ width: "100%" }}
                 id="outlined-multiline-flexible"
                 size="small"
+                onChange={(e)=>setAddresslin3(e.target.value)}
               />
             </div>
             <div className="d-flex justify-content-between">
@@ -160,11 +176,11 @@ export default function BasicModal() {
                   <Select
                     labelId="emo-select-small-label"
                     id="demo-select-small"
-                    value={selectedCountry}
-                    onChange={(e)=>selectedState(e.target.value)}
+                    value={selectedState}
+                    onChange={(e)=>setSelectedState(e.target.value)}
                   >
                      {selectedCountry !== ''
-                      ? city.map((value, index) => (
+                      ? state.map((value, index) => (
                           <MenuItem key={index} value={value.isoCode}>
                             {value.name}
                           </MenuItem>
@@ -183,16 +199,16 @@ export default function BasicModal() {
                   <Select
                     labelId="emo-select-small-label"
                     id="demo-select-small"
-                    value={selectedCountry}
-                    onChange={(e)=>selectedcity(e.target.value)}
+                    value={selectedcity}
+                    onChange={(e)=>setSelectedcity(e.target.value)}
                     sx={{
                       background: "#f0f2f2",
                       boxShadow: "0 2px 5px #0f111126",
                     }}
                   >
-                    {selectedState !== ''
+                    {selectedState !== '' && selectedCountry !==''
                       ? city.map((value, index) => (
-                          <MenuItem key={index} value={value.isoCode}>
+                          <MenuItem key={index} value={value.name}>
                             {value.name}
                           </MenuItem>
                         ))
@@ -201,6 +217,7 @@ export default function BasicModal() {
                 </FormControl>
               </div>
             </div>
+            <Button fullWidth variant="contained" color="warning" sx={{my:3}}>Save</Button>
           </div>
         </Box>
       </Modal>
