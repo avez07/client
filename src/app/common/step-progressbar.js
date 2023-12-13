@@ -3,6 +3,8 @@ import {Button,Card} from 'react-bootstrap';
 import { Box, Stepper, Step, StepLabel, StepContent, Typography } from '@mui/material';
 import { IoIosCheckmarkCircleOutline } from 'react-icons/io';
 import { FaBacon, FaBeer, FaUser } from 'react-icons/fa';
+import { FaHouse } from 'react-icons/fa6';
+
 import Address from "./checkout-data";
 
 const CustomStepIcon = ({ active, completed, icon }) => {
@@ -23,13 +25,12 @@ export default function VerticalLinearStepper() {
   
   const steps = [
     {
-      icon: <FaUser style={{ fontSize: '30px', color: 'black' }} />,
+      icon: <FaHouse style={{ fontSize: '25px', color: 'grey' }} />,
       label: 'Shipping Address',
       content: (
         <>
           <Card>
       <Card.Body>
-        <Card.Title>Card Title</Card.Title>
        <Address />
         <Button variant="primary" onClick={handleNext}>Go somewhere</Button>
       </Card.Body>
@@ -64,7 +65,7 @@ export default function VerticalLinearStepper() {
   ];
 
   return (
-    <Box sx={{ maxWidth: 600 }}>
+    <Box >
       <Stepper activeStep={activeStep} orientation="vertical">
         {steps.map((step, index) => (
           <Step key={index}>
