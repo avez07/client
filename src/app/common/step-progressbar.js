@@ -1,6 +1,7 @@
 import React from "react";
 import {Button,Card} from 'react-bootstrap';
-import { Box, Stepper, Step, StepLabel, StepContent, Typography } from '@mui/material';
+import {makeStyles} from '@material-ui/core/styles'
+import { Box, Stepper, Step, StepLabel, StepContent, Typography,useTheme,useMediaQuery } from '@mui/material';
 import { IoIosCheckmarkCircleOutline } from 'react-icons/io';
 import { FaBacon, FaBeer, FaUser } from 'react-icons/fa';
 import { FaHouse } from 'react-icons/fa6';
@@ -10,15 +11,30 @@ import Address from "./checkout-data";
 const CustomStepIcon = ({ active, completed, icon }) => {
   return completed ? <IoIosCheckmarkCircleOutline style={{ fontSize: '30px', color: 'green' }} /> : icon;
 };
-
-
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: '100%',
+  },
+  backButton: {
+    // width:'100%',
+    margin:'10px 15px',
+  },
+  instructions: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  },
+}));
 
 export default function VerticalLinearStepper() {
   const [activeStep, setActiveStep] = React.useState(0);
+  const [isopen, setisopen] = React.useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const classes = useStyles();
+  console.log(isopen)
 
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
+
+
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
@@ -32,7 +48,7 @@ export default function VerticalLinearStepper() {
           <Card>
       <Card.Body>
        <Address />
-        <Button variant="primary" onClick={handleNext}>Go somewhere</Button>
+        <Button variant="dark" style={{float:'right'}} onClick={handleNext}>Continue</Button>
       </Card.Body>
     </Card>
         </>
@@ -44,7 +60,7 @@ export default function VerticalLinearStepper() {
       content: (
         <>
           <Typography>Step 2 Content</Typography>
-          <Button variant="contained" onClick={handleNext}>
+          <Button variant="primary" style={{float:'right'}} onClick={handleNext}>
             Continue
           </Button>
         </>
@@ -56,7 +72,7 @@ export default function VerticalLinearStepper() {
       content: (
         <>
           <Typography>Step 3 Content</Typography>
-          <Button variant="contained" onClick={handleNext}>
+          <Button variant="primary" style={{float:'right'}} onClick={handleNext}>
             Finish
           </Button>
         </>
@@ -65,21 +81,57 @@ export default function VerticalLinearStepper() {
   ];
 
   return (
-    <Box >
-      <Stepper activeStep={activeStep} orientation="vertical">
-        {steps.map((step, index) => (
-          <Step key={index}>
-            <StepLabel
-              icon={<CustomStepIcon active={activeStep === index} completed={activeStep > index} icon={step.icon} />}
-            >
-              <Typography>{step.label}</Typography>
-            </StepLabel>
-            <StepContent>
-              {step.content}
-            </StepContent>
+    <>
+    {!isMobile ? (
+      <Box className='checkout-box'>
+        <Stepper activeStep={activeStep} orientation="vertical" sx={{width: `${isMobile ? '100%' : '70%'}`}}>
+          {steps.map((step, index) => (
+            <Step key={index}>
+              <StepLabel
+                icon={<CustomStepIcon active={activeStep === index} completed={activeStep > index} icon={step.icon} />}
+              >
+                <Typography>{step.label}</Typography>
+              </StepLabel>
+              <StepContent>
+                {step.content}
+              </StepContent>
+            </Step>
+          ))}
+        </Stepper>
+        <div className="mt-5">
+          <Card>
+            <Card.Body>
+              <h1>this is subtotal</h1>
+              <Button variant="dark" style={{width: '100%'}}>Continue</Button>
+            </Card.Body>
+          </Card>
+        </div>
+      </Box>
+    ) : (
+      <Box>
+        <div className={classes.root}>
+      <Stepper activeStep={activeStep} alternativeLabel>
+        {steps.map((step,index) => (
+          <Step key={step.label}>
+            <StepLabel icon={<CustomStepIcon active={activeStep === index} completed={activeStep > index} icon={step.icon} />}
+              >{step.label}</StepLabel>
           </Step>
         ))}
       </Stepper>
-    </Box>
+      </div>
+      <div className="my-3">
+        <Card>
+          <Card.Body>
+            <Address isopen={isopen}/>
+          </Card.Body>
+          <Button variant="dark" className={classes.backButton} onClick={handleNext}>Use this Address</Button>
+          <Button variant="dark" className={classes.backButton} onClick={(e)=>{setisopen(true)}}>Edit this </Button>
+
+        </Card>
+      </div>
+      </Box>
+    )}
+    </>
   );
+  
 }

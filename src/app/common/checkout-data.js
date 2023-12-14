@@ -9,17 +9,26 @@ import {
   FormControl,
   Select,
   MenuItem,
-  Alert
+  Radio,
+  RadioGroup,
+  FormControlLabel
 } from "@mui/material";
 import { MdClose,MdAdd } from "react-icons/md";
 import { Country, State, City } from "country-state-city";
 import { Key } from "@mui/icons-material";
 
-export default function BasicModal() {
+export default function BasicModal({isopen}) {
   const theme = useTheme();
   const isMpbile = useMediaQuery(theme.breakpoints.down("sm"));
   const [open, setOpen] = React.useState(false);
-  const handleModal = () => setOpen(!open);
+  const handleModal = () => {setOpen(!isopen)};
+  React.useEffect(() => {
+    setOpen(isopen);
+  }, [isopen]);
+  console.log(isopen+'1')
+
+
+  const [selectedAddress, setSelectedAddress] = React.useState([]);
 
   const [fullname, setFullNmae] = React.useState("");
   const [phoneNo, setPhoneNo] = React.useState("");
@@ -38,7 +47,7 @@ export default function BasicModal() {
     top: "70%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: isMpbile ? 300 : 600,
+    width: isMpbile ? '90%' : 600,
     bgcolor: "background.paper",
     borderRadius: "7px",
     boxShadow: 24,
@@ -56,8 +65,22 @@ export default function BasicModal() {
   // console.log(city);
 
   return (
-    <div>
-      <Alert severity="error">This is an error alert — check it out!</Alert>
+    <div> 
+       <RadioGroup
+        row
+        aria-labelledby="demo-row-radio-buttons-group-label"
+        name="row-radio-buttons-group"
+        sx={{flexDirection:'column'}}
+      >    
+       {selectedAddress.map((address) => (
+  <div className="stored-address" key={address}>
+    <span> 
+    <FormControlLabel value={address} control={<Radio />}/>
+    </span>
+    <span>Ansari avez</span>
+  </div>
+))}
+  </RadioGroup>
       <Button style={{alignItems:'baseline'}} onClick={handleModal}><span style={{fontSize:'15px'}}><MdAdd /></span>Add new Address</Button>
       <Modal
         open={open}
