@@ -29,7 +29,7 @@ export default function VerticalLinearStepper() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [isopen, setisopen] = React.useState(false);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const classes = useStyles();
   console.log(isopen)
 
@@ -125,7 +125,7 @@ export default function VerticalLinearStepper() {
             <Address isopen={isopen}/>
           </Card.Body>
           <Button variant="dark" className={classes.backButton} onClick={handleNext}>Use this Address</Button>
-          <Button variant="dark" className={classes.backButton} onClick={(e)=>{setisopen(true)}}>Edit this </Button>
+          <Button variant="dark" className={classes.backButton} onClick={(e)=>{setisopen(!isopen)}}>Edit this </Button>
 
         </Card>
       </div>
