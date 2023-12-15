@@ -4,7 +4,12 @@ const device = ()=>{
     return(
         <>
         <BrowserView>
-     <h1 className='pt-5 mt-5'>This is rendered only in browser</h1>
+        {isMobile?(
+          <h1 className='pt-5 mt-5'>This is rendered only in browser</h1>
+
+        ):(
+          <h1 className='pt-5 mt-5'>This is rendered only in browser</h1>
+        )}
    </BrowserView>
    <MobileView>
      <h1>This is rendered only on mobile</h1>
