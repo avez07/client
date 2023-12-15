@@ -8,7 +8,7 @@ const device = ()=>{
           <h1 className='pt-5 mt-5'>This is rendered only in browser</h1>
 
         ):(
-          <h1 className='pt-5 mt-5'>This is rendered only in browser</h1>
+          <h1 className='pt-5 mt-5'>This is rendered only in mobile</h1>
         )}
    </BrowserView>
    <MobileView>
