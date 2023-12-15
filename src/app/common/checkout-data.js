@@ -1,4 +1,4 @@
-import * as React from "react";
+import  React,{useContext,useState} from "react";
 import {
   Box,
   Button,
@@ -13,34 +13,31 @@ import {
   RadioGroup,
   FormControlLabel
 } from "@mui/material";
+import {AuthContext} from './auth'
 import { MdClose,MdAdd } from "react-icons/md";
 import { Country, State, City } from "country-state-city";
-import { Key } from "@mui/icons-material";
 
-export default function BasicModal({isopen}) {
+export default function BasicModal() {
   const theme = useTheme();
   const isMpbile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [open, setOpen] = React.useState(false);
-  const handleModal = () => {setOpen(!isopen)};
-  React.useEffect(() => {
-    setOpen(isopen);
-  }, [isopen]);
-  console.log(isopen+'1')
+ const {isopen,setIsopen} = useContext(AuthContext)
+  const handleModal = () => {setIsopen(!isopen)};
+ 
 
 
-  const [selectedAddress, setSelectedAddress] = React.useState([]);
+  const [selectedAddress, setSelectedAddress] = useState([]);
 
-  const [fullname, setFullNmae] = React.useState("");
-  const [phoneNo, setPhoneNo] = React.useState("");
-  const [pinCode, setPinCode] = React.useState("");
+  const [fullname, setFullNmae] = useState("");
+  const [phoneNo, setPhoneNo] = useState("");
+  const [pinCode, setPinCode] = useState("");
   
-  const [addresslin1, setAddresslin1] = React.useState("");
-  const [addresslin2, setAddresslin2] = React.useState("");
-  const [addresslin3, setAddresslin3] = React.useState("");
+  const [addresslin1, setAddresslin1] = useState("");
+  const [addresslin2, setAddresslin2] = useState("");
+  const [addresslin3, setAddresslin3] = useState("");
   
-  const [selectedCountry, setSelectedCountry] = React.useState("");
-  const [selectedState, setSelectedState] = React.useState("");
-  const [selectedcity, setSelectedcity] = React.useState("");
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedcity, setSelectedcity] = useState("");
 
   const style = {
     position: "absolute",
@@ -83,7 +80,7 @@ export default function BasicModal({isopen}) {
   </RadioGroup>
       <Button style={{alignItems:'baseline'}} onClick={handleModal}><span style={{fontSize:'15px'}}><MdAdd /></span>Add new Address</Button>
       <Modal
-        open={open}
+        open={isopen}
         onClose={handleModal}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"

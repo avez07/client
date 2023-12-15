@@ -1,12 +1,13 @@
-import React from "react";
+import React,{useContext} from "react";
 import {Button,Card} from 'react-bootstrap';
 import {makeStyles} from '@material-ui/core/styles'
+import {AuthContext} from './auth'
 import { Box, Stepper, Step, StepLabel, StepContent, Typography,useTheme,useMediaQuery } from '@mui/material';
 import { IoIosCheckmarkCircleOutline } from 'react-icons/io';
 import { FaBacon, FaBeer, FaUser } from 'react-icons/fa';
 import { FaHouse } from 'react-icons/fa6';
 
-import Address from "./checkout-data";
+import BasicModal from "./checkout-data";
 
 const CustomStepIcon = ({ active, completed, icon }) => {
   return completed ? <IoIosCheckmarkCircleOutline style={{ fontSize: '30px', color: 'green' }} /> : icon;
@@ -27,11 +28,10 @@ const useStyles = makeStyles((theme) => ({
 
 export default function VerticalLinearStepper() {
   const [activeStep, setActiveStep] = React.useState(0);
-  const [isopen, setisopen] = React.useState(false);
+  const {isopen,setIsopen} = useContext(AuthContext);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const classes = useStyles();
-  console.log(isopen)
 
 
 
@@ -47,7 +47,7 @@ export default function VerticalLinearStepper() {
         <>
           <Card>
       <Card.Body>
-       <Address />
+       <BasicModal/>
         <Button variant="dark" style={{float:'right'}} onClick={handleNext}>Continue</Button>
       </Card.Body>
     </Card>
@@ -122,10 +122,10 @@ export default function VerticalLinearStepper() {
       <div className="my-3">
         <Card>
           <Card.Body>
-            <Address isopen={isopen}/>
+            <BasicModal/>
           </Card.Body>
           <Button variant="dark" className={classes.backButton} onClick={handleNext}>Use this Address</Button>
-          <Button variant="dark" className={classes.backButton} onClick={(e)=>{setisopen(!isopen)}}>Edit this </Button>
+          <Button variant="dark" className={classes.backButton} onClick={(e)=>{setIsopen(!isopen)}}>Edit this </Button>
 
         </Card>
       </div>

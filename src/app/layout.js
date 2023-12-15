@@ -1,10 +1,11 @@
 
 import { Inter } from 'next/font/google'
+import {AuthProvider} from '/src/app/common/auth'
 // import './globals.css'
-import '../../public/css/style.css'
-import '../../public/css/Layout.css'
-import '../../public/css/App.css'
-import '../../public/css/datatable.css'
+import '/public/css/style.css'
+import '/public/css/Layout.css'
+import '/public/css/App.css'
+import '/public/css/datatable.css'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -22,7 +23,7 @@ export default function ClientLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
  
-        {children}
+       <AuthProvider>{children}</AuthProvider>
       
         </body>
     </html>
