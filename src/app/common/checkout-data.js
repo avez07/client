@@ -1,4 +1,5 @@
 import  React,{useContext,useState} from "react";
+import { LuPenSquare } from "react-icons/lu";
 import {
   Box,
   Button,
@@ -17,7 +18,7 @@ import {AuthContext} from './auth'
 import { MdClose,MdAdd } from "react-icons/md";
 import { Country, State, City } from "country-state-city";
 
-export default function BasicModal() {
+const Address = ()=>{
   const theme = useTheme();
   const isMpbile = useMediaQuery(theme.breakpoints.down("sm"));
  const {isopen,setIsopen} = useContext(AuthContext)
@@ -63,6 +64,9 @@ export default function BasicModal() {
 
   return (
     <div> 
+      {selectedAddress.length > 0 ? (
+      <div className="edit-add-btn text-end pb-2" onClick={(e)=>setIsopen(!isopen)}><a href="#" ><span><LuPenSquare style={{fontSize:'15px',marginRight:'3px'}}/></span>Edit Address</a></div>
+      ):(null)}
        <RadioGroup
         row
         aria-labelledby="demo-row-radio-buttons-group-label"
@@ -72,7 +76,7 @@ export default function BasicModal() {
        {selectedAddress.map((address) => (
   <div className="stored-address" key={address}>
     <span> 
-    <FormControlLabel value={address} control={<Radio />}/>
+    <FormControlLabel value={address} control={<Radio size="small" />}/>
     </span>
     <span>Ansari avez</span>
   </div>
@@ -244,3 +248,4 @@ export default function BasicModal() {
     </div>
   );
 }
+export {Address};

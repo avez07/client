@@ -9,7 +9,7 @@ const  checkout = ()=> {
   return (
     <>
      <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static"   style={{background:"#1c1c1c"}}>
+      <AppBar position="static"   style={{background:"#808080"}}>
         <Toolbar variant="dense" style={{justifyContent:'center'}}>
           <Typography variant="h5" className="py-3 fw-bold"  color="inherit" component="div">
             Checkout

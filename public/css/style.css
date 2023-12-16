@@ -188,21 +188,9 @@ position: relative;
     background: red;
     border-radius: 7px;
   }
-  /* #steps .step:not(:last-child)::after{
-    width: 340px !important;
-    transition: all 3s;
-  } */
-  #steps .active:before  { 
-    font-family: FontAwesome; 
-    font-size: 30px; 
-    display: inline-block; 
-    content: '\f137';
-}
- 
-  #steps .step.done::after {
-    width: 340px !important;
-    transition: all 3s;
-  }
+
+
+
  
   .add-model-head{
     text-transform: capitalize;
@@ -247,12 +235,38 @@ height: 14px;
   }
   .chekout-box{
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     margin: 20px 0;
-
+   
   }
-  
-  
+ .step-label{
+  font-size: 27px;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+ }
+ .step-change{
+  font-size: 15px;
+  font-weight: 500;
+  text-transform: capitalize;
+  color: blue;
+  cursor: pointer;
+  margin-right: 45px;
+ }
+  .edit-add-btn a{
+    text-decoration: none;
+    vertical-align: middle;
+  }
+  .checkout-items{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .other-features{
+    font-size: 12px;
+    margin: 0;
+  }
   
   @media only screen and (max-width: 767px){
     .product-img{
