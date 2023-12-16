@@ -9,7 +9,7 @@ import { MdDiscount } from "react-icons/md";
 import { HiCurrencyRupee } from "react-icons/hi2";
 import defaul_cake_img from '/public/assets/Butterscotch-Cakes.jpg';
 
-import {Address} from "./checkout-data";
+import {Address,Discount, Payment} from "./checkout-data";
 import Image from "next/image";
 
 const CustomStepIcon = ({ active, completed, icon }) => {
@@ -59,25 +59,29 @@ export default function VerticalLinearStepper() {
     },
     {
       icon: <MdDiscount style={{ fontSize: '25px', color: 'grey' }} />,
-      label: 'Coupen',
+      label: 'Offers',
       content: (
         <>
-          <Typography>Step 2 Content</Typography>
-          <Button variant="warning" style={{float:'right'}} onClick={handleNext}>
-            Continue
-          </Button>
+          <Card>
+      <Card.Body>
+       <Discount/>
+        <Button variant="warning" style={{float:'right',marginTop:'10px'}} onClick={handleNext}>Continue</Button>
+      </Card.Body>
+    </Card>
         </>
       ),
     },
     {
       icon: <HiCurrencyRupee style={{ fontSize: '25px', color: 'grey' }} />,
-      label: 'Step 3',
+      label: 'Payment',
       content: (
         <>
-          <Typography>Step 3 Content</Typography>
-          <Button variant="warning" style={{float:'right'}} onClick={handleNext}>
-           Countinue
-          </Button>
+          <Card>
+      <Card.Body>
+       <Payment/>
+        <Button variant="warning" style={{float:'right',marginTop:'10px'}} onClick={handleNext}>Continue</Button>
+      </Card.Body>
+    </Card>
         </>
       ),
     },

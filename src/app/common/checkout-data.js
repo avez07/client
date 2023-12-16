@@ -1,5 +1,9 @@
-import  React,{useContext,useState} from "react";
+import React, { useContext, useState } from "react";
 import { LuPenSquare } from "react-icons/lu";
+import visa from '/public/assets/cards-logo/visa.png';
+import mastercard from '/public/assets/cards-logo/mastercard.png';
+import rupay from '/public/assets/cards-logo/rupay.png';
+
 import {
   Box,
   Button,
@@ -14,16 +18,17 @@ import {
   RadioGroup,
   FormControlLabel
 } from "@mui/material";
-import {AuthContext} from './auth'
-import { MdClose,MdAdd } from "react-icons/md";
+import { AuthContext } from './auth'
+import { MdClose, MdAdd } from "react-icons/md";
 import { Country, State, City } from "country-state-city";
+import Image from "next/image";
 
-const Address = ()=>{
+const Address = () => {
   const theme = useTheme();
   const isMpbile = useMediaQuery(theme.breakpoints.down("sm"));
- const {isopen,setIsopen} = useContext(AuthContext)
-  const handleModal = () => {setIsopen(!isopen)};
- 
+  const { isopen, setIsopen } = useContext(AuthContext)
+  const handleModal = () => { setIsopen(!isopen) };
+
 
 
   const [selectedAddress, setSelectedAddress] = useState([]);
@@ -31,11 +36,11 @@ const Address = ()=>{
   const [fullname, setFullNmae] = useState("");
   const [phoneNo, setPhoneNo] = useState("");
   const [pinCode, setPinCode] = useState("");
-  
+
   const [addresslin1, setAddresslin1] = useState("");
   const [addresslin2, setAddresslin2] = useState("");
   const [addresslin3, setAddresslin3] = useState("");
-  
+
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedState, setSelectedState] = useState("");
   const [selectedcity, setSelectedcity] = useState("");
@@ -50,39 +55,39 @@ const Address = ()=>{
     borderRadius: "7px",
     boxShadow: 24,
     overflow: "auto",
-    marginBottom:"20px"
+    marginBottom: "20px"
     // padding: '16px 20px',
   };
- 
+
 
   const country = Country.getAllCountries();
   const state = State.getStatesOfCountry(selectedCountry);
-  const city = City.getCitiesOfState(selectedCountry,selectedState);
+  const city = City.getCitiesOfState(selectedCountry, selectedState);
 
-  
+
   // console.log(city);
 
   return (
-    <div> 
+    <div>
       {selectedAddress.length > 0 ? (
-      <div className="edit-add-btn text-end pb-2" onClick={(e)=>setIsopen(!isopen)}><a href="#" ><span><LuPenSquare style={{fontSize:'15px',marginRight:'3px'}}/></span>Edit Address</a></div>
-      ):(null)}
-       <RadioGroup
+        <div className="edit-add-btn text-end pb-2" onClick={(e) => setIsopen(!isopen)}><a href="#" ><span><LuPenSquare style={{ fontSize: '15px', marginRight: '3px' }} /></span>Edit Address</a></div>
+      ) : (null)}
+      <RadioGroup
         row
         aria-labelledby="demo-row-radio-buttons-group-label"
         name="row-radio-buttons-group"
-        sx={{flexDirection:'column'}}
-      >    
-       {selectedAddress.map((address) => (
-  <div className="stored-address" key={address}>
-    <span> 
-    <FormControlLabel value={address} control={<Radio size="small" />}/>
-    </span>
-    <span>Ansari avez</span>
-  </div>
-))}
-  </RadioGroup>
-      <Button style={{alignItems:'baseline'}} onClick={handleModal}><span style={{fontSize:'15px'}}><MdAdd /></span>Add new Address</Button>
+        sx={{ flexDirection: 'column' }}
+      >
+        {selectedAddress.map((address) => (
+          <div className="stored-address" key={address}>
+            <span>
+              <FormControlLabel value={address} control={<Radio size="small" />} />
+            </span>
+            <span>Ansari avez</span>
+          </div>
+        ))}
+      </RadioGroup>
+      <Button style={{ alignItems: 'baseline' }} onClick={handleModal}><span style={{ fontSize: '15px' }}><MdAdd /></span>Add new Address</Button>
       <Modal
         open={isopen}
         onClose={handleModal}
@@ -114,7 +119,7 @@ const Address = ()=>{
                   labelId="emo-select-small-label"
                   id="demo-select-small"
                   value={selectedCountry}
-                  onChange={(e)=>setSelectedCountry(e.target.value)}
+                  onChange={(e) => setSelectedCountry(e.target.value)}
                   sx={{
                     background: "#f0f2f2",
                     boxShadow: "0 2px 5px #0f111126",
@@ -139,7 +144,7 @@ const Address = ()=>{
                 sx={{ width: "100%" }}
                 id="outlined-multiline-flexible"
                 size="small"
-                onChange={(e)=>setFullNmae(e.target.value)}
+                onChange={(e) => setFullNmae(e.target.value)}
               />
             </div>
             <div className="phone number">
@@ -148,7 +153,7 @@ const Address = ()=>{
                 sx={{ width: "100%" }}
                 id="outlined-multiline-flexible"
                 size="small"
-                onChange={(e)=>setPhoneNo(e.target.value)}
+                onChange={(e) => setPhoneNo(e.target.value)}
               />
             </div>
             <div className="pincode">
@@ -157,7 +162,7 @@ const Address = ()=>{
                 sx={{ width: "100%" }}
                 id="outlined-multiline-flexible"
                 size="small"
-                onChange={(e)=>setPinCode(e.target.value)}
+                onChange={(e) => setPinCode(e.target.value)}
               />
             </div>
             <div className="addressline 1">
@@ -168,7 +173,7 @@ const Address = ()=>{
                 sx={{ width: "100%" }}
                 id="outlined-multiline-flexible"
                 size="small"
-                onChange={(e)=>setAddresslin1(e.target.value)}
+                onChange={(e) => setAddresslin1(e.target.value)}
               />
             </div>
             <div className="address-line-2">
@@ -177,7 +182,7 @@ const Address = ()=>{
                 sx={{ width: "100%" }}
                 id="outlined-multiline-flexible"
                 size="small"
-                onChange={(e)=>setAddresslin2(e.target.value)}
+                onChange={(e) => setAddresslin2(e.target.value)}
               />
             </div>
             <div className="addressline-3">
@@ -186,7 +191,7 @@ const Address = ()=>{
                 sx={{ width: "100%" }}
                 id="outlined-multiline-flexible"
                 size="small"
-                onChange={(e)=>setAddresslin3(e.target.value)}
+                onChange={(e) => setAddresslin3(e.target.value)}
               />
             </div>
             <div className="d-flex justify-content-between">
@@ -201,14 +206,14 @@ const Address = ()=>{
                     labelId="emo-select-small-label"
                     id="demo-select-small"
                     value={selectedState}
-                    onChange={(e)=>setSelectedState(e.target.value)}
+                    onChange={(e) => setSelectedState(e.target.value)}
                   >
-                     {selectedCountry !== ''
+                    {selectedCountry !== ''
                       ? state.map((value, index) => (
-                          <MenuItem key={index} value={value.isoCode}>
-                            {value.name}
-                          </MenuItem>
-                        ))
+                        <MenuItem key={index} value={value.isoCode}>
+                          {value.name}
+                        </MenuItem>
+                      ))
                       : null}
                   </Select>
                 </FormControl>
@@ -224,28 +229,79 @@ const Address = ()=>{
                     labelId="emo-select-small-label"
                     id="demo-select-small"
                     value={selectedcity}
-                    onChange={(e)=>setSelectedcity(e.target.value)}
+                    onChange={(e) => setSelectedcity(e.target.value)}
                     sx={{
                       background: "#f0f2f2",
                       boxShadow: "0 2px 5px #0f111126",
                     }}
                   >
-                    {selectedState !== '' && selectedCountry !==''
+                    {selectedState !== '' && selectedCountry !== ''
                       ? city.map((value, index) => (
-                          <MenuItem key={index} value={value.name}>
-                            {value.name}
-                          </MenuItem>
-                        ))
+                        <MenuItem key={index} value={value.name}>
+                          {value.name}
+                        </MenuItem>
+                      ))
                       : null}
                   </Select>
                 </FormControl>
               </div>
             </div>
-            <Button fullWidth variant="contained" color="warning" sx={{my:3}}>Save</Button>
+            <Button fullWidth variant="contained" color="warning" sx={{ my: 3 }}>Save</Button>
           </div>
         </Box>
       </Modal>
     </div>
   );
 }
-export {Address};
+
+const Discount = () => {
+  return (
+    <>
+      <div className="addressline-3">
+        <p className=" fw-semibold my-2">Coupen Code</p>
+        <TextField
+          // sx={{ width: "100%" }}
+          id="outlined-multiline-flexible"
+          size="small"
+          placeholder="enter coupen code"
+          onChange={(e) => setAddresslin3(e.target.value)}
+        />
+            <Button  variant="contained" color="warning" sx={{ ml: 3 }}>Apply</Button>
+      </div>
+    </>
+  )
+}
+const Payment = ()=>{
+  const [value, setValue] = React.useState('female');
+
+  const handleChange = (event) => {
+    setValue(event.target.value);
+  }
+  return(
+    <>
+    <FormControl fullWidth component="fieldset">
+  <RadioGroup aria-label="gender"  name="gender1" value={value} onChange={handleChange}>
+    <div className="">
+      <h5>credit card / debit card</h5>
+      <hr />
+      <div className="d-flex">
+    <FormControlLabel value="1"  control={<Radio size="small" />}/>
+    <div>
+      <Image src={visa} alt="visa card"  className="card-logo ms-2" priority={true} height={20}/>
+      <Image src={mastercard} alt="mastercard card" className="card-logo ms-2" priority={true}  height={25}/>
+      <Image src={rupay} alt="rupay card" className="card-logo ms-2" priority={true}  height={35}/>
+      <div>
+      <Button style={{ alignItems: 'baseline' }}><span style={{ fontSize: '15px' }}><MdAdd /></span>Add new Address</Button>
+      </div>
+    </div>
+      </div>
+
+
+    </div>
+  
+  </RadioGroup>
+</FormControl>
+    </>
+  )
+}
+export { Address,Discount,Payment };
