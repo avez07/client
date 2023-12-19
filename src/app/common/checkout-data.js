@@ -266,42 +266,94 @@ const Discount = () => {
           placeholder="enter coupen code"
           onChange={(e) => setAddresslin3(e.target.value)}
         />
-            <Button  variant="contained" color="warning" sx={{ ml: 3 }}>Apply</Button>
+        <Button variant="contained" color="warning" sx={{ ml: 3 }}>Apply</Button>
       </div>
     </>
   )
 }
-const Payment = ()=>{
-  const [value, setValue] = React.useState('female');
+const Payment = () => {
+  const [addCard, setAddCard] = useState(false)
+  const [CID, setCID] = useState(['1', '2']);
+  const [cardvalue, setCardValue] = useState(CID.length > 0 ? CID[0] : 0);
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardHolder, setCardHolder] = useState('');
+  const [cardDate, setCardDate] = useState('');
+  const [cardCvv, setCardCVV] = useState('');
+  const styles = {
+    height: !addCard ? 0 : '100%',
+    transition: 'height linear 0.3s',
+    overflow: 'hidden'
+  };
+  console.log();
 
-  const handleChange = (event) => {
-    setValue(event.target.value);
-  }
-  return(
+  return (
     <>
-    <FormControl fullWidth component="fieldset">
-  <RadioGroup aria-label="gender"  name="gender1" value={value} onChange={handleChange}>
-    <div className="">
-      <h5>credit card / debit card</h5>
-      <hr />
-      <div className="d-flex">
-    <FormControlLabel value="1"  control={<Radio size="small" />}/>
-    <div>
-      <Image src={visa} alt="visa card"  className="card-logo ms-2" priority={true} height={20}/>
-      <Image src={mastercard} alt="mastercard card" className="card-logo ms-2" priority={true}  height={25}/>
-      <Image src={rupay} alt="rupay card" className="card-logo ms-2" priority={true}  height={35}/>
-      <div>
-      <Button style={{ alignItems: 'baseline' }}><span style={{ fontSize: '15px' }}><MdAdd /></span>Add new Address</Button>
-      </div>
-    </div>
-      </div>
-
-
-    </div>
-  
-  </RadioGroup>
-</FormControl>
+      <FormControl fullWidth component="fieldset">
+        <div className="">
+          <h5>credit card / debit card</h5>
+          <hr />
+          <RadioGroup aria-label="gender" name="gender1" value={cardvalue} onChange={(e) => setCardValue(e.target.value)}>
+            {CID.map((address) => (
+              <div className="stored-card" key={address}>
+                <span>
+                  <FormControlLabel value={address} control={<Radio size="small" />} />
+                </span>
+                <span>Ansari avez</span>
+              </div>
+            ))}
+          </RadioGroup>
+          <div>
+            <Image src={visa} alt="visa card" className="card-logo ms-2" priority={true} height={20} />
+            <Image src={mastercard} alt="mastercard card" className="card-logo ms-2" priority={true} height={25} />
+            <Image src={rupay} alt="rupay card" className="card-logo ms-2" priority={true} height={35} />
+            <div>
+              <Button style={{ alignItems: 'baseline' }} onClick={(e)=>setAddCard(!addCard)}><span style={{ fontSize: '15px' }}><MdAdd /></span>Add new card</Button>
+            </div>
+          </div>
+          <div style={styles}>
+            <div className="card-number">
+              <p className=" fw-semibold my-2">Card Number</p>
+              <TextField
+              type="number"
+                sx={{ width: "100%", }}
+                id="outlined-multiline-flexible"
+                size="small"
+                onChange={(e) => setCardNumber(e.target.value)}
+              />
+            </div>
+            <div className="card-holder">
+              <p className=" fw-semibold my-2">Card Holder Name</p>
+              <TextField
+                sx={{ width: "100%"}}
+                id="outlined-multiline-flexible"
+                size="small"
+                onChange={(e) => setCardHolder(e.target.value)}
+              />
+            </div>
+            <div className='d-flex justify-content-between'>
+              <div className="expired-date">
+                <p className=" fw-semibold my-2">Expire</p>
+                <TextField
+                type="month"
+                  id="outlined-multiline-flexible"
+                  size="small"
+                  onChange={(e) => setCardDate(e.target.value)}
+                />
+              </div>
+              <div className="Cvv">
+                <p className=" fw-semibold my-2">CVV</p>
+                <TextField
+                type="number"
+                  id="outlined-multiline-flexible"
+                  size="small"
+                  onChange={(e) => setCardCVV(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </FormControl >
     </>
   )
 }
-export { Address,Discount,Payment };
+export { Address, Discount, Payment };

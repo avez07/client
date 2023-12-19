@@ -225,13 +225,18 @@ height: 14px;
     height: 14px;
     padding: 5px 15px;
   }
-  .stored-address{
+  .stored-address,.stored-card{
     height: 70px;
     background-color: #FCF5EE;
     border: 1px solid #FBD8B4;
     border-radius: 5px;
     padding: 9px;
     margin-bottom: 10px;
+  }
+  .stored-card{
+    height: 35px !important;
+    padding: 0 9px;
+
   }
   .chekout-box{
     display: flex;
