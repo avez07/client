@@ -1,6 +1,5 @@
 import React,{useContext} from "react";
 import {Button,Card} from 'react-bootstrap';
-import {makeStyles} from '@material-ui/core/styles'
 import {AuthContext} from './auth'
 import { Box, Stepper, Step, StepLabel, StepContent, Typography,useTheme,useMediaQuery } from '@mui/material';
 import { IoIosCheckmarkCircleOutline } from 'react-icons/io';
@@ -15,26 +14,13 @@ import Image from "next/image";
 const CustomStepIcon = ({ active, completed, icon }) => {
   return completed ? <IoIosCheckmarkCircleOutline style={{ fontSize: '30px', color: 'green' }} /> : icon;
 };
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-  },
-  backButton: {
-    // width:'100%',
-    margin:'10px 15px',
-  },
-  instructions: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-}));
+
 
 export default function VerticalLinearStepper() {
   const [activeStep, setActiveStep] = React.useState(0);
   const {isopen,setIsopen} = useContext(AuthContext);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const classes = useStyles();
 
 
 
@@ -135,7 +121,7 @@ export default function VerticalLinearStepper() {
       </Box>
     ) : (
       <Box>
-        <div className={classes.root}>
+        <div style={{width:'100%'}}>
       <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map((step,index) => (
           <Step key={step.label}>

@@ -3,6 +3,7 @@ import { LuPenSquare } from "react-icons/lu";
 import visa from '/public/assets/cards-logo/visa.png';
 import mastercard from '/public/assets/cards-logo/mastercard.png';
 import rupay from '/public/assets/cards-logo/rupay.png';
+import { useForm } from 'react-hook-form'
 
 import {
   Box,
@@ -108,14 +109,15 @@ const Address = () => {
           </div>
           <div className="model-body" style={{ padding: "16px 24px" }}>
             <h4>Add a new address</h4>
-            <div className="country div">
-              <p className=" fw-semibold mb-0 mt-2">Country/Region</p>
-              <FormControl
-                className="add-model-form"
-                sx={{ my: 1, width: "100%" }}
-                size="small"
-              >
-                <Select
+            <FormControl
+              className="add-model-form"
+              sx={{ my: 1, width: "100%" }}
+              size="small"
+            >
+              <div className="country div">
+                <p className=" fw-semibold mb-0 mt-2">Country/Region</p>
+
+                <Select fullWidth
                   labelId="emo-select-small-label"
                   id="demo-select-small"
                   value={selectedCountry}
@@ -133,76 +135,73 @@ const Address = () => {
                     );
                   })}
                 </Select>
-              </FormControl>
-            </div>
 
-            <div className="fullname">
-              <p className=" fw-semibold my-2">
-                Full Name(frist name & last name)
-              </p>
-              <TextField
-                sx={{ width: "100%" }}
-                id="outlined-multiline-flexible"
-                size="small"
-                onChange={(e) => setFullNmae(e.target.value)}
-              />
-            </div>
-            <div className="phone number">
-              <p className=" fw-semibold my-2">Phone Number</p>
-              <TextField
-                sx={{ width: "100%" }}
-                id="outlined-multiline-flexible"
-                size="small"
-                onChange={(e) => setPhoneNo(e.target.value)}
-              />
-            </div>
-            <div className="pincode">
-              <p className=" fw-semibold my-2">Pincode</p>
-              <TextField
-                sx={{ width: "100%" }}
-                id="outlined-multiline-flexible"
-                size="small"
-                onChange={(e) => setPinCode(e.target.value)}
-              />
-            </div>
-            <div className="addressline 1">
-              <p className=" fw-semibold my-2">
-                Flat, House no., Building, Company, Apartment
-              </p>
-              <TextField
-                sx={{ width: "100%" }}
-                id="outlined-multiline-flexible"
-                size="small"
-                onChange={(e) => setAddresslin1(e.target.value)}
-              />
-            </div>
-            <div className="address-line-2">
-              <p className=" fw-semibold my-2">Area, Street, Sector, Village</p>
-              <TextField
-                sx={{ width: "100%" }}
-                id="outlined-multiline-flexible"
-                size="small"
-                onChange={(e) => setAddresslin2(e.target.value)}
-              />
-            </div>
-            <div className="addressline-3">
-              <p className=" fw-semibold my-2">Landmark</p>
-              <TextField
-                sx={{ width: "100%" }}
-                id="outlined-multiline-flexible"
-                size="small"
-                onChange={(e) => setAddresslin3(e.target.value)}
-              />
-            </div>
-            <div className="d-flex justify-content-between">
-              <div className="state div me-2" style={{ width: "50%" }}>
-                <p className=" fw-semibold mb-0 mt-2">state</p>
-                <FormControl
-                  className="add-model-form"
-                  sx={{ my: 1, width: "100%" }}
+              </div>
+
+              <div className="fullname">
+                <p className=" fw-semibold my-2">
+                  Full Name(frist name & last name)
+                </p>
+                <TextField
+                  sx={{ width: "100%" }}
+                  id="outlined-multiline-flexible"
                   size="small"
-                >
+                  onChange={(e) => setFullNmae(e.target.value)}
+                />
+              </div>
+              <div className="phone number">
+                <p className=" fw-semibold my-2">Phone Number</p>
+                <TextField
+                  sx={{ width: "100%" }}
+                  id="outlined-multiline-flexible"
+                  size="small"
+                  onChange={(e) => setPhoneNo(e.target.value)}
+                />
+              </div>
+              <div className="pincode">
+                <p className=" fw-semibold my-2">Pincode</p>
+                <TextField
+                  sx={{ width: "100%" }}
+                  id="outlined-multiline-flexible"
+                  size="small"
+                  onChange={(e) => setPinCode(e.target.value)}
+                />
+              </div>
+              <div className="addressline 1">
+                <p className=" fw-semibold my-2">
+                  Flat, House no., Building, Company, Apartment
+                </p>
+                <TextField
+                  sx={{ width: "100%" }}
+                  id="outlined-multiline-flexible"
+                  size="small"
+                  onChange={(e) => setAddresslin1(e.target.value)}
+                />
+              </div>
+              <div className="address-line-2">
+                <p className=" fw-semibold my-2">Area, Street, Sector, Village</p>
+                <TextField
+                  sx={{ width: "100%" }}
+                  id="outlined-multiline-flexible"
+                  size="small"
+                  onChange={(e) => setAddresslin2(e.target.value)}
+                />
+              </div>
+              <div className="addressline-3">
+                <p className=" fw-semibold my-2">Landmark</p>
+                <TextField
+                  sx={{ width: "100%" }}
+                  id="outlined-multiline-flexible"
+                  size="small"
+                  onChange={(e) => setAddresslin3(e.target.value)}
+                />
+              </div>
+              <div className="d-flex justify-content-between">
+                <div className="state div me-2" style={{ width: "50%" }}>
+                  <p className=" fw-semibold mb-0 mt-2">state</p>
+
                   <Select
+                    fullWidth
                     labelId="emo-select-small-label"
                     id="demo-select-small"
                     value={selectedState}
@@ -216,16 +215,11 @@ const Address = () => {
                       ))
                       : null}
                   </Select>
-                </FormControl>
-              </div>
-              <div className="citie div ms-2" style={{ width: "50%" }}>
-                <p className=" fw-semibold mb-0 mt-2">City/Town</p>
-                <FormControl
-                  className="add-model-form"
-                  sx={{ my: 1, width: "100%" }}
-                  size="small"
-                >
-                  <Select
+
+                </div>
+                <div className="citie div ms-2" style={{ width: "50%" }}>
+                  <p className=" fw-semibold mb-0 mt-2">City/Town</p>
+                  <Select fullWidth
                     labelId="emo-select-small-label"
                     id="demo-select-small"
                     value={selectedcity}
@@ -243,10 +237,10 @@ const Address = () => {
                       ))
                       : null}
                   </Select>
-                </FormControl>
+                </div>
               </div>
-            </div>
-            <Button fullWidth variant="contained" color="warning" sx={{ my: 3 }}>Save</Button>
+              <Button fullWidth variant="contained" color="warning" sx={{ my: 3 }}>Save</Button>
+            </FormControl>
           </div>
         </Box>
       </Modal>
@@ -257,7 +251,7 @@ const Address = () => {
 const Discount = () => {
   return (
     <>
-      <div className="addressline-3">
+      <div className="coupen">
         <p className=" fw-semibold my-2">Coupen Code</p>
         <TextField
           // sx={{ width: "100%" }}
@@ -272,6 +266,7 @@ const Discount = () => {
   )
 }
 const Payment = () => {
+  const { register, handleSubmit, formState: { errors } } = useForm()
   const [addCard, setAddCard] = useState(false)
   const [CID, setCID] = useState(['1', '2']);
   const [cardvalue, setCardValue] = useState(CID.length > 0 ? CID[0] : 0);
@@ -284,6 +279,7 @@ const Payment = () => {
     transition: 'height linear 0.3s',
     overflow: 'hidden'
   };
+  
   console.log();
 
   return (
@@ -301,58 +297,84 @@ const Payment = () => {
                 <span>Ansari avez</span>
               </div>
             ))}
-          </RadioGroup>
-          <div>
-            <Image src={visa} alt="visa card" className="card-logo ms-2" priority={true} height={20} />
-            <Image src={mastercard} alt="mastercard card" className="card-logo ms-2" priority={true} height={25} />
-            <Image src={rupay} alt="rupay card" className="card-logo ms-2" priority={true} height={35} />
             <div>
-              <Button style={{ alignItems: 'baseline' }} onClick={(e)=>setAddCard(!addCard)}><span style={{ fontSize: '15px' }}><MdAdd /></span>Add new card</Button>
-            </div>
-          </div>
-          <div style={styles}>
-            <div className="card-number">
-              <p className=" fw-semibold my-2">Card Number</p>
-              <TextField
-              type="number"
-                sx={{ width: "100%", }}
-                id="outlined-multiline-flexible"
-                size="small"
-                onChange={(e) => setCardNumber(e.target.value)}
-              />
-            </div>
-            <div className="card-holder">
-              <p className=" fw-semibold my-2">Card Holder Name</p>
-              <TextField
-                sx={{ width: "100%"}}
-                id="outlined-multiline-flexible"
-                size="small"
-                onChange={(e) => setCardHolder(e.target.value)}
-              />
-            </div>
-            <div className='d-flex justify-content-between'>
-              <div className="expired-date">
-                <p className=" fw-semibold my-2">Expire</p>
-                <TextField
-                type="month"
-                  id="outlined-multiline-flexible"
-                  size="small"
-                  onChange={(e) => setCardDate(e.target.value)}
-                />
-              </div>
-              <div className="Cvv">
-                <p className=" fw-semibold my-2">CVV</p>
-                <TextField
-                type="number"
-                  id="outlined-multiline-flexible"
-                  size="small"
-                  onChange={(e) => setCardCVV(e.target.value)}
-                />
+              <Image src={visa} alt="visa card" className="card-logo ms-2" priority={true} height={20} />
+              <Image src={mastercard} alt="mastercard card" className="card-logo ms-2" priority={true} height={25} />
+              <Image src={rupay} alt="rupay card" className="card-logo ms-2" priority={true} height={35} />
+              <div>
+                <Button style={{ alignItems: 'baseline' }} onClick={(e) => setAddCard(!addCard)}><span style={{ fontSize: '15px' }}><MdAdd /></span>Add new card</Button>
               </div>
             </div>
-          </div>
+            <form onSubmit={handleSubmit(onsubmit)}>
+              <div style={styles}>
+                <div className="card-number">
+                  <p className=" fw-semibold my-2">Card Number</p>
+                  <TextField
+                    type="number"
+                    sx={{ width: "100%", }}
+                    id="outlined-multiline-flexible"
+                    size="small"
+                    onChange={(e) => setCardNumber(e.target.value)}
+                    {...register('cardnumber', { required: 'Card Number is Required', maxLength: { value: 16, message: 'Card Number is not Valid' }, minLength: { value: 15, message: 'Card Number is not Valid' } })}
+                  />
+                  {errors.cardNumber && <div>{errors.cardNumber.message}</div>}
+                </div>
+                <div className="card-holder">
+                  <p className=" fw-semibold my-2">Card Holder Name</p>
+                  <TextField
+                    sx={{ width: "100%" }}
+                    id="outlined-multiline-flexible"
+                    size="small"
+                    onChange={(e) => setCardHolder(e.target.value)}
+                  />
+                </div>
+                <div className='d-flex justify-content-between'>
+                  <div className="expired-date">
+                    <p className=" fw-semibold my-2">Expire</p>
+                    <TextField
+                      type="month"
+                      id="outlined-multiline-flexible"
+                      size="small"
+                      onChange={(e) => setCardDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="Cvv">
+                    <p className=" fw-semibold my-2">CVV</p>
+                    <TextField
+                      type="number"
+                      id="outlined-multiline-flexible"
+                      size="small"
+                      onChange={(e) => setCardCVV(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <Button type="submit" variant="contained" color="warning">Submit</Button>
+              </div>
+            </form>
+            <div className="Pay-upi d-flex align-items-center">
+              <span>
+                <FormControlLabel value='2' control={<Radio size="small" />} />
+              </span>
+              <div className="upi" style={{width:'100%'}}>
+                <p className=" fw-semibold my-2">UPI ID</p>
+                <TextField
+                  fullWidth
+                  id="outlined-multiline-flexible"
+                  size="small"
+                  placeholder="enter upi id"
+                  onChange={(e) => setAddresslin3(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="Pay-cod">
+              <span>
+                <FormControlLabel value='3' control={<Radio size="small" />} />
+              </span>
+             <span>Cash On Delhivery</span>
+            </div>
+          </RadioGroup>
         </div>
-      </FormControl >
+      </FormControl>
     </>
   )
 }
