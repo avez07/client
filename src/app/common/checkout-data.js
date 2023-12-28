@@ -1,11 +1,11 @@
-import React, { useContext, useState,useEffect, useCallback } from "react";
+import React, { useContext, useState, useEffect, useCallback } from "react";
 import { LuPenSquare } from "react-icons/lu";
 import visa from '/public/assets/cards-logo/visa.png';
 import mastercard from '/public/assets/cards-logo/mastercard.png';
 import rupay from '/public/assets/cards-logo/rupay.png';
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
-import {useFormik} from 'formik';
+import { useFormik } from 'formik';
 import {
   Box,
   Button,
@@ -25,32 +25,38 @@ import { MdClose, MdAdd } from "react-icons/md";
 import { Country, State, City } from "country-state-city";
 import Image from "next/image";
 
+const Addressvalidatation_schema = yup.object({
+  countryName: yup.string().required('this feild is Required'),
+  stateName: yup.string().required('this feild is Required'),
+  cityName: yup.string().required('this feild is Required'),
+  fullName: yup.string().required('this feild is Required'),
+  Phonenumber: yup.string().required('this feild is Required').max(10, 'Invalid Phone Number'),
+  Pincode: yup.string().required('this feild is Required'),
+  Addressline1: yup.string().required('this feild is Required').max(30, 'address should be smaller than 30 characters'),
+  Addressline2: yup.string().required('this feild is Required').max(30, 'address should be smaller than 30 characters'),
+  Addressline3: yup.string().required('this feild is Required').max(30, 'address should be smaller than 30 characters'),
+})
 const Paymentvalidatation_schema = yup.object({
-  cardNumber: yup.number().required('cardNummber is required').max(16,'Invalid CArdNumber'),
-  cardHolder:yup.string().required('cardHolder Name is required'),
+  cardNumber: yup.number().required('cardNummber is required').max(16, 'Invalid CArdNumber'),
+  cardHolder: yup.string().required('cardHolder Name is required'),
   cardDate: yup.string().required('Card Date is Required'),
   cardCvv: yup.string().required('Card CVV is Required')
 })
 
+
 const Address = () => {
   const theme = useTheme();
   const isMpbile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { isopen, setIsopen} = useContext(AuthContext)
   const handleModal = () => { setIsopen(!isopen) };
-  const [selectedAddress, setSelectedAddress] = useState([]);
-
-  const [fullname, setFullNmae] = useState("");
-  const [phoneNo, setPhoneNo] = useState("");
-  const [pinCode, setPinCode] = useState("");
-
-  const [addresslin1, setAddresslin1] = useState("");
-  const [addresslin2, setAddresslin2] = useState("");
-  const [addresslin3, setAddresslin3] = useState("");
-
+  const [selectedAddress, setSelectedAddress] = useState(['a1','a2']);
   const [selectedCountry, setSelectedCountry] = useState("");
+  const [adressID, setAddressID] = useState(selectedAddress.length > 0 ? selectedAddress[0]:'');
+  const { isopen, setIsopen ,setadress } = useContext(AuthContext);
   const [selectedState, setSelectedState] = useState("");
-  const [selectedcity, setSelectedcity] = useState("");
-
+ 
+useEffect(()=>{
+  setadress(adressID)
+}, [adressID, setadress])
   const style = {
     position: "absolute",
     top: "70%",
@@ -64,11 +70,26 @@ const Address = () => {
     marginBottom: "20px"
     // padding: '16px 20px',
   };
-
+  const formik = useFormik({
+    initialValues: {
+      countryName: '',
+      stateName: '',
+      cityName: '',
+      fullName: '',
+      Phonenumber: '',
+      Pincode: '',
+      Addressline1: '',
+      Addressline2: '',
+      Addressline3: '',
+    }, validationSchema: Addressvalidatation_schema,
+    onSubmit: (values) => {
+      console.log('Form submitted with values:', values)
+    }
+  })
 
   const country = Country.getAllCountries();
-  const state = State.getStatesOfCountry(selectedCountry);
-  const city = City.getCitiesOfState(selectedCountry, selectedState);
+  const state = State.getStatesOfCountry(formik.values.countryName);
+  const city = City.getCitiesOfState(formik.values.countryName, formik.values.stateName);
 
 
   // console.log(city);
@@ -83,6 +104,8 @@ const Address = () => {
         aria-labelledby="demo-row-radio-buttons-group-label"
         name="row-radio-buttons-group"
         sx={{ flexDirection: 'column' }}
+        onChange={(e)=>setAddressID(e.target.value)}
+        value={adressID}
       >
         {selectedAddress.map((address) => (
           <div className="stored-address" key={address}>
@@ -114,23 +137,22 @@ const Address = () => {
           </div>
           <div className="model-body" style={{ padding: "16px 24px" }}>
             <h4>Add a new address</h4>
-            <FormControl
-              className="add-model-form"
-              sx={{ my: 1, width: "100%" }}
-              size="small"
-            >
+         
+            <form onSubmit={formik.handleSubmit}>
               <div className="country div">
                 <p className=" fw-semibold mb-0 mt-2">Country/Region</p>
 
                 <Select fullWidth
                   labelId="emo-select-small-label"
                   id="demo-select-small"
-                  value={selectedCountry}
-                  onChange={(e) => setSelectedCountry(e.target.value)}
                   sx={{
                     background: "#f0f2f2",
                     boxShadow: "0 2px 5px #0f111126",
                   }}
+                  value={formik.values.countryName}
+                  onChange={(e) => { formik.handleChange(e), setSelectedCountry(e.target.value) }}
+                  onBlur={(e) => { formik.handleBlur(e), setSelectedCountry(e.target.value) }}
+                  name="countryName"
                 >
                   {country.map((value, index) => {
                     return (
@@ -140,6 +162,9 @@ const Address = () => {
                     );
                   })}
                 </Select>
+                {formik.touched.countryName && formik.errors.countryName ? (
+                  <div className="text-danger">{formik.errors.countryName}</div>
+                ) : (null)}
 
               </div>
 
@@ -151,8 +176,14 @@ const Address = () => {
                   sx={{ width: "100%" }}
                   id="outlined-multiline-flexible"
                   size="small"
-                  onChange={(e) => setFullNmae(e.target.value)}
+                  value={formik.values.fullName}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  name="fullName"
                 />
+                {formik.touched.fullName && formik.errors.fullName ? (
+                  <div className="text-danger">{formik.errors.fullName}</div>
+                ) : (null)}
               </div>
               <div className="phone number">
                 <p className=" fw-semibold my-2">Phone Number</p>
@@ -160,8 +191,14 @@ const Address = () => {
                   sx={{ width: "100%" }}
                   id="outlined-multiline-flexible"
                   size="small"
-                  onChange={(e) => setPhoneNo(e.target.value)}
+                  value={formik.values.Phonenumber}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  name="Phonenumber"
                 />
+                {formik.touched.Phonenumber && formik.errors.Phonenumber ? (
+                  <div className="text-danger">{formik.errors.Phonenumber}</div>
+                ) : (null)}
               </div>
               <div className="pincode">
                 <p className=" fw-semibold my-2">Pincode</p>
@@ -169,8 +206,14 @@ const Address = () => {
                   sx={{ width: "100%" }}
                   id="outlined-multiline-flexible"
                   size="small"
-                  onChange={(e) => setPinCode(e.target.value)}
+                  value={formik.values.Pincode}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  name="Pincode"
                 />
+                {formik.touched.Pincode && formik.errors.Pincode ? (
+                  <div className="text-danger">{formik.errors.Pincode}</div>
+                ) : (null)}
               </div>
               <div className="addressline 1">
                 <p className=" fw-semibold my-2">
@@ -180,8 +223,14 @@ const Address = () => {
                   sx={{ width: "100%" }}
                   id="outlined-multiline-flexible"
                   size="small"
-                  onChange={(e) => setAddresslin1(e.target.value)}
+                  value={formik.values.Addressline1}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  name="Addressline1"
                 />
+                {formik.touched.Addressline1 && formik.errors.Addressline1 ? (
+                  <div className="text-danger">{formik.errors.Addressline1}</div>
+                ) : (null)}
               </div>
               <div className="address-line-2">
                 <p className=" fw-semibold my-2">Area, Street, Sector, Village</p>
@@ -189,8 +238,14 @@ const Address = () => {
                   sx={{ width: "100%" }}
                   id="outlined-multiline-flexible"
                   size="small"
-                  onChange={(e) => setAddresslin2(e.target.value)}
+                  value={formik.values.Addressline2}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  name="Addressline2"
                 />
+                {formik.touched.Addressline2 && formik.errors.Addressline2 ? (
+                  <div className="text-danger">{formik.errors.Addressline2}</div>
+                ) : (null)}
               </div>
               <div className="addressline-3">
                 <p className=" fw-semibold my-2">Landmark</p>
@@ -198,8 +253,14 @@ const Address = () => {
                   sx={{ width: "100%" }}
                   id="outlined-multiline-flexible"
                   size="small"
-                  onChange={(e) => setAddresslin3(e.target.value)}
+                  value={formik.values.Addressline3}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  name="Addressline3"
                 />
+                {formik.touched.Addressline3 && formik.errors.Addressline3 ? (
+                  <div className="text-danger">{formik.errors.Addressline3}</div>
+                ) : (null)}
               </div>
               <div className="d-flex justify-content-between">
                 <div className="state div me-2" style={{ width: "50%" }}>
@@ -209,8 +270,10 @@ const Address = () => {
                     fullWidth
                     labelId="emo-select-small-label"
                     id="demo-select-small"
-                    value={selectedState}
-                    onChange={(e) => setSelectedState(e.target.value)}
+                    value={formik.values.stateName}
+                    onChange={(e) => { formik.handleChange(e), setSelectedState(e.target.value)}}
+                    onBlur={(e) => { formik.handleBlur(e), setSelectedState(e.target.value)}}
+                    name="stateName"
                   >
                     {selectedCountry !== ''
                       ? state.map((value, index) => (
@@ -220,19 +283,23 @@ const Address = () => {
                       ))
                       : null}
                   </Select>
-
+                  {formik.touched.stateName && formik.errors.stateName ? (
+                    <div className="text-danger">{formik.errors.stateName}</div>
+                  ) : (null)}
                 </div>
                 <div className="citie div ms-2" style={{ width: "50%" }}>
                   <p className=" fw-semibold mb-0 mt-2">City/Town</p>
                   <Select fullWidth
                     labelId="emo-select-small-label"
                     id="demo-select-small"
-                    value={selectedcity}
-                    onChange={(e) => setSelectedcity(e.target.value)}
                     sx={{
                       background: "#f0f2f2",
                       boxShadow: "0 2px 5px #0f111126",
                     }}
+                    value={formik.values.cityName}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    name="stateName"
                   >
                     {selectedState !== '' && selectedCountry !== ''
                       ? city.map((value, index) => (
@@ -242,10 +309,14 @@ const Address = () => {
                       ))
                       : null}
                   </Select>
+                  {formik.touched.cityName && formik.errors.cityName ? (
+                    <div className="text-danger">{formik.errors.cityName}</div>
+                  ) : (null)}
                 </div>
               </div>
-              <Button fullWidth variant="contained" color="warning" sx={{ my: 3 }}>Save</Button>
-            </FormControl>
+              <Button fullWidth variant="contained" type="submit" color="warning" sx={{ my: 3 }}>Save</Button>
+            </form>
+            {/* </FormControl> */}
           </div>
         </Box>
       </Modal>
@@ -254,6 +325,8 @@ const Address = () => {
 }
 
 const Discount = () => {
+  const { discount, setDiscount } = useContext(AuthContext)
+  console.log(discount)
   return (
     <>
       <div className="coupen">
@@ -263,9 +336,9 @@ const Discount = () => {
           id="outlined-multiline-flexible"
           size="small"
           placeholder="enter coupen code"
-          onChange={(e) => setAddresslin3(e.target.value)}
+          onChange={(e) => setDiscount(e.target.value)}
+          onBlur={(e) => setDiscount(e.target.value)}
         />
-        <Button variant="contained" color="warning" sx={{ ml: 3 }}>Apply</Button>
       </div>
     </>
   )
@@ -273,52 +346,53 @@ const Discount = () => {
 
 const Payment = () => {
   const [addCard, setAddCard] = useState(false)
-  const [CID, setCID] = useState(['p1', 'p2']);
-  const [paymentmode, setPaymentmode] = useState(CID.length > 0 ? CID[0] : 3);
-  const {setPaymentMethod,paymentmethod} = useContext(AuthContext)
- 
+  const [CID, setCID] = useState([]);
+  const [UPIID, setUPIID] = useState('')
+  const [paymentmode, setPaymentmode] = useState(CID.length > 0 ? CID[0] : '3');
+  const { setPaymentMethod } = useContext(AuthContext)
+
   const styles = {
     height: !addCard ? 0 : '100%',
     transition: 'height linear 0.3s',
     overflow: 'hidden'
   };
   const formmik = useFormik({
-    initialValues:{
+    initialValues: {
       cardNumber: '',
       cardHolder: '',
       cardDate: '',
       cardCvv: '',
     },
     validationSchema: Paymentvalidatation_schema,
-    onSubmit:(values)=>{
+    onSubmit: (values) => {
       console.log('Form submitted with values:', values)
     }
   })
-  const handlePayment = useCallback((value)=>{
+  const handlePayment = useCallback((value) => {
     setPaymentmode(value);
     const Pmethod = paymentmode.startsWith('p')
-    ? {
+      ? {
         method: 'Prepaid',
         value: paymentmode,
       }
-    : paymentmode == 2
-    ? {
-        method: 'UPI',
-        value: paymentmode,
-      }
-    : paymentmode == 3
-    ? {
-        method: 'COD', // Change this to the default method
-        value: paymentmode,
-      }:null;
-  
-  setPaymentMethod(Pmethod);    
-  },[setPaymentMethod, paymentmode])
+      : paymentmode == '2'
+        ? {
+          method: 'UPI',
+          value: UPIID,
+        }
+        : paymentmode == '3'
+          ? {
+            method: 'COD', // Change this to the default method
+            value: paymentmode,
+          } : null;
+
+    setPaymentMethod(Pmethod);
+  }, [setPaymentMethod, paymentmode, UPIID])
 
   useEffect(() => {
     handlePayment(paymentmode)
-  }, [handlePayment,paymentmode]);
-  console.log(paymentmethod)
+  }, [handlePayment, paymentmode]);
+  // console.log(paymentmethod)
 
 
   return (
@@ -327,7 +401,7 @@ const Payment = () => {
         <div className="">
           <h5>credit card / debit card</h5>
           <hr />
-          <RadioGroup aria-label="gender" name="gender1" value={paymentmode} onChange={(e)=>handlePayment(e.target.value)}>
+          <RadioGroup aria-label="gender" name="gender1" value={paymentmode} onChange={(e) => handlePayment(e.target.value)}>
             {CID.map((address) => (
               <div className="stored-card" key={address}>
                 <span>
@@ -352,15 +426,15 @@ const Payment = () => {
                     type="number"
                     sx={{ width: "100%", }}
                     id="outlined-multiline-flexible"
-                    size="small"                    
+                    size="small"
                     onChange={formmik.handleChange}
                     onBlur={formmik.handleBlur}
                     value={formmik.values.cardNumber}
                     name="cardNumber"
                   />
-                 {formmik.touched.cardNumber && formmik.errors.cardNumber?(
-                  <div>{formmik.errors.cardNumber}</div>
-                 ):null}
+                  {formmik.touched.cardNumber && formmik.errors.cardNumber ? (
+                    <div className="text-danger">{formmik.errors.cardNumber}</div>
+                  ) : null}
                 </div>
                 <div className="card-holder">
                   <p className=" fw-semibold my-2">Card Holder Name</p>
@@ -373,9 +447,9 @@ const Payment = () => {
                     value={formmik.values.cardHolder}
                     name="cardHolder"
                   />
-                  {formmik.touched.cardHolder && formmik.errors.cardHolder?(
-                  <div>{formmik.errors.cardHolder}</div>
-                 ):null}
+                  {formmik.touched.cardHolder && formmik.errors.cardHolder ? (
+                    <div className="text-danger">{formmik.errors.cardHolder}</div>
+                  ) : null}
                 </div>
                 <div className='d-flex justify-content-between'>
                   <div className="expired-date">
@@ -385,13 +459,13 @@ const Payment = () => {
                       id="outlined-multiline-flexible"
                       size="small"
                       onChange={formmik.handleChange}
-                    onBlur={formmik.handleBlur}
-                    value={formmik.values.cardDate}
-                    name="cardDate"
+                      onBlur={formmik.handleBlur}
+                      value={formmik.values.cardDate}
+                      name="cardDate"
                     />
-                    {formmik.touched.cardDate && formmik.errors.cardDate?(
-                  <div>{formmik.errors.cardDate}</div>
-                 ):null}
+                    {formmik.touched.cardDate && formmik.errors.cardDate ? (
+                      <div className="text-danger">{formmik.errors.cardDate}</div>
+                    ) : null}
                   </div>
                   <div className="Cvv">
                     <p className=" fw-semibold my-2">CVV</p>
@@ -404,26 +478,27 @@ const Payment = () => {
                       value={formmik.values.cardCvv}
                       name="cardCvv"
                     />
-                    {formmik.touched.cardCvv && formmik.errors.cardCvv?(
-                  <div>{formmik.errors.cardCvv}</div>
-                 ):null}
+                    {formmik.touched.cardCvv && formmik.errors.cardCvv ? (
+                      <div className="text-danger">{formmik.errors.cardCvv}</div>
+                    ) : null}
                   </div>
                 </div>
-                <Button type="submit" variant="contained" color="warning">Submit</Button>
+                <Button type="submit" variant="contained" sx={{ my: 3 }} color="warning">Add Card</Button>
               </div>
             </form>
             <div className="Pay-upi d-flex align-items-center">
               <span>
                 <FormControlLabel value='2' control={<Radio size="small" />} />
               </span>
-              <div className="upi" style={{width:'100%'}}>
+              <div className="upi" style={{ width: '100%' }}>
                 <p className=" fw-semibold my-2">UPI ID</p>
                 <TextField
                   fullWidth
                   id="outlined-multiline-flexible"
                   size="small"
                   placeholder="enter upi id"
-                  onChange={(e) => setAddresslin3(e.target.value)}
+                  onChange={(e) => setUPIID(e.target.value)}
+                  onBlur={(e) => setUPIID(e.target.value)}
                 />
               </div>
             </div>
@@ -431,7 +506,7 @@ const Payment = () => {
               <span>
                 <FormControlLabel value='3' control={<Radio size="small" />} />
               </span>
-             <span>Cash On Delhivery</span>
+              <span>Cash On Delhivery</span>
             </div>
           </RadioGroup>
         </div>
