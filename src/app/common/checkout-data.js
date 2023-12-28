@@ -1,10 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState,useEffect, useCallback } from "react";
 import { LuPenSquare } from "react-icons/lu";
 import visa from '/public/assets/cards-logo/visa.png';
 import mastercard from '/public/assets/cards-logo/mastercard.png';
 import rupay from '/public/assets/cards-logo/rupay.png';
 import { useForm } from 'react-hook-form'
-
+import * as yup from 'yup'
+import {useFormik} from 'formik';
 import {
   Box,
   Button,
@@ -24,14 +25,18 @@ import { MdClose, MdAdd } from "react-icons/md";
 import { Country, State, City } from "country-state-city";
 import Image from "next/image";
 
+const Paymentvalidatation_schema = yup.object({
+  cardNumber: yup.number().required('cardNummber is required').max(16,'Invalid CArdNumber'),
+  cardHolder:yup.string().required('cardHolder Name is required'),
+  cardDate: yup.string().required('Card Date is Required'),
+  cardCvv: yup.string().required('Card CVV is Required')
+})
+
 const Address = () => {
   const theme = useTheme();
   const isMpbile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { isopen, setIsopen } = useContext(AuthContext)
+  const { isopen, setIsopen} = useContext(AuthContext)
   const handleModal = () => { setIsopen(!isopen) };
-
-
-
   const [selectedAddress, setSelectedAddress] = useState([]);
 
   const [fullname, setFullNmae] = useState("");
@@ -265,22 +270,56 @@ const Discount = () => {
     </>
   )
 }
+
 const Payment = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm()
   const [addCard, setAddCard] = useState(false)
-  const [CID, setCID] = useState(['1', '2']);
-  const [cardvalue, setCardValue] = useState(CID.length > 0 ? CID[0] : 0);
-  const [cardNumber, setCardNumber] = useState('');
-  const [cardHolder, setCardHolder] = useState('');
-  const [cardDate, setCardDate] = useState('');
-  const [cardCvv, setCardCVV] = useState('');
+  const [CID, setCID] = useState(['p1', 'p2']);
+  const [paymentmode, setPaymentmode] = useState(CID.length > 0 ? CID[0] : 3);
+  const {setPaymentMethod,paymentmethod} = useContext(AuthContext)
+ 
   const styles = {
     height: !addCard ? 0 : '100%',
     transition: 'height linear 0.3s',
     overflow: 'hidden'
   };
+  const formmik = useFormik({
+    initialValues:{
+      cardNumber: '',
+      cardHolder: '',
+      cardDate: '',
+      cardCvv: '',
+    },
+    validationSchema: Paymentvalidatation_schema,
+    onSubmit:(values)=>{
+      console.log('Form submitted with values:', values)
+    }
+  })
+  const handlePayment = useCallback((value)=>{
+    setPaymentmode(value);
+    const Pmethod = paymentmode.startsWith('p')
+    ? {
+        method: 'Prepaid',
+        value: paymentmode,
+      }
+    : paymentmode == 2
+    ? {
+        method: 'UPI',
+        value: paymentmode,
+      }
+    : paymentmode == 3
+    ? {
+        method: 'COD', // Change this to the default method
+        value: paymentmode,
+      }:null;
   
-  console.log();
+  setPaymentMethod(Pmethod);    
+  },[setPaymentMethod, paymentmode])
+
+  useEffect(() => {
+    handlePayment(paymentmode)
+  }, [handlePayment,paymentmode]);
+  console.log(paymentmethod)
+
 
   return (
     <>
@@ -288,7 +327,7 @@ const Payment = () => {
         <div className="">
           <h5>credit card / debit card</h5>
           <hr />
-          <RadioGroup aria-label="gender" name="gender1" value={cardvalue} onChange={(e) => setCardValue(e.target.value)}>
+          <RadioGroup aria-label="gender" name="gender1" value={paymentmode} onChange={(e)=>handlePayment(e.target.value)}>
             {CID.map((address) => (
               <div className="stored-card" key={address}>
                 <span>
@@ -305,7 +344,7 @@ const Payment = () => {
                 <Button style={{ alignItems: 'baseline' }} onClick={(e) => setAddCard(!addCard)}><span style={{ fontSize: '15px' }}><MdAdd /></span>Add new card</Button>
               </div>
             </div>
-            <form onSubmit={handleSubmit(onsubmit)}>
+            <form onSubmit={formmik.handleSubmit}>
               <div style={styles}>
                 <div className="card-number">
                   <p className=" fw-semibold my-2">Card Number</p>
@@ -313,11 +352,15 @@ const Payment = () => {
                     type="number"
                     sx={{ width: "100%", }}
                     id="outlined-multiline-flexible"
-                    size="small"
-                    onChange={(e) => setCardNumber(e.target.value)}
-                    {...register('cardnumber', { required: 'Card Number is Required', maxLength: { value: 16, message: 'Card Number is not Valid' }, minLength: { value: 15, message: 'Card Number is not Valid' } })}
+                    size="small"                    
+                    onChange={formmik.handleChange}
+                    onBlur={formmik.handleBlur}
+                    value={formmik.values.cardNumber}
+                    name="cardNumber"
                   />
-                  {errors.cardNumber && <div>{errors.cardNumber.message}</div>}
+                 {formmik.touched.cardNumber && formmik.errors.cardNumber?(
+                  <div>{formmik.errors.cardNumber}</div>
+                 ):null}
                 </div>
                 <div className="card-holder">
                   <p className=" fw-semibold my-2">Card Holder Name</p>
@@ -325,8 +368,14 @@ const Payment = () => {
                     sx={{ width: "100%" }}
                     id="outlined-multiline-flexible"
                     size="small"
-                    onChange={(e) => setCardHolder(e.target.value)}
+                    onChange={formmik.handleChange}
+                    onBlur={formmik.handleBlur}
+                    value={formmik.values.cardHolder}
+                    name="cardHolder"
                   />
+                  {formmik.touched.cardHolder && formmik.errors.cardHolder?(
+                  <div>{formmik.errors.cardHolder}</div>
+                 ):null}
                 </div>
                 <div className='d-flex justify-content-between'>
                   <div className="expired-date">
@@ -335,8 +384,14 @@ const Payment = () => {
                       type="month"
                       id="outlined-multiline-flexible"
                       size="small"
-                      onChange={(e) => setCardDate(e.target.value)}
+                      onChange={formmik.handleChange}
+                    onBlur={formmik.handleBlur}
+                    value={formmik.values.cardDate}
+                    name="cardDate"
                     />
+                    {formmik.touched.cardDate && formmik.errors.cardDate?(
+                  <div>{formmik.errors.cardDate}</div>
+                 ):null}
                   </div>
                   <div className="Cvv">
                     <p className=" fw-semibold my-2">CVV</p>
@@ -344,8 +399,14 @@ const Payment = () => {
                       type="number"
                       id="outlined-multiline-flexible"
                       size="small"
-                      onChange={(e) => setCardCVV(e.target.value)}
+                      onChange={formmik.handleChange}
+                      onBlur={formmik.handleBlur}
+                      value={formmik.values.cardCvv}
+                      name="cardCvv"
                     />
+                    {formmik.touched.cardCvv && formmik.errors.cardCvv?(
+                  <div>{formmik.errors.cardCvv}</div>
+                 ):null}
                   </div>
                 </div>
                 <Button type="submit" variant="contained" color="warning">Submit</Button>
