@@ -1,3 +1,4 @@
+'use client'
 import React, { useContext, useState, useEffect, useCallback } from "react";
 import { LuPenSquare } from "react-icons/lu";
 import visa from '/public/assets/cards-logo/visa.png';
@@ -48,8 +49,8 @@ const Address = () => {
   const theme = useTheme();
   const isMpbile = useMediaQuery(theme.breakpoints.down("sm"));
   const handleModal = () => { setIsopen(!isopen) };
-  const [selectedAddress, setSelectedAddress] = useState(['a1','a2']);
   const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedAddress, setSelectedAddress] = useState(['a1']);
   const [adressID, setAddressID] = useState(selectedAddress.length > 0 ? selectedAddress[0]:'');
   const { isopen, setIsopen ,setadress } = useContext(AuthContext);
   const [selectedState, setSelectedState] = useState("");
@@ -57,6 +58,7 @@ const Address = () => {
 useEffect(()=>{
   setadress(adressID)
 }, [adressID, setadress])
+
   const style = {
     position: "absolute",
     top: "70%",
@@ -92,7 +94,7 @@ useEffect(()=>{
   const city = City.getCitiesOfState(formik.values.countryName, formik.values.stateName);
 
 
-  // console.log(city);
+  // console.log('selected address id'+ address);
 
   return (
     <div>
@@ -325,8 +327,8 @@ useEffect(()=>{
 }
 
 const Discount = () => {
-  const { discount, setDiscount } = useContext(AuthContext)
-  console.log(discount)
+  const {setDiscount } = useContext(AuthContext)
+  // console.log('selected discount '+discount)
   return (
     <>
       <div className="coupen">
@@ -335,7 +337,7 @@ const Discount = () => {
           // sx={{ width: "100%" }}
           id="outlined-multiline-flexible"
           size="small"
-          placeholder="enter coupen code"
+          placeholder="Enter coupen code"
           onChange={(e) => setDiscount(e.target.value)}
           onBlur={(e) => setDiscount(e.target.value)}
         />
@@ -349,7 +351,7 @@ const Payment = () => {
   const [CID, setCID] = useState([]);
   const [UPIID, setUPIID] = useState('')
   const [paymentmode, setPaymentmode] = useState(CID.length > 0 ? CID[0] : '3');
-  const { setPaymentMethod } = useContext(AuthContext)
+  const { setPaymentMethod ,paymentMethod} = useContext(AuthContext)
 
   const styles = {
     height: !addCard ? 0 : '100%',
@@ -392,9 +394,7 @@ const Payment = () => {
   useEffect(() => {
     handlePayment(paymentmode)
   }, [handlePayment, paymentmode]);
-  // console.log(paymentmethod)
-
-
+  // console.log(paymentMethod)
   return (
     <>
       <FormControl fullWidth component="fieldset">

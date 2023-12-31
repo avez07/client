@@ -39,6 +39,7 @@ function AdminNav({ toggleSidebar,toggleNightMode,isNightMode }) {
                 <span className="search-icon">
                   <BsSearch />
                 </span>
+                
               </Col>
             </Row>
           </Form>

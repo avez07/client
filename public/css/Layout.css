@@ -4,6 +4,22 @@
     top: 16px;
     left: 81px;
 }
+.dashboard-search-icon{
+    position: absolute;
+    top: 27px;
+    left: 281px;
+}
+.dashboard-location-icon{
+    position: absolute;
+    top: 27px;
+    right: 613px;
+}
+.dashboard-search-input{
+    padding-left: 28px !important;
+}
+.dashboard-location-icon{
+
+}
 .toggle{
     font-size: 33px;
     margin-left: 10px;

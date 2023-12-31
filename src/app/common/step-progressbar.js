@@ -18,14 +18,22 @@ const CustomStepIcon = ({ active, completed, icon }) => {
 
 export default function VerticalLinearStepper() {
   const [activeStep, setActiveStep] = React.useState(0);
-  const {isopen,setIsopen} = useContext(AuthContext);
+  const {isopen,setIsopen,address,paymentMethod, setError} = useContext(AuthContext);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
 
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+   const CheckOutErorr = (activeStep == 0 && address === '') || (activeStep == 0 && address === null)  
+   ?{
+    message : 'Erorr',
+    data: 'Select Your Address Frist',
+   }: (null)
+   setError(CheckOutErorr)
+   if (CheckOutErorr == null) {    
+     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+   }
   };
  
   const steps = [
@@ -37,7 +45,7 @@ export default function VerticalLinearStepper() {
           <Card>
       <Card.Body>
        <Address/>
-        <Button variant="warning" style={{float:'right'}} onClick={handleNext}>Continue</Button>
+        <Button variant="warning" style={{float:'right'}} onClick={handleNext}>Use This Address</Button>
       </Card.Body>
     </Card>
         </>
@@ -83,7 +91,7 @@ export default function VerticalLinearStepper() {
               <StepLabel
                 icon={<CustomStepIcon active={activeStep === index} completed={activeStep > index} icon={step.icon} />}
               >
-                <Typography sx={{fontFamily:'__Inter_e66fe9'}} className="step-label">{step.label}{activeStep !== index && index < activeStep?(<span className="step-change" onClick={(e)=>setActiveStep(index)}>change</span>):(null)}</Typography>
+                <Typography sx={{fontFamily:'__Inter_e66fe9'}} className="step-label">{step.label}{activeStep !== index && index < activeStep && activeStep != 4 ?(<span className="step-change" onClick={(e)=>setActiveStep(index)}>change</span>):(null)}</Typography>
               </StepLabel>
               <StepContent>
                 {step.content}
@@ -100,7 +108,7 @@ export default function VerticalLinearStepper() {
 
               <hr />
               <div className="d-flex justify-content-between"><span>total:</span><span className="fw-semibold fs-5">&#8377; 5000</span></div>
-              <Button variant="warning" className="fw-semibold mt-2" style={{float:'right'}}>Continue to Pay</Button>
+              <Button onClick={(e)=>setActiveStep(4)} variant="warning" className="fw-semibold mt-2"  disabled={activeStep !== 3 ? true : false} style={{float:'right'}}>Continue to Pay</Button>
             </Card.Body>
           </Card>
           <div className="mt-4">

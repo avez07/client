@@ -135,7 +135,7 @@ const AddCart = () => {
                 <Card.Title>Product details</Card.Title>
                 <Card.Text>Sub total (3 items) : &#8377;55000.00</Card.Text>
                 <Button
-                  variant="danger" style={{width:'100%'}} onClick={() => { router.push("../dashboard");}}>
+                  variant="danger" style={{width:'100%'}} onClick={() => { router.push("/dashboard/checkout");}}>
                   Continue
                 </Button>
               </Card.Body>

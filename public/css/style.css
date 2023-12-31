@@ -13,8 +13,9 @@ width: 30vw;
     padding: 35px 40px;
 background: #fee8eb;
 box-shadow: -4px 4px 25px #cccccc;
-
-
+}
+#navbar-dropdown::after{
+display: none !important;
 }
 .authentication h5{
     text-align: center;
