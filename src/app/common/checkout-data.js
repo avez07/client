@@ -54,6 +54,8 @@ const Address = () => {
   const [adressID, setAddressID] = useState(selectedAddress.length > 0 ? selectedAddress[0]:'');
   const { isopen, setIsopen ,setadress } = useContext(AuthContext);
   const [selectedState, setSelectedState] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+
  
 useEffect(()=>{
   setadress(adressID)
@@ -90,11 +92,11 @@ useEffect(()=>{
   })
 
   const country = Country.getAllCountries();
-  const state = State.getStatesOfCountry(formik.values.countryName);
-  const city = City.getCitiesOfState(formik.values.countryName, formik.values.stateName);
+  const state = State.getStatesOfCountry(selectedCountry);
+  const city = City.getCitiesOfState(selectedCountry,selectedState);
 
 
-  // console.log('selected address id'+ address);
+  console.log('selected address id'+ selectedCountry +' '+ selectedState);
 
   return (
     <div>
@@ -299,9 +301,9 @@ useEffect(()=>{
                       boxShadow: "0 2px 5px #0f111126",
                     }}
                     value={formik.values.cityName}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    name="stateName"
+                    onChange={(e) => { formik.handleChange(e), setSelectedCity(e.target.value)}}
+                    onBlur={(e) => { formik.handleBlur(e), setSelectedCity(e.target.value)}}
+                    name="cityName"
                   >
                     {selectedState !== '' && selectedCountry !== ''
                       ? city.map((value, index) => (
