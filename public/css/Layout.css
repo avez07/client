@@ -219,36 +219,68 @@ font-size: 15px;
 }
 .website-progres-icon svg{color: #ffa1b5; font-size: 29px;} .branch-progres-icon svg{color: #541b87; font-size: 29px;} .other-progres-icon svg{color: #1c851c; font-size: 29px;}
 
-.content-night .main .rdt_Table , .content-night .rdt_Pagination {
+
+.content-night .css-1atu56z-MuiPaper-root,
+.content-night .css-1tbggly,.content-night  .css-r58cto-MuiTableRow-root{
+    background-color: #242937f3 !important;
+    box-shadow: 0 3px 5px 0.3px #0000001a !important;
+    /* backdrop-filter: blur(8px) !important; */
+    fill: #b8bbc3 !important;
+}
+.content-night .css-1sdw5na-MuiTableRow-root,.content-night .css-10gei56{
     background-color: #24293726 !important;
-    box-shadow: 0 3px 5px 0.3px #0000001a;
+    box-shadow: 0 3px 5px 0.3px #0000001a !important;
     backdrop-filter: blur(8px) !important;
-    color: #b8bbc3 !important;
-  }
- .content-night .jQWwAJ , .content-night .nCTcL{
-    background-color: #24293726 !important;
-    box-shadow: 0 3px 5px 0.3px #0000001a;
-    backdrop-filter: blur(8px) !important;
-    color: #b8bbc3 !important;
-    border-bottom: none !important;
-  }
-  
-  .content-night .mYSul .CjBYJ{
-    background: #d8d8d8 !important;
-    color: #000 !important;
-  }
-   .content-night .CjBYJ .jcIA-dp{
-    color:#000 !important
-  }
-   .content-night .dvyAZW{ /*table head*/
-    background-color: #ffffff2b !important;
-  }
- .content-night .rdt_Pagination .MLcXO{
-fill: #b8bbc3 !important;
-  }
+    fill: #b8bbc3 !important;
+}
+.content-night tr td, .content-night tr th{
+    color: #fff !important;
+    border-bottom: 1px solid #000 !important;   
+}
+
+.content-night tr th  svg,.content-night tr td  svg,.content-night tr td .css-h5odmr-MuiButtonBase-root-MuiCheckbox-root.Mui-checked , .content-night .css-h5odmr-MuiButtonBase-root-MuiCheckbox-root{
+    color: #d6d7da !important;
+}
+.content-night .css-1cqjob8-MuiTableRow-root{
+    background-color: #0c1220 !important;
+    box-shadow: 0 3px 5px 0.3px #0000001a !important;
+}
+
+.content-night tr:hover td{
+    background-color: #383b42ad !important;
+    box-shadow: 0 3px 5px 0.3px #0000001a !important;
+}
 .content-night  .ofEne ,.filter-text{
     color: #e5e5e5 !important;
   }
+  .content-night .MuiBox-root .css-1lderhz button,
+  .content-night th:not(:first-child) .Mui-TableHeadCell-Content svg,
+  .content-night .MuiBox-root .css-1p0wbhh svg,.content-night .MuiBox-root .css-1p0wbhh input{
+color: #fff !important;
+  }
+  .content-night .css-10gei56 .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected{
+    background: white !important;
+    color: #000 !important;
+    font-weight: 700 !important;
+  }
+  .content-night .css-10gei56 .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root:not(.Mui-selected),
+  .content-night .css-10gei56 input, .content-night .css-10gei56 svg,
+  .content-night .css-10gei56  .css-1rxz5jq-MuiSelect-select-MuiInputBase-input-MuiInput-input,
+  .content-night .css-10gei56 label,
+  .content-night .css-1g0miuk svg,.content-night button{
+    color: white !important;
+    fill: white;
+  }
+  .css-12wk00z-MuiTableContainer-root::-webkit-scrollbar{
+    visibility: hidden;
+  }
+  .content-night .css-jojhy6-MuiPaper-root-MuiAlert-root{
+    background:transparent !important;
+  }
+  .content-night .css-k008qs{
+    color: #fff;
+  }
+
   .data-table-extensions-action{display: none;}
   .action-icon {
     position: absolute;

@@ -18,8 +18,6 @@ const handleExportRows = (rows) => {
   download(csvConfig)(csv);
 };
 
-
-
 const Example = () => {
   const handleExportRowsPDF = (rows) => {
     const doc = new jsPDF();
@@ -50,6 +48,7 @@ const Example = () => {
           gap: '16px',
           padding: '8px',
           flexWrap: 'wrap',
+          color: 'red'
         }}
       >
         
