@@ -274,7 +274,7 @@ color: #fff !important;
   .css-12wk00z-MuiTableContainer-root::-webkit-scrollbar{
     visibility: hidden;
   }
-  .content-night .css-jojhy6-MuiPaper-root-MuiAlert-root, .content-night .MuiPaper-root .MuiPaper-elevation .MuiPaper-rounded .MuiPaper-elevation2 .css-d7xo1i{
+  .content-night .css-jojhy6-MuiPaper-root-MuiAlert-root, .content-night .css-d7xo1i{
     background:transparent !important;
   }
   .content-night .css-k008qs{
