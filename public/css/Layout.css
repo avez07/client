@@ -271,7 +271,7 @@ color: #fff !important;
     color: white !important;
     fill: white;
   }
-  .css-12wk00z-MuiTableContainer-root::-webkit-scrollbar{
+  .css-12wk00z-MuiTableContainer-root::-webkit-scrollbar, .css-h9ohb9::-webkit-scrollbar{
     visibility: hidden;
   }
   .content-night .css-1cccqvr.css-1cccqvr.css-1cccqvr{
