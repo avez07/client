@@ -221,11 +221,14 @@ font-size: 15px;
 
 
 .content-night .css-1atu56z-MuiPaper-root,
-.content-night .css-1tbggly,.content-night  table thead tr{
+.content-night .css-1tbggly,.content-night  table thead tr, .content-night .css-h9ohb9{
     background-color: #242937f3 !important;
     box-shadow: 0 3px 5px 0.3px #0000001a !important;
     /* backdrop-filter: blur(8px) !important; */
     fill: #b8bbc3 !important;
+}
+.content-night table tbody tr{
+    background: transparent !important;
 }
 .content-night table tbody tr,.content-night .css-10gei56{
     background-color: #24293726 !important;
@@ -277,6 +280,7 @@ color: #fff !important;
   .content-night .css-1cccqvr.css-1cccqvr.css-1cccqvr{
     color: #fff;
   }
+ 
   .content-night .css-jojhy6-MuiPaper-root-MuiAlert-root, .content-night .css-d7xo1i, .content-night .css-njklwv{
     background:transparent !important;
   }
