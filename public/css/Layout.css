@@ -227,9 +227,7 @@ font-size: 15px;
     /* backdrop-filter: blur(8px) !important; */
     fill: #b8bbc3 !important;
 }
-.content-night table tbody tr{
-    background: transparent !important;
-}
+
 .content-night table tbody tr,.content-night .css-10gei56{
     background-color: #24293726 !important;
     box-shadow: 0 3px 5px 0.3px #0000001a !important;
