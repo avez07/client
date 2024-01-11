@@ -39,9 +39,7 @@ font-size: 15px;
 .dashboard-search-input{
     padding-left: 28px !important;
 }
-.dashboard-location-icon{
 
-}
 .dashboard-location-input{
     padding-left: 28px !important;
     width: 70% !important;
@@ -97,6 +95,9 @@ nav{
     text-overflow: ellipsis;
     white-space: nowrap;
     padding: 10px 20px 10px 7px;
+    list-style-type: none;
+    text-decoration: none;
+    font-size: 18px;
 
 }
 .menu-items{
@@ -226,6 +227,7 @@ font-size: 15px;
     box-shadow: 0 3px 5px 0.3px #0000001a !important;
     /* backdrop-filter: blur(8px) !important; */
     fill: #b8bbc3 !important;
+    z-index: 0 !important;
 }
 
 .content-night table tbody tr,.content-night .css-10gei56{

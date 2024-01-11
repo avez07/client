@@ -103,13 +103,7 @@ margin-right: 10px;
   
   }
  
-  .sidebar-ul > li> a{
-    list-style-type: none;
-    text-decoration: none;
-    /* color: black; */
-    font-weight: 600;
-    font-size: 20px;
-  }
+  
 
    #sidebar-collapese {
     width: 60px !important;
