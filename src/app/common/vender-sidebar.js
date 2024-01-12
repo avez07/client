@@ -55,10 +55,10 @@ const Sidebar = ({ isOpen, isNightMode }) => {
             </li>
            
             <li className={`${active == 4? 'active': ''}`} >
-              <Link href="/" onClick={()=>handleactive(5)}><span className="menu-items"><FaStar /></span>Reviews</Link>
+              <Link href="/" onClick={()=>handleactive(4)}><span className="menu-items"><FaStar /></span>Reviews</Link>
             </li>
             <li className={`${active == 5? 'active': ''}`} >
-              <Link href="/vender/logistic" onClick={()=>handleactive(6)}><span className="menu-items"><FaTruckMoving /></span>Logistic<span className="ms-auto right-arrow"><FaAngleRight/></span></Link>
+              <Link href="/vender/logistic" onClick={()=>handleactive(5)}><span className="menu-items"><FaTruckMoving /></span>Logistic<span className="ms-auto right-arrow"><FaAngleRight/></span></Link>
               <ul className="list-dropdwon p-0">
                 <li className={`${subActive == 1? 'sub-active': ''}`} onClick={()=>handleSubactive(1)}><Link href='/vender/logistic'>Carriers List</Link></li>
                 <li className={`${subActive == 2? 'sub-active': ''}`} onClick={()=>handleSubactive(2)}><Link href='/vender/logistic/pending-orders'>Pending Orders</Link></li>
@@ -66,10 +66,10 @@ const Sidebar = ({ isOpen, isNightMode }) => {
               </ul>
             </li>
             <li className={`${active == 6? 'active': ''}`} >
-              <Link href="/" onClick={()=>handleactive(7)}><span className="menu-items"><FaGear /></span>settings</Link>
+              <Link href="/" onClick={()=>handleactive(6)}><span className="menu-items"><FaGear /></span>settings</Link>
             </li>
             <li className={`${active == 7? 'active': ''}`} >
-              <Link href="/" onClick={()=>handleactive(8)}><span className="menu-items"><RiLogoutBoxFill /></span>Logout</Link>
+              <Link href="/" onClick={()=>handleactive(7)}><span className="menu-items"><RiLogoutBoxFill /></span>Logout</Link>
             </li>
           </ul>
         </div>
