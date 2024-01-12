@@ -24,7 +24,7 @@ const Sidebar = ({ isOpen, isNightMode }) => {
               <Link href="/admin"><span className="menu-items"><FaHome /></span> Home</Link>
             </li>
             <li>
-              <Link href="/admin/Inventory"><span className="menu-items"><FaBoxOpen /></span>Product Details</Link>
+              <Link href="/admin/Inventory"><span className="menu-items"><FaBoxOpen /></span>Manage Products</Link>
             </li>
             <li>
               <Link href="/"><span className="menu-items"><FaCartPlus /></span>Order Details</Link>

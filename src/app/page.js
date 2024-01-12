@@ -2,6 +2,6 @@
 import {redirect} from "next/navigation";
 
 const redirect_page = ()=>{
-  redirect('/vender')
+  redirect('/admin')
 }
 export default redirect_page;

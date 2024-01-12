@@ -75,16 +75,19 @@ nav{
     padding-left: 20px;
     font-size: 18px;
 }
+.sidebar-ul{
+    padding: 0 6px !important;
+}
 .sidebar-ul > li{
     position: relative;
     left: 3px;
     top: 4px;
     font-size: 20px !important;
 }
-.pro-menu-item:hover{
+/* .pro-menu-item:hover{
     background: whitesmoke;
     color: black !important;
-}
+} */
 .sidebar-ul > li> a{
     color: whitesmoke;    
     font-weight: 550;
@@ -94,7 +97,7 @@ nav{
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    padding: 10px 20px 10px 7px;
+    padding: 10px 16px 10px 7px;
     list-style-type: none;
     text-decoration: none;
     font-size: 18px;
@@ -107,7 +110,7 @@ nav{
     color: #464545;
     font-weight: 600;
 }
-.sidebar-ul > li:hover{
+.sidebar-ul > li a:hover{
     background: whitesmoke;
     color: currentColor;
 }
@@ -117,6 +120,34 @@ nav{
     vertical-align: middle;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+.list-dropdwon li{
+font-size: 16px;
+/* list-style: none; */
+color: white;
+padding: 4px 54px;
+margin: 2px 0;
+}
+.list-dropdwon li:hover{
+    background: #615878;
+}
+.sidebar-ul > .active > .list-dropdwon >.sub-active{
+    background: whitesmoke;
+    border-radius: 4px;
+    color: #000;
+}
+.sidebar-ul > .active > a .right-arrow{
+    transform: rotate(90deg);
+    transition: transform  0.3s;
+}
+.sidebar-ul .list-dropdwon{
+    height: 0;
+    overflow: hidden;
+    transition: height  0.3s;
+}
+.sidebar-ul > .active > .list-dropdwon{
+    height: 110px !important;
+    transition: height  0.3s;
 }
 .website-name {
     display: inline-block;
