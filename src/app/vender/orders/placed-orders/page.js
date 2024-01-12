@@ -73,6 +73,16 @@ const Example = () => {
         >
           Export EXCEL
         </Button>
+        <Button
+          disabled={
+            !table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()
+          }
+          //only export selected rows
+          onClick={() => handleExportRows(table.getSelectedRowModel().rows)}
+          startIcon={<FaSquareCheck />}
+        >
+          Cencel Orders
+        </Button>
       </Box>
     ),
   });

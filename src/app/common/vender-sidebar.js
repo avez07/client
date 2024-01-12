@@ -1,16 +1,30 @@
 "use client"
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {Playball} from "next/font/google"
-import { FaHome, FaBoxOpen, FaCartPlus, FaUserFriends } from "react-icons/fa";
-import { RiFilePaper2Fill } from "react-icons/ri";
+import { FaHome, FaBoxOpen, FaCartPlus, FaUserFriends, FaStar, FaAngleRight } from "react-icons/fa";
+import { RiFilePaper2Fill, RiLogoutBoxFill } from "react-icons/ri";
 import logo from "../../../public/assets/wesite-logo.png";
+import { FaGear, FaTruckMoving } from "react-icons/fa6";
 
 
 const playball = Playball({ weight:'400', style: 'normal',subsets: ['latin'],display: 'swap',})
 
 const Sidebar = ({ isOpen, isNightMode }) => {
+  const [active,setActive] = useState(0);
+  const [subActive,setSubActive] = useState(1);
+
+  
+
+  const handleSubactive = (value) => {
+    setSubActive((prevSubActive) => (prevSubActive === value ? prevSubActive : value));
+
+  };
+  const handleactive = (value) => {
+    setActive((prevActive) => (prevActive === value ? prevActive : value));
+    setSubActive(1)    
+  };
 
   return (
     <>
@@ -20,20 +34,42 @@ const Sidebar = ({ isOpen, isNightMode }) => {
             <Image src={logo} alt="website-logo" className="website-logo" /><span className={`${playball.className} website-name`}>Sweet delight</span>
           </div>
           <ul className="sidebar-ul">
-            <li>
-              <Link href="/admin"><span className="menu-items"><FaHome /></span> Home</Link>
+            <li className={`${active == 1? 'active': ''}`}>
+              <Link href="/vender" onClick={()=>handleactive(1)}><span className='menu-items'><FaHome /></span>Dashboard</Link>
             </li>
-            <li>
-              <Link href="/admin/Inventory"><span className="menu-items"><FaBoxOpen /></span>Manage Products</Link>
+            <li className={`${active == 2? 'active': ''}`}>
+              <Link href="/vender/products/manage-products" onClick={()=>handleactive(2)} ><span className="menu-items"><FaBoxOpen /></span>Product<span className="ms-auto right-arrow"><FaAngleRight/></span></Link>
+              <ul className="list-dropdwon p-0">
+                <li className={`${subActive == 1? 'sub-active': ''}`} onClick={()=>handleSubactive(1)}><Link href='/vender/products/manage-products'>List Product</Link></li>
+                <li className={`${subActive == 2? 'sub-active': ''}`} onClick={()=>handleSubactive(2)}><Link href='/vender/products/product-Category'> Product Category</Link></li>
+                <li className={`${subActive == 3? 'sub-active': ''}`} onClick={()=>handleSubactive(3)}><Link href='/vender/products/add-product'> Add Product</Link></li>
+              </ul>
             </li>
-            <li>
-              <Link href="/"><span className="menu-items"><FaCartPlus /></span>Order Details</Link>
+            <li className={`${active == 3? 'active': ''}`} >
+              <Link href="/vender/Orders" onClick={()=>handleactive(3)} ><span className="menu-items"><FaCartPlus /></span>Orders<span className="ms-auto right-arrow"><FaAngleRight/></span></Link>
+              <ul className="list-dropdwon p-0">
+                <li className={`${subActive == 1? 'sub-active': ''}`} onClick={()=>handleSubactive(1)}><Link href='/vender/orders'>List Orders</Link></li>
+                <li className={`${subActive == 2? 'sub-active': ''}`} onClick={()=>handleSubactive(2)}><Link href='/vender/orders/pending-orders'>Pending Orders</Link></li>
+                <li className={`${subActive == 2? 'sub-active': ''}`} onClick={()=>handleSubactive(3)}><Link href='/vender/orders/placed-orders'>Placed Orders</Link></li>
+              </ul>
             </li>
-            <li>
-              <Link href="/"><span className="menu-items"><FaUserFriends /></span>Seller Details</Link>
+           
+            <li className={`${active == 4? 'active': ''}`} >
+              <Link href="/" onClick={()=>handleactive(5)}><span className="menu-items"><FaStar /></span>Reviews</Link>
             </li>
-            <li>
-              <Link href="/"><span className="menu-items"><RiFilePaper2Fill /></span>Billing</Link>
+            <li className={`${active == 5? 'active': ''}`} >
+              <Link href="/admin/Inventory" onClick={()=>handleactive(6)}><span className="menu-items"><FaTruckMoving /></span>Logistic<span className="ms-auto right-arrow"><FaAngleRight/></span></Link>
+              <ul className="list-dropdwon p-0">
+                <li className={`${subActive == 1? 'sub-active': ''}`} onClick={()=>handleSubactive(1)}>Carriers List</li>
+                <li className={`${subActive == 2? 'sub-active': ''}`} onClick={()=>handleSubactive(2)}>Pending Orders</li>
+                <li className={`${subActive == 3? 'sub-active': ''}`} onClick={()=>handleSubactive(3)}>Delivered Orders</li>
+              </ul>
+            </li>
+            <li className={`${active == 6? 'active': ''}`} >
+              <Link href="/" onClick={()=>handleactive(7)}><span className="menu-items"><FaGear /></span>settings</Link>
+            </li>
+            <li className={`${active == 7? 'active': ''}`} >
+              <Link href="/" onClick={()=>handleactive(8)}><span className="menu-items"><RiLogoutBoxFill /></span>Logout</Link>
             </li>
           </ul>
         </div>

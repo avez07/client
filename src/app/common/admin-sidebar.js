@@ -40,23 +40,25 @@ const Sidebar = ({ isOpen, isNightMode }) => {
             <li className={`${active == 2? 'active': ''}`}>
               <Link href="/admin/Inventory" onClick={()=>handleactive(2)} ><span className="menu-items"><FaBoxOpen /></span>Product<span className="ms-auto right-arrow"><FaAngleRight/></span></Link>
               <ul className="list-dropdwon p-0">
-                <li className={`${subActive == 1? 'sub-active': ''}`} onClick={()=>handleSubactive(1)}>List</li>
-                <li className={`${subActive == 2? 'sub-active': ''}`} onClick={()=>handleSubactive(2)}>Add</li>
-                <li className={`${subActive == 3? 'sub-active': ''}`} onClick={()=>handleSubactive(3)}>Category</li>
+                <li className={`${subActive == 1? 'sub-active': ''}`} onClick={()=>handleSubactive(1)}><Link href='./manage-products'>List Product</Link></li>
+                <li className={`${subActive == 2? 'sub-active': ''}`} onClick={()=>handleSubactive(2)}><Link href='./manage-products'> Product Category</Link></li>
+                <li className={`${subActive == 3? 'sub-active': ''}`} onClick={()=>handleSubactive(3)}><Link href='./ma'> Add Category</Link></li>
               </ul>
             </li>
             <li className={`${active == 3? 'active': ''}`} >
               <Link href="/admin/Inventory" onClick={()=>handleactive(3)} ><span className="menu-items"><FaCartPlus /></span>Orders<span className="ms-auto right-arrow"><FaAngleRight/></span></Link>
               <ul className="list-dropdwon p-0">
-                <li className={`${subActive == 1? 'sub-active': ''}`} onClick={()=>handleSubactive(1)}>List</li>
-                <li className={`${subActive == 2? 'sub-active': ''}`} onClick={()=>handleSubactive(2)}>Details</li>
+                <li className={`${subActive == 1? 'sub-active': ''}`} onClick={()=>handleSubactive(1)}>List Orders</li>
+                <li className={`${subActive == 2? 'sub-active': ''}`} onClick={()=>handleSubactive(2)}>Pending Orders</li>
+                <li className={`${subActive == 2? 'sub-active': ''}`} onClick={()=>handleSubactive(3)}>Placed Orders</li>
+
               </ul>
             </li>
             <li className={`${active == 4? 'active': ''}`} >
               <Link href="/admin/Inventory" onClick={()=>handleactive(4)}><span className="menu-items"><FaUserFriends /></span>Seller<span className="ms-auto right-arrow"><FaAngleRight/></span></Link>
               <ul className="list-dropdwon p-0">
-                <li className={`${subActive == 1? 'sub-active': ''}`} onClick={()=>handleSubactive(1)}>List</li>
-                <li className={`${subActive == 2? 'sub-active': ''}`} onClick={()=>handleSubactive(2)}>Details</li>
+                <li className={`${subActive == 1? 'sub-active': ''}`} onClick={()=>handleSubactive(1)}>List Sellers</li>
+                {/* <li className={`${subActive == 2? 'sub-active': ''}`} onClick={()=>handleSubactive(2)}></li> */}
               </ul>
             </li>
             <li className={`${active == 5? 'active': ''}`} >
@@ -65,9 +67,9 @@ const Sidebar = ({ isOpen, isNightMode }) => {
             <li className={`${active == 6? 'active': ''}`} >
               <Link href="/admin/Inventory" onClick={()=>handleactive(6)}><span className="menu-items"><FaTruckMoving /></span>Logistic<span className="ms-auto right-arrow"><FaAngleRight/></span></Link>
               <ul className="list-dropdwon p-0">
-                <li className={`${subActive == 1? 'sub-active': ''}`} onClick={()=>handleSubactive(1)}>Carriers List</li>
-                <li className={`${subActive == 2? 'sub-active': ''}`} onClick={()=>handleSubactive(2)}>Add</li>
-                <li className={`${subActive == 3? 'sub-active': ''}`} onClick={()=>handleSubactive(3)}>Category</li>
+                <li className={`${subActive == 1? 'sub-active': ''}`} onClick={()=>handleSubactive(1)}><Link href='/vender/logistic'>Carriers List</Link></li>
+                <li className={`${subActive == 2? 'sub-active': ''}`} onClick={()=>handleSubactive(2)}><Link href='/vender/logistic/pending-orders'>Pending Orders</Link></li>
+                <li className={`${subActive == 3? 'sub-active': ''}`} onClick={()=>handleSubactive(3)}><Link href='/vender/logistic/delivered-orders'>Delivered Orders</Link></li>
               </ul>
             </li>
             <li className={`${active == 7? 'active': ''}`} >
