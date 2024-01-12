@@ -10,6 +10,7 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import deco_cake from "/public/assets/product_store/choclate.webp";
 import { FaThumbsUp,FaPlus } from "react-icons/fa";
+import Image from "next/image";
 
 function ManageProduct() {
   return (
@@ -28,7 +29,7 @@ function ManageProduct() {
                       className="d-flex  align-items-center"
                       style={{ width: "20%" }}
                     >
-                      <img src={deco_cake} alt="demo_cake" height={50} />
+                      <Image src={deco_cake} priority={true} alt="demo_cake" height={50} />
                       <p className="text-capitalize fw-semibold product-name">
                         cocolate cakebbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
                       </p>

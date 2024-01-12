@@ -6,10 +6,11 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 // import Florala from 'react-froala-wysiwyg';
 import { FaRegQuestionCircle } from "react-icons/fa";
-import 'froala-editor/css/froala_style.min.css';
-import 'froala-editor/css/froala_editor.pkgd.min.css';
-import { Editor } from "@tinymce/tinymce-react";
-const FroalaEditor  =  dynamic(()=>import('react-froala-wysiwyg'),{ssr:false})
+// import 'froala-editor/css/froala_style.min.css';
+// import 'froala-editor/css/froala_editor.pkgd.min.css';
+import 'react-quill/dist/quill.snow.css';
+import { Directions } from "@mui/icons-material";
+const Quill  =  dynamic(()=>import('react-quill'),{ssr:false})
 
 const BulkEdit = () => {
   const [description, setDescription] = useState("");
@@ -39,6 +40,25 @@ const BulkEdit = () => {
     setDiscount(finalDiscount.toFixed(2));
     setShipCharge(ShipingCharges.toFixed(2));
   };
+  const toolbarOptions =[
+    ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+    ['blockquote', 'code-block'],
+  
+    [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+    [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+    [{ 'direction': 'rtl' }],                         // text direction
+  
+    [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+  
+    [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+    [{ 'font': [] }],
+    [{ 'align': [] }],
+  
+    ['clean']                                         // remove formatting button
+  ];
   useEffect(() => {
     calculateMargin();
   });
@@ -68,24 +88,14 @@ const BulkEdit = () => {
 
         <Form.Group controlId="formDescription" className="card my-3 p-3">
           <Form.Label className="fw-semibold">Description</Form.Label>
-          <FroalaEditor
-  config={{
-    placeholderText: 'Enter Your description',
-    toolbarButtons: {
-      moreText: {
-        buttons: ['bold', 'italic', 'underline', 'strikeThrough', '|', 'subscript', 'superscript'],
-        align: 'left',
-        buttonsVisible: 3,
-      },
-      moreParagraph: {
-        buttons: ['paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote'],
-        align: 'left',
-        buttonsVisible: 3,
-      },
-      // Add more toolbar configurations as needed
-    },   
-  }}
-/>
+          <Quill theme="snow"
+          id="Discription"
+          modules={{
+            toolbar:toolbarOptions
+          }}
+          value={description}
+          onChange={handleDescriptionChange}
+          />
         </Form.Group>
         <Form.Group controlId="formName" className="card my-3 p-3">
           <Form.Label className="fw-semibold me-3">Pricing</Form.Label>

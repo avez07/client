@@ -293,6 +293,18 @@ color: #fff !important;
   .content-night .css-k008qs{
     color: #fff;
   }
+ .content-night #Discription svg path{
+    stroke: white !important;
+    fill: white;
+  }
+  .content-night .ql-picker-options{
+    background-color: #0c1220 !important;
+    border: 1px solid #1e1818 !important;
+  }
+  .content-night .ql-bold svg path,.content-night .ql-underline svg path{
+    fill: transparent !important;
+
+  }
 
   .data-table-extensions-action{display: none;}
   .action-icon {
