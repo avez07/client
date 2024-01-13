@@ -288,6 +288,7 @@ height: 14px;
   }
   .progress{
     height: 7px !important;
+    background: #90949d !important;
   }
    .progress .progress-bar{
     min-height: 0 !important;
@@ -296,6 +297,11 @@ height: 14px;
   }
   .progressbar-span{
     width: 55%;
+  }
+  .static{
+    font-size: 28px;
+    font-weight: 700;
+    color: #90949d;
   }
   @keyframes progressBar {
     from {
@@ -308,7 +314,12 @@ height: 14px;
   .reviwchart{
     height: 200px;
     width: 200px;
-    background: red;
+    /* background: red; */
+  }
+  .review-statistic{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
   @media only screen and (max-width: 767px){
     .product-img{

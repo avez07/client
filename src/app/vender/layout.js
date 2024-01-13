@@ -1,10 +1,11 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import VenderNav from '../common/vender-header'
 import Sidebar from '../common/vender-sidebar'
 import Container from 'react-bootstrap/Container';
 import { Inter } from 'next/font/google'
+import { AuthContext } from "../common/auth";
 import transparant from '/public/assets/transparent-backgroung.png'
 // import '../globals.css'
 import '/public/css/Layout.css'
@@ -21,6 +22,7 @@ export default function AdminLayout({ children }) {
   const [boxDataWidth, setBoxDataWidth] = useState('calc(100% - 240px)');
   const [isNightMode, setisNightMode] = useState(false);
   const [contentNightStyle, setContentNightStyle] = useState({});
+  const { nightmode,setNightmode} = useContext(AuthContext)
 
   useEffect(() => {
     const nightStyle = {
@@ -37,6 +39,7 @@ export default function AdminLayout({ children }) {
   };
   const NightMode = () => {
     setisNightMode(!isNightMode)
+    setNightmode(!nightmode)
   }
   return (
     <>

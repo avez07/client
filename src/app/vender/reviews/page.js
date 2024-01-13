@@ -88,7 +88,7 @@ const Reviews = () => {
         <Col key={1}>
           <Card>
             <Card.Body>
-              <div className='d-flex p-2'>
+              <div className='d-flex'style={{padding:'19px 0'}}>
                 <div className='reviews px-3' style={{borderInlineEnd: '2px solid #ccc',width:'50%'}}>
                     <div className='ratings d-flex'>
                         <span className='pe-2'>4.9</span><span><FaStar/></span>
@@ -111,9 +111,23 @@ const Reviews = () => {
         <Col key={2}>
           <Card>
             <Card.Body>
-              <div className='reviwchart'>
+              <div className='d-flex justify-content-between'>
+                <div className='review-statistic'>
+                  <div className='d-flex flex-column'>
+                    <div className='static'>Reviews statistics</div>
+                    <div className='rate-msg my-2'>12 New Reviews</div>
+                    <div className='this-week'>+8.4%</div>
+                  </div>
+                  <div className='d-flex flex-column'>
+                    <div><span style={{color:'#663399'}}>87%</span> Positive Reviews</div>
+                    <div style={{color:'#94909D'}}>Weekly Report</div>
+                  </div>
+                </div>
+                <div className='reviwchart'>
               <AipexChart/>
               </div>
+              </div>
+             
              
             </Card.Body>
           </Card>

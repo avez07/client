@@ -55,7 +55,7 @@ const Sidebar = ({ isOpen, isNightMode }) => {
             </li>
            
             <li className={`${active == 4? 'active': ''}`} >
-              <Link href="/" onClick={()=>handleactive(4)}><span className="menu-items"><FaStar /></span>Reviews</Link>
+              <Link href="/vender/reviews" onClick={()=>handleactive(4)}><span className="menu-items"><FaStar /></span>Reviews</Link>
             </li>
             <li className={`${active == 5? 'active': ''}`} >
               <Link href="/vender/logistic" onClick={()=>handleactive(5)}><span className="menu-items"><FaTruckMoving /></span>Logistic<span className="ms-auto right-arrow"><FaAngleRight/></span></Link>

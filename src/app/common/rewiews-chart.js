@@ -1,71 +1,71 @@
-"use client"
+"use client";
 import React, { useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 
 const ApexChart = ({ seriesData }) => {
- 
   const [chartData, setChartData] = useState({
     series: [
       {
         name: 'Net Profit',
-        data: seriesData || [44, 55,45, 57, 56, 61, 58],
+        data: seriesData || [44, 55, 45, 57, 56, 61, 58],
+        
       },
     ],
     options: {
       chart: {
         type: 'bar',
         height: 200,
-        toolbar:{
-          show:false
-        }
-       
+        toolbar: {
+          show: false,
+        },
       },
       plotOptions: {
         bar: {
+          distributed: true, 
           borderRadius: 5,
           horizontal: false,
           columnWidth: '40%',
           endingShape: 'rounded',
-          // colors:(function(){
-          //   const defaultColor = '#000';
-          //   const juneColor = 'red';
-          //   const currentDay = new Date().getDay();
-          //  return Array.from({length:7},(_,i)=>i === currentDay? juneColor : defaultColor)
-          // })
         },
+      },
+     colors: (() => {
+        const currentDay = new Date().getDay();
+        const color = Array.from({ length: 7 }, (_, i) => (currentDay === i ? '#663399' : '#90949d'));
+        console.log(color)
+        return color
+      })(),
+      legend: {
+        show: false
       },
       dataLabels: {
         enabled: false,
       },
       stroke: {
         show: false,
-        
       },
       xaxis: {
-        categories: ['S','M', 'T', 'W', 'T', 'F', 's'],
+        categories: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
         axisBorder: {
-          show: false, // Hide x-axis line
+          show: false,
         },
+      
         axisTicks: {
-          show: false, // Hide x-axis ticks
+          show: false,
         },
       },
       yaxis: {
         title: {
-          text: '$ (thousands)',
+          show:false
         },
         axisBorder: {
-          show: false, // Hide y-axis line
+          show: false,
         },
-        labels:{
-          show:false
-        }
+        labels: {
+          show: false,
+        },
       },
-      grid:{
-        show:false,
-      },
-      fill: {
-        opacity: 1,
+      grid: {
+        show: false,
       },
       tooltip: {
         y: {

@@ -10,11 +10,20 @@ export const AuthProvider = ({children})=>{
     const [discount ,setDiscount] = useState(null)
     const [address ,setadress] = useState(null)
     const [iserror ,setError] = useState(null)
+    const [nightmode,setNightmode] = useState(false)
 
-
+const exportData = {
+    isopen,setIsopen,
+    isMobile,setIsMobile,
+    paymentMethod,setPaymentMethod,
+    discount,setDiscount,
+    address,setadress,
+    iserror,setError,
+    nightmode,setNightmode
+}
 
     return(
-        <AuthContext.Provider value={{isopen,setIsopen,isMobile,setIsMobile,paymentMethod,setPaymentMethod,discount,setDiscount,address,setadress,iserror,setError}}>
+        <AuthContext.Provider value={exportData}>
             {children}
         </AuthContext.Provider>
     )
