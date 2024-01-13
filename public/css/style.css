@@ -267,7 +267,49 @@ height: 14px;
     font-size: 12px;
     margin: 0;
   }
-  
+  /* review page  */
+  .ratings{
+    font-size: 32px;
+    font-weight: 700;
+    color: rebeccapurple;
+  }
+  .rate-msg{
+    font-size: 14px;
+  }
+  .this-week{
+    background-color: #6633992e;
+    margin-right: auto;
+    color: rebeccapurple;
+    width: fit-content;
+    padding: 3px 8px;
+    font-size: 12px;
+    border-radius: 5px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  }
+  .progress{
+    height: 7px !important;
+  }
+   .progress .progress-bar{
+    min-height: 0 !important;
+    animation: progressBar  linear 1s;
+    background: rebeccapurple;
+  }
+  .progressbar-span{
+    width: 55%;
+  }
+  @keyframes progressBar {
+    from {
+      width: 0;
+    }
+    to {
+     max-width: 100%; /* or any desired width value */
+    }
+  }
+  .reviwchart{
+    height: 200px;
+    width: 200px;
+    background: red;
+  }
   @media only screen and (max-width: 767px){
     .product-img{
       height: 25%;
