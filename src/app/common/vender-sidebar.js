@@ -50,7 +50,7 @@ const Sidebar = ({ isOpen, isNightMode }) => {
               <ul className="list-dropdwon p-0">
                 <li className={`${subActive == 1? 'sub-active': ''}`} onClick={()=>handleSubactive(1)}><Link href='/vender/orders'>List Orders</Link></li>
                 <li className={`${subActive == 2? 'sub-active': ''}`} onClick={()=>handleSubactive(2)}><Link href='/vender/orders/pending-orders'>Pending Orders</Link></li>
-                <li className={`${subActive == 2? 'sub-active': ''}`} onClick={()=>handleSubactive(3)}><Link href='/vender/orders/placed-orders'>Placed Orders</Link></li>
+                <li className={`${subActive == 3? 'sub-active': ''}`} onClick={()=>handleSubactive(3)}><Link href='/vender/orders/placed-orders'>Placed Orders</Link></li>
               </ul>
             </li>
            

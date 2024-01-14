@@ -303,6 +303,7 @@ height: 14px;
     font-weight: 700;
     color: #90949d;
   }
+ 
   @keyframes progressBar {
     from {
       width: 0;
@@ -320,6 +321,30 @@ height: 14px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+  }
+   /* logistic page  */
+   .orders_statics{
+    width: 25%;
+    justify-content: space-around;
+  }
+  .orders_statics:not(:last-child){
+    border-inline-end: 2px solid #ccc;
+  }
+  .order-status{
+    color: #1c1c1c;
+    font-weight: 500;
+  }
+  .content-night .order-status{
+    color: #ccc !important;
+  }
+  .order-track-no{
+    font-size: 28px;
+    color: rebeccapurple;
+    font-weight: 700;
+  }
+  .order-status-icon{
+    color: #767676;
+    font-size: 30px;
   }
   @media only screen and (max-width: 767px){
     .product-img{

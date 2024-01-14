@@ -5,13 +5,18 @@ import {
   createMRTColumnHelper,
   useMaterialReactTable,
 } from 'material-react-table';
-import { mkConfig, generateCsv, download } from 'export-to-csv'; 
+import { Card } from 'react-bootstrap';
+import { mkConfig, generateCsv, download } from 'export-to-csv';
 import { Box, Button } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { jsPDF } from 'jspdf'; //or use your library of choice here
 import autoTable from 'jspdf-autotable';
-import { columns,data } from '/public/data';
-import { FaSquareCheck } from 'react-icons/fa6';
+import { columns, data } from '/public/data';
+import { FaClockRotateLeft, FaSquareCheck } from 'react-icons/fa6';
+import { FaClock, FaUser } from 'react-icons/fa';
+import { RiCheckDoubleLine } from 'react-icons/ri';
+import { HiMiniReceiptRefund } from 'react-icons/hi2';
+import { MdDangerous } from 'react-icons/md';
 
 const handleExportRows = (rows) => {
   const rowData = rows.map((row) => row.original);
@@ -52,7 +57,7 @@ const Example = () => {
           color: 'red'
         }}
       >
-        
+
         <Button
           disabled={
             !table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()
@@ -77,7 +82,45 @@ const Example = () => {
     ),
   });
 
-  return <MaterialReactTable table={table} />;
+  return (
+    <>
+    <div className='mb-5'>
+    <Card style={{ width: '100%' }}>
+      <Card.Body className='d-flex justify-content-between py-4'>
+       <div className='orders_statics d-flex'>
+        <div className='order-status-value d-flex flex-column'>
+          <span className='order-track-no'>56</span><span className='order-status text-muted text-capitalize'>pending Payments</span>
+        </div>
+        <div className='order-status-icon'><FaClockRotateLeft/></div>
+       </div>
+       <div className='orders_statics d-flex'>
+        <div className='order-status-value d-flex flex-column'>
+          <span className='order-track-no'>27</span><span className='order-status text-muted text-capitalize'>Unfulfilled</span>
+        </div>
+        <div className='order-status-icon'><MdDangerous/></div>
+       </div>
+       <div className='orders_statics d-flex'>
+        <div className='order-status-value d-flex flex-column'>
+          <span className='order-track-no'>1249</span><span className='order-status text-muted text-capitalize'>Completed</span>
+        </div>
+        <div className='order-status-icon'><RiCheckDoubleLine/></div>
+       </div>
+       <div className='orders_statics d-flex'>
+        <div className='order-status-value d-flex flex-column'>
+          <span className='order-track-no'>13</span><span className='order-status text-muted text-capitalize'>Refunded</span>
+        </div>
+        <div className='order-status-icon'><HiMiniReceiptRefund/></div>
+       </div>
+      </Card.Body>
+    </Card>
+    </div>
+      <div>
+        <MaterialReactTable table={table} />
+      </div>
+    </>
+
+
+  );
 };
 
 export default Example;
