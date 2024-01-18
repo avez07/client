@@ -1,485 +1,89 @@
+
 import React from "react";
 import {
   MaterialReactTable,
   createMRTColumnHelper,
   useMaterialReactTable,
 } from 'material-react-table';
+
+const dataRetrive = async () => {
+  var requestOptions = {
+    method: 'GET',
+    redirect: 'follow'
+  };
+
+  try {
+    const response = await fetch("http://localhost:5500/api/employedata", requestOptions);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('error', error);
+    throw error; // Rethrow the error for handling elsewhere if needed
+  }
+};
+    const res = await dataRetrive();
+// console.log(res); 
 const columnHelper = createMRTColumnHelper();
 const columns = [
   columnHelper.accessor('id', {
     header: 'ID',
     size: 40,
   }),
-  columnHelper.accessor('firstName', {
-    header: 'First Name',
+  columnHelper.accessor('title', {
+    header: 'title',
+    size: 40,
+  }),
+  columnHelper.accessor('sector', {
+    header: 'sector',
     size: 120,
   }),
-  columnHelper.accessor('lastName', {
-    header: 'Last Name',
+  columnHelper.accessor('source', {
+    header: 'source',
     size: 120,
   }),
- 
-  columnHelper.accessor('city', {
-    header: 'City',
+  columnHelper.accessor('topic', {
+    header: 'topic',
+    size: 120,
   }),
-  columnHelper.accessor('state', {
-    header: 'Country',
-    size: 220,
+  columnHelper.accessor('start_year', {
+    header: 'start_year',
+    size: 120,
   }),
+  columnHelper.accessor('end_year', {
+    header: 'end_year',
+    size: 120,
+  }),
+  columnHelper.accessor('intensity', {
+    header: 'intensity',
+    size: 120,
+  }),
+  columnHelper.accessor('pestle', {
+    header: 'pestle',
+    size: 120,
+  }),
+  columnHelper.accessor('country', {
+    header: 'country',
+    size: 120,
+  }),
+  columnHelper.accessor('relevance', {
+    header: 'relevance',
+    size: 120,
+  }),
+  columnHelper.accessor('likelihood', {
+    header: 'likelihood',
+    size: 120,
+  }),
+  columnHelper.accessor('added', {
+    header: 'added',
+    size: 120,
+  }),
+  columnHelper.accessor('published', {
+    header: 'published',
+    size: 120,
+  }),  
 ];
 
 
-const data = [
-  
-  {
-    ID:1,
-      firstName: 'John',
-      lastName: 'Doe',
-    
-    address: '261 Erdman Ford',
-    city: 'East Daphne',
-    state: 'Kentucky',
-  },
-  {
-    ID:2,
-      firstName: 'Jane',
-      lastName: 'Doe',
-    
-    address: '769 Dominic Grove',
-    city: 'Columbus',
-    state: 'Ohio',
-  },
-  {
-    ID:3,
-      firstName: 'Joe',
-      lastName: 'Doe',
-    
-    address: '566 Brakus Inlet',
-    city: 'South Linda',
-    state: 'West Virginia',
-  },
-  {
-    ID:4,
-      firstName: 'Kevin',
-      lastName: 'Vandy',
-    
-    address: '722 Emie Stream',
-    city: 'Lincoln',
-    state: 'Nebraska',
-  },
-  {
-    ID:5,
-      firstName: 'Joshua',
-      lastName: 'Rolluffs',
-    
-    address: '32188 Larkin Turnpike',
-    city: 'Charleston',
-    state: 'South Carolina',
-  },
-  {
-    ID:1,
-      firstName: 'John',
-      lastName: 'Doe',
-    
-    address: '261 Erdman Ford',
-    city: 'East Daphne',
-    state: 'Kentucky',
-  },
-  {
-    ID:2,
-      firstName: 'Jane',
-      lastName: 'Doe',
-    
-    address: '769 Dominic Grove',
-    city: 'Columbus',
-    state: 'Ohio',
-  },
-  {
-    ID:3,
-      firstName: 'Joe',
-      lastName: 'Doe',
-    
-    address: '566 Brakus Inlet',
-    city: 'South Linda',
-    state: 'West Virginia',
-  },
-  {
-    ID:4,
-      firstName: 'Kevin',
-      lastName: 'Vandy',
-    
-    address: '722 Emie Stream',
-    city: 'Lincoln',
-    state: 'Nebraska',
-  },
-  {
-    ID:5,
-      firstName: 'Joshua',
-      lastName: 'Rolluffs',
-    
-    address: '32188 Larkin Turnpike',
-    city: 'Charleston',
-    state: 'South Carolina',
-  },
-  {
-    ID:1,
-      firstName: 'John',
-      lastName: 'Doe',
-    
-    address: '261 Erdman Ford',
-    city: 'East Daphne',
-    state: 'Kentucky',
-  },
-  {
-    ID:2,
-      firstName: 'Jane',
-      lastName: 'Doe',
-    
-    address: '769 Dominic Grove',
-    city: 'Columbus',
-    state: 'Ohio',
-  },
-  {
-    ID:3,
-      firstName: 'Joe',
-      lastName: 'Doe',
-    
-    address: '566 Brakus Inlet',
-    city: 'South Linda',
-    state: 'West Virginia',
-  },
-  {
-    ID:4,
-      firstName: 'Kevin',
-      lastName: 'Vandy',
-    
-    address: '722 Emie Stream',
-    city: 'Lincoln',
-    state: 'Nebraska',
-  },
-  {
-    ID:5,
-      firstName: 'Joshua',
-      lastName: 'Rolluffs',
-    
-    address: '32188 Larkin Turnpike',
-    city: 'Charleston',
-    state: 'South Carolina',
-  },
-  {
-    ID:1,
-      firstName: 'John',
-      lastName: 'Doe',
-    
-    address: '261 Erdman Ford',
-    city: 'East Daphne',
-    state: 'Kentucky',
-  },
-  {
-    ID:2,
-      firstName: 'Jane',
-      lastName: 'Doe',
-    
-    address: '769 Dominic Grove',
-    city: 'Columbus',
-    state: 'Ohio',
-  },
-  {
-    ID:3,
-      firstName: 'Joe',
-      lastName: 'Doe',
-    
-    address: '566 Brakus Inlet',
-    city: 'South Linda',
-    state: 'West Virginia',
-  },
-  {
-    ID:4,
-      firstName: 'Kevin',
-      lastName: 'Vandy',
-    
-    address: '722 Emie Stream',
-    city: 'Lincoln',
-    state: 'Nebraska',
-  },
-  {
-    ID:5,
-      firstName: 'Joshua',
-      lastName: 'Rolluffs',
-    
-    address: '32188 Larkin Turnpike',
-    city: 'Charleston',
-    state: 'South Carolina',
-  },
-  {
-    ID:1,
-      firstName: 'John',
-      lastName: 'Doe',
-    
-    address: '261 Erdman Ford',
-    city: 'East Daphne',
-    state: 'Kentucky',
-  },
-  {
-    ID:2,
-      firstName: 'Jane',
-      lastName: 'Doe',
-    
-    address: '769 Dominic Grove',
-    city: 'Columbus',
-    state: 'Ohio',
-  },
-  {
-    ID:3,
-      firstName: 'Joe',
-      lastName: 'Doe',
-    
-    address: '566 Brakus Inlet',
-    city: 'South Linda',
-    state: 'West Virginia',
-  },
-  {
-    ID:4,
-      firstName: 'Kevin',
-      lastName: 'Vandy',
-    
-    address: '722 Emie Stream',
-    city: 'Lincoln',
-    state: 'Nebraska',
-  },
-  {
-    ID:5,
-      firstName: 'Joshua',
-      lastName: 'Rolluffs',
-    
-    address: '32188 Larkin Turnpike',
-    city: 'Charleston',
-    state: 'South Carolina',
-  },
-  {
-    ID:1,
-      firstName: 'John',
-      lastName: 'Doe',
-    
-    address: '261 Erdman Ford',
-    city: 'East Daphne',
-    state: 'Kentucky',
-  },
-  {
-    ID:2,
-      firstName: 'Jane',
-      lastName: 'Doe',
-    
-    address: '769 Dominic Grove',
-    city: 'Columbus',
-    state: 'Ohio',
-  },
-  {
-    ID:3,
-      firstName: 'Joe',
-      lastName: 'Doe',
-    
-    address: '566 Brakus Inlet',
-    city: 'South Linda',
-    state: 'West Virginia',
-  },
-  {
-    ID:4,
-      firstName: 'Kevin',
-      lastName: 'Vandy',
-    
-    address: '722 Emie Stream',
-    city: 'Lincoln',
-    state: 'Nebraska',
-  },
-  {
-    ID:5,
-      firstName: 'Joshua',
-      lastName: 'Rolluffs',
-    
-    address: '32188 Larkin Turnpike',
-    city: 'Charleston',
-    state: 'South Carolina',
-  },
-  {
-    ID:1,
-      firstName: 'John',
-      lastName: 'Doe',
-    
-    address: '261 Erdman Ford',
-    city: 'East Daphne',
-    state: 'Kentucky',
-  },
-  {
-    ID:2,
-      firstName: 'Jane',
-      lastName: 'Doe',
-    
-    address: '769 Dominic Grove',
-    city: 'Columbus',
-    state: 'Ohio',
-  },
-  {
-    ID:3,
-      firstName: 'Joe',
-      lastName: 'Doe',
-    
-    address: '566 Brakus Inlet',
-    city: 'South Linda',
-    state: 'West Virginia',
-  },
-  {
-    ID:4,
-      firstName: 'Kevin',
-      lastName: 'Vandy',
-    
-    address: '722 Emie Stream',
-    city: 'Lincoln',
-    state: 'Nebraska',
-  },
-  {
-    ID:5,
-      firstName: 'Joshua',
-      lastName: 'Rolluffs',
-    
-    address: '32188 Larkin Turnpike',
-    city: 'Charleston',
-    state: 'South Carolina',
-  },
-  {
-    ID:1,
-      firstName: 'John',
-      lastName: 'Doe',
-    
-    address: '261 Erdman Ford',
-    city: 'East Daphne',
-    state: 'Kentucky',
-  },
-  {
-    ID:2,
-      firstName: 'Jane',
-      lastName: 'Doe',
-    
-    address: '769 Dominic Grove',
-    city: 'Columbus',
-    state: 'Ohio',
-  },
-  {
-    ID:3,
-      firstName: 'Joe',
-      lastName: 'Doe',
-    
-    address: '566 Brakus Inlet',
-    city: 'South Linda',
-    state: 'West Virginia',
-  },
-  {
-    ID:4,
-      firstName: 'Kevin',
-      lastName: 'Vandy',
-    
-    address: '722 Emie Stream',
-    city: 'Lincoln',
-    state: 'Nebraska',
-  },
-  {
-    ID:5,
-      firstName: 'Joshua',
-      lastName: 'Rolluffs',
-    
-    address: '32188 Larkin Turnpike',
-    city: 'Charleston',
-    state: 'South Carolina',
-  },
-  {
-    ID:1,
-      firstName: 'John',
-      lastName: 'Doe',
-    
-    address: '261 Erdman Ford',
-    city: 'East Daphne',
-    state: 'Kentucky',
-  },
-  {
-    ID:2,
-      firstName: 'Jane',
-      lastName: 'Doe',
-    
-    address: '769 Dominic Grove',
-    city: 'Columbus',
-    state: 'Ohio',
-  },
-  {
-    ID:3,
-      firstName: 'Joe',
-      lastName: 'Doe',
-    
-    address: '566 Brakus Inlet',
-    city: 'South Linda',
-    state: 'West Virginia',
-  },
-  {
-    ID:4,
-      firstName: 'Kevin',
-      lastName: 'Vandy',
-    
-    address: '722 Emie Stream',
-    city: 'Lincoln',
-    state: 'Nebraska',
-  },
-  {
-    ID:5,
-      firstName: 'Joshua',
-      lastName: 'Rolluffs',
-    
-    address: '32188 Larkin Turnpike',
-    city: 'Charleston',
-    state: 'South Carolina',
-  },
-  {
-    ID:1,
-      firstName: 'John',
-      lastName: 'Doe',
-    
-    address: '261 Erdman Ford',
-    city: 'East Daphne',
-    state: 'Kentucky',
-  },
-  {
-    ID:2,
-      firstName: 'Jane',
-      lastName: 'Doe',
-    
-    address: '769 Dominic Grove',
-    city: 'Columbus',
-    state: 'Ohio',
-  },
-  {
-    ID:3,
-      firstName: 'Joe',
-      lastName: 'Doe',
-    
-    address: '566 Brakus Inlet',
-    city: 'South Linda',
-    state: 'West Virginia',
-  },
-  {
-    ID:4,
-      firstName: 'Kevin',
-      lastName: 'Vandy',
-    
-    address: '722 Emie Stream',
-    city: 'Lincoln',
-    state: 'Nebraska',
-  },
-  {
-    ID:5,
-      firstName: 'Joshua',
-      lastName: 'Rolluffs',
-    
-    address: '32188 Larkin Turnpike',
-    city: 'Charleston',
-    state: 'South Carolina',
-  },
-];
+const data = res.map((items) => ({ ...items }));
+// console.log(typeof(data))
 export  {columns,data}

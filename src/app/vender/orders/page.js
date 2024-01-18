@@ -11,13 +11,14 @@ import { Box, Button } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { jsPDF } from 'jspdf'; //or use your library of choice here
 import autoTable from 'jspdf-autotable';
-import { columns, data } from '/public/data';
-import { FaClockRotateLeft, FaSquareCheck } from 'react-icons/fa6';
+import { columns, data } from '/public/data.js';
+import { FaClockRotateLeft } from 'react-icons/fa6';
 import { FaClock, FaUser } from 'react-icons/fa';
 import { RiCheckDoubleLine } from 'react-icons/ri';
 import { HiMiniReceiptRefund } from 'react-icons/hi2';
 import { MdDangerous } from 'react-icons/md';
 
+console.log(columns);
 const handleExportRows = (rows) => {
   const rowData = rows.map((row) => row.original);
   const csv = generateCsv(csvConfig)(rowData);
