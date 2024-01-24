@@ -268,7 +268,6 @@ font-size: 15px;
     box-shadow: 0 3px 5px 0.3px #0000001a !important;
     /* backdrop-filter: blur(8px) !important; */
     fill: #b8bbc3 !important;
-    z-index: 0 !important;
 }
 
 .content-night table tbody tr,.content-night .css-10gei56{
@@ -290,7 +289,7 @@ font-size: 15px;
     box-shadow: 0 3px 5px 0.3px #0000001a !important;
 }
 .css-1tbggly,.css-di3982,.css-1k0t0zl{
-    z-index: auto;
+    z-index: auto !important;
 }
 button[aria-label='Toggle full screen']{
     display: none !important;
