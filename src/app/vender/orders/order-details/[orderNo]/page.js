@@ -4,17 +4,7 @@ import OrderTable from "/public/order-data.js";
 import {Col,Row,Card} from 'react-bootstrap'
 const OrderDetails = ({ params }) => {
     
-//     const table = useMaterialReactTable({
-//         columns,
-//         data,
-//         enableRowSelection: true,
-//         enableColumnOrdering: false,
-//         enableStickyHeader: true,
-//         enableTopToolbar:false,
-//         enableBottomToolbar:false,
-//         enableColumnActions:false,
-// enableSorting:false    
-// })
+
 
     return (
         <>
@@ -24,7 +14,14 @@ const OrderDetails = ({ params }) => {
                 <Col key={1}>
                     <Card>
                         <Card.Body className="p-0">
+                            <p className="text-capitalize fw-semibold m-0 p-3 fs-5">Order details</p>
                             <OrderTable/>
+                            <div className="text-capitalize p-4 text-muted text-end">
+                                <div className="fw-5 fw-semibold">subtotal: &#8377;2300</div>
+                                <div className="fw-normal">shiping fee: &#8377;76</div>
+                                <div className="fw-normal">GSt: &#8377;30</div>
+                                <div className="fw-bold">total: &#8377;2406</div>
+                            </div>
                         </Card.Body>
                     </Card>
                 </Col>

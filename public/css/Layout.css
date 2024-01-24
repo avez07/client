@@ -324,7 +324,9 @@ color: #fff !important;
   .content-night .css-1cccqvr.css-1cccqvr.css-1cccqvr{
     color: #fff;
   }
- 
+ .orderTable tbody{
+    box-shadow: none !important;
+ }
   .content-night .css-jojhy6-MuiPaper-root-MuiAlert-root, .content-night .css-d7xo1i, .content-night .css-njklwv{
     background:transparent !important;
   }

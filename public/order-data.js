@@ -1,8 +1,7 @@
-import React, { useMemo,useCallback,useState,useEffect } from "react";
+import React, { useMemo,useState,useEffect } from "react";
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 
 const OrderTable = () => {
-    const [rowSelection, setRowSelection] = useState({});
     const columns = useMemo(
         () => [
            
@@ -56,33 +55,24 @@ const OrderTable = () => {
         { "id": 1, "Name": 'John Smith', "Product": "http://dummyimage.com/116x100.png/ff4444/ffffff", "Price": "0", "Quantity": 1, "Discout": 1, "total": "66223" },
 
     ];
-    const handleSelectionChange = useCallback(
-        (selectedRows) => {
-            console.log("Selected Rows:", selectedRows);
-        },
-        []
-    );
+    
 
     const table = useMaterialReactTable({
         columns,
         data,
-        enableRowSelection: true,
+        enableRowSelection: false,
         enableColumnOrdering: false,
         enableStickyHeader: true,
         enableTopToolbar: false,
         enableBottomToolbar: false,
         enableColumnActions: false,
         enableSorting: false,
-        getRowId : (row)=> row.id,
-        onRowSelectionChange:setRowSelection,
-        state:rowSelection      
+        
     });
-    useEffect(()=>{
-        console.info({rowSelection})
-    },[rowSelection])
+   
 
     return (
-        <MaterialReactTable table={table} />
+        <MaterialReactTable table={table} className='orderTable' />
     );
 };
 
