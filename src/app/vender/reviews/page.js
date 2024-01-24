@@ -85,7 +85,7 @@ const Reviews = () => {
 
   return (
     <>
-      <Row xs={1} md={2} className="g-4 mb-4">
+      <Row xs={1} md={2} className="g-4 mb-4" style={{width:'100%'}}>
         <Col key={1}>
           <Card>
             <Card.Body>
