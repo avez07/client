@@ -289,7 +289,10 @@ font-size: 15px;
     box-shadow: 0 3px 5px 0.3px #0000001a !important;
 }
 .css-1tbggly,.css-di3982,.css-1k0t0zl{
-    z-index: auto !important;
+    /* z-index: auto !important; */
+}
+.admin-navbar{
+    z-index: 10 !important;
 }
 button[aria-label='Toggle full screen']{
     display: none !important;
