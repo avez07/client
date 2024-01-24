@@ -1,6 +1,7 @@
 
 import { Inter } from 'next/font/google'
 import {AuthProvider} from '/src/app/common/auth'
+import NextTopLoader from 'nextjs-toploader'
 // import './globals.css'
 import '/public/css/style.css'
 import '/public/css/Layout.css'
@@ -23,7 +24,10 @@ export default function ClientLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
  
-       <AuthProvider>{children}</AuthProvider>
+       <AuthProvider>
+       <NextTopLoader/>
+       {children}
+       </AuthProvider>
       
         </body>
     </html>
