@@ -1,8 +1,7 @@
 "use client"
 import React from 'react';
-import dynamic from 'next/dynamic';
-const AipexChart = dynamic(()=>import('/src/app/common/rewiews-chart'),{ssr:false});
-// import AipexChart from '/src/app/common/rewiews-chart'
+// import dynamic from 'next/dynamic';
+// const AipexChart = dynamic(()=>import('/src/app/common/rewiews-chart'),{ssr:false});
 import {
   MaterialReactTable,
   createMRTColumnHelper,
@@ -18,13 +17,15 @@ import { FaSquareCheck } from 'react-icons/fa6';
 import { Row,Card,Col,ProgressBar} from 'react-bootstrap';
 import { FaStar } from 'react-icons/fa';
 
-const handleExportRows = (rows) => {
-  const rowData = rows.map((row) => row.original);
-  const csv = generateCsv(csvConfig)(rowData);
-  download(csvConfig)(csv);
-};
+
 
 const Reviews = () => {
+
+  const handleExportRows = (rows) => {
+    const rowData = rows.map((row) => row.original);
+    const csv = generateCsv(csvConfig)(rowData);
+    download(csvConfig)(csv);
+  };
   const handleExportRowsPDF = (rows) => {
     const doc = new jsPDF();
     const tableData = rows.map((row) => Object.values(row.original));
@@ -124,7 +125,7 @@ const Reviews = () => {
                   </div>
                 </div>
                 <div className='reviwchart'>
-              <AipexChart/>
+              {/* <AipexChart/> */}
               </div>
               </div>
              
