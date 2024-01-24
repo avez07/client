@@ -5,7 +5,7 @@ import Image from "next/image";
 import {Playball} from "next/font/google"
 import { FaHome, FaBoxOpen, FaCartPlus, FaUserFriends, FaStar, FaAngleRight } from "react-icons/fa";
 import { RiFilePaper2Fill, RiLogoutBoxFill } from "react-icons/ri";
-import logo from "../../../public/assets/wesite-logo.png";
+import logo from "/public/assets/wesite-logo.png";
 import { FaGear, FaTruckMoving } from "react-icons/fa6";
 
 

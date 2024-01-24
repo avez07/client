@@ -18,7 +18,7 @@ const handleExportRows = (rows) => {
   download(csvConfig)(csv);
 };
 
-const Example = () => {
+const Orders = () => {
   const handleExportRowsPDF = (rows) => {
     const doc = new jsPDF();
     const tableData = rows.map((row) => Object.values(row.original));
@@ -79,4 +79,4 @@ const Example = () => {
   return <MaterialReactTable table={table} />;
 };
 
-export default Example;
+export default Orders;
