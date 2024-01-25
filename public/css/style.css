@@ -347,6 +347,26 @@ height: 14px;
     font-size: 30px;
   }
   /* order details page for vendor and admin  */
+  .orderTable thead{
+    border-top: 1px solid #ccc;  
+    border-bottom: 1px solid #ccc;
+    border-collapse: collapse;  
+ }
+ .orderTable thead th{
+    padding: 12px;
+    border-collapse: collapse;
+ }
+ .orderTable tbody td{
+    padding: 15px;
+    border-collapse: collapse;
+    border-bottom: 1px solid #ccc;
+ }
+ .orderTable tbody tr:hover{
+background: #e4e3e3;
+ }
+ .content-night .orderTable thead{
+  border-top: none;
+ }
   .main-status{
 display: flex;
 flex-direction: column;
@@ -396,6 +416,19 @@ overflow-y: scroll;
     text-transform: capitalize;
     width: 30%;
     text-align: end;
+  }
+  .order-cart{
+    font-size: 19px;
+    background: #dcf6e8;
+    color: #28c76f;
+    border-radius: 50%;
+    height: 35px;
+    display: block;
+    width: 35px;
+    text-align: center;
+  }
+  .order-cart svg{
+    vertical-align: bottom;
   }
   @media only screen and (max-width: 767px){
     .product-img{
