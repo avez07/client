@@ -430,6 +430,11 @@ overflow-y: scroll;
   .order-cart svg{
     vertical-align: bottom;
   }
+  /* add proguct page  */
+  .css-b62m3t-container{
+    width: 15vw;
+    margin-right: 15px ;
+  }
   @media only screen and (max-width: 767px){
     .product-img{
       height: 25%;
