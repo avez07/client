@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState,forwardRef} from "react";
 import dynamic from 'next/dynamic';
 import { RadioGroup, FormControlLabel, Radio, Checkbox } from '@mui/material'
 import { Form, Button, InputGroup } from "react-bootstrap";
@@ -12,13 +12,34 @@ const Quill = dynamic(() => import('react-quill'), { ssr: false })
 const Select = dynamic(() => import('react-select'), { ssr: false })
 
 const mainColors = [
-  'red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'brown', 'black', 'white', 'gray', 'grey',
+ '', 'red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'brown', 'black', 'white', 'gray', 'grey',
   'lightred', 'lightorange', 'lightyellow', 'lightgreen', 'lightblue', 'lightpurple', 'lightpink', 'lightbrown',
-  'darkred', 'darkorange', 'darkyellow', 'darkgreen', 'darkblue', 'darkpurple', 'darkpink', 'darkbrown'
+  'darkred', 'darkorange', 'darkyellow', 'darkgreen', 'darkblue', 'darkpurple', 'darkpink', 'darkbrown','Others'
 ];
-const main_size = Array.from({ length: 15 }, (_, index) => 16 + index * 2)
+const colorOption =  mainColors.map((items, index) => {
+    return { value: items, label: index === 0 ? 'Select Color': items, Key: index }
+  })
 
-const BulkEdit = () => {
+  const main_size = () => {
+    let sizes = Array.from({ length: 15 }, (_, index) => 16 + index * 2).map((items, index) => {
+      return { value: items, label: items, key: index };
+    });
+    sizes.unshift({ value: '', label: 'Select Size' }); // Add empty array value at index [0]
+    sizes.push({ value: 'Others', label: 'Others' }); // Add 'Others' at the end
+    return sizes;
+  };
+const customStyle = {
+  option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+    // const color = chroma(data.color);
+    return {
+      ...styles,
+      backgroundColor: isFocused ? "#999999" : null,
+      color: "#333333",
+    };
+  }
+}
+
+function BulkEdit()  {
   const [description, setDescription] = useState("");
 
   const [sell, setSell] = useState("");
@@ -30,11 +51,15 @@ const BulkEdit = () => {
   const [discount, setDiscount] = useState("00");
   const [weight, setWeight] = useState("");
   const [shipCharge, setShipCharge] = useState(0);
-  const [variantSelect, setVariantSelect] = useState(0)
   const [VariantTure, setVariantTure] = useState(false);
-  const [VariantColor, setVariantColor] = useState("");
-  const [VariantSize, setVariantSize] = useState("");
+  const [variantSelect, setVariantSelect] = useState(1)
+  const [VariantColor, setVariantColor] = useState(colorOption[0]);
+  const [VariantSize, setVariantSize] = useState(main_size()[0]);
   const [VariantObject, setVariantObject] = useState([]);
+
+  
+const variantColorRef = useRef(null)
+const variantSizeRef = useRef(null)
 
 
 
@@ -91,23 +116,27 @@ const BulkEdit = () => {
   };
   const handleVariant = (e) => {
     const Result = {
-      color: VariantColor,
-      size: VariantSize,
+      color: VariantColor.value,
+      size: VariantSize.value,
       quantity: 0,
       cost: 0,
       price: 0
     };  
+    console.log(variantSelect)
     setVariantObject([...VariantObject,Result])
     if (variantSelect === 1) {
-      setVariantSize('');
+      setVariantColor(colorOption[0]);
     } else if (variantSelect === 2) {
-      setVariantColor('');
+      setVariantSize(main_size()[0]);
     } else if (variantSelect === 3) {
-      setVariantColor('');
-      setVariantSize('');
+      setVariantColor(colorOption[0]);
+      setVariantSize(main_size()[0]);
     }
-    console.log(VariantObject)
   };
+  // useEffect(()=>{
+  //   console.log(variantSelect)
+  //   console.log(VariantObject)
+  // })
   
 
   return (
@@ -292,18 +321,20 @@ const BulkEdit = () => {
               </div>
               <div className="d-flex align-items-center my-3">
                 <Select
-                styles={{width:'10vw'}}
-                onChange={(selectedOption) => setVariantColor(selectedOption.value)}
+                value={VariantColor}
+                menuPlacement="top"
+                styles={{ ...customStyle, width: '10vw' }}
+                onChange={(selectedOption) => setVariantColor(selectedOption)}
                   options={mainColors.map((items, index) => {
                     return { value: items, label: items, Key: index }
                   })}
                 />
                 <Select
+                 value={VariantSize}
+                menuPlacement="top"
                 styles={{width:'10vw'}}
-                onChange={(selectedOption) => setVariantColor(selectedOption.value)}
-                  options={main_size.map((items, index) => {
-                    return { value: items, label: items, Key: index }
-                  })}
+                onChange={(selectedOption) => setVariantSize(selectedOption)}
+                  options={main_size()}
                 />
                 <Button variant="primary" onClick={handleVariant} type="submit">
                   Add Variant
