@@ -8,6 +8,7 @@ import Tooltip from "react-bootstrap/Tooltip";
 import { FaRegQuestionCircle } from "react-icons/fa";
 import 'react-quill/dist/quill.snow.css';
 import { Key } from "@mui/icons-material";
+import BulkEdiTable from "@/app/common/table-bulkEdit";
 const Quill = dynamic(() => import('react-quill'), { ssr: false })
 const Select = dynamic(() => import('react-select'), { ssr: false })
 
@@ -56,10 +57,9 @@ function BulkEdit()  {
   const [VariantColor, setVariantColor] = useState(colorOption[0]);
   const [VariantSize, setVariantSize] = useState(main_size()[0]);
   const [VariantObject, setVariantObject] = useState([]);
+  const [jsonData, setJsonData] = useState([]);
 
   
-const variantColorRef = useRef(null)
-const variantSizeRef = useRef(null)
 
 
 
@@ -100,8 +100,11 @@ const variantSizeRef = useRef(null)
     ['clean']                                         // remove formatting button
   ];
   useEffect(() => {
+    if (VariantObject !== null || VariantObject !== "") {
+      localStorage.setItem('variantData',JSON.stringify(VariantObject))
+    }
     calculateMargin();
-  });
+  },[VariantObject]);
 
   // console.log(ColorList)
   const handleDescriptionChange = (value) => {
@@ -116,28 +119,27 @@ const variantSizeRef = useRef(null)
   };
   const handleVariant = (e) => {
     const Result = {
+      id : VariantObject.length +1,
       color: VariantColor.value,
       size: VariantSize.value,
       quantity: 0,
       cost: 0,
       price: 0
     };  
-    console.log(variantSelect)
+    if (localStorage.getItem('variantData') !== null) {
+      setJsonData(JSON.parse(localStorage.getItem('variantData')));
+    }
     setVariantObject([...VariantObject,Result])
-    if (variantSelect === 1) {
+    if (variantSelect == 1) {
       setVariantColor(colorOption[0]);
-    } else if (variantSelect === 2) {
+    } else if (variantSelect == 2) {
       setVariantSize(main_size()[0]);
-    } else if (variantSelect === 3) {
+    } else if (variantSelect == 3) {
       setVariantColor(colorOption[0]);
       setVariantSize(main_size()[0]);
     }
   };
-  // useEffect(()=>{
-  //   console.log(variantSelect)
-  //   console.log(VariantObject)
-  // })
-  
+console.log(jsonData)
 
   return (
     <>
@@ -340,6 +342,7 @@ const variantSizeRef = useRef(null)
                   Add Variant
                 </Button>
               </div>
+             <BulkEdiTable jsonData={jsonData}/>
             </>
           ) : null}
 

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AdminNav from '../common/admin-header'
 import Sidebar from '../common/admin-sidebar'
+import CustomNav from "../common/customNav";
 import Container from 'react-bootstrap/Container';
 import { Inter } from 'next/font/google'
 import transparant from '/public/assets/transparent-backgroung.png'
@@ -11,6 +12,7 @@ import '/public/css/Layout.css'
 import '/public/css/style.css'
 import '/public/css/App.css'
 import '/public/css/datatable.css'
+
 
 
 
@@ -46,6 +48,7 @@ export default function AdminLayout({ children }) {
   return (
     <>
       <Sidebar isOpen={isSidebarOpen} isNightMode={isNightMode} />
+      {/* <CustomNav/> */}
       <Container fluid className={`p-0 ${!isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         <div className={`box-data ${isNightMode ? 'night-mode' : ''}`} style={{ width: boxDataWidth }}>
           <AdminNav toggleSidebar={toggleSidebar} toggleNightMode={NightMode} isNightMode={isNightMode} />
