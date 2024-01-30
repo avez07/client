@@ -1,34 +1,35 @@
 "use client"
-import React, { useEffect, useRef, useState,forwardRef} from "react";
+import React, { useEffect, useRef, useState, forwardRef, useContext } from "react";
+import { AuthContext } from '@/app/common/auth'
 import dynamic from 'next/dynamic';
 import { RadioGroup, FormControlLabel, Radio, Checkbox } from '@mui/material'
+import { pink } from '@mui/material/colors'
 import { Form, Button, InputGroup } from "react-bootstrap";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import { FaRegQuestionCircle } from "react-icons/fa";
 import 'react-quill/dist/quill.snow.css';
-import { Key } from "@mui/icons-material";
 import BulkEdiTable from "@/app/common/table-bulkEdit";
 const Quill = dynamic(() => import('react-quill'), { ssr: false })
 const Select = dynamic(() => import('react-select'), { ssr: false })
 
 const mainColors = [
- '', 'red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'brown', 'black', 'white', 'gray', 'grey',
+  '', 'red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'brown', 'black', 'white', 'gray', 'grey',
   'lightred', 'lightorange', 'lightyellow', 'lightgreen', 'lightblue', 'lightpurple', 'lightpink', 'lightbrown',
-  'darkred', 'darkorange', 'darkyellow', 'darkgreen', 'darkblue', 'darkpurple', 'darkpink', 'darkbrown','Others'
+  'darkred', 'darkorange', 'darkyellow', 'darkgreen', 'darkblue', 'darkpurple', 'darkpink', 'darkbrown', 'Others'
 ];
-const colorOption =  mainColors.map((items, index) => {
-    return { value: items, label: index === 0 ? 'Select Color': items, Key: index }
-  })
+const colorOption = mainColors.map((items, index) => {
+  return { value: items, label: index === 0 ? 'Select Color' : items, Key: index }
+})
 
-  const main_size = () => {
-    let sizes = Array.from({ length: 15 }, (_, index) => 16 + index * 2).map((items, index) => {
-      return { value: items, label: items, key: index };
-    });
-    sizes.unshift({ value: '', label: 'Select Size' }); // Add empty array value at index [0]
-    sizes.push({ value: 'Others', label: 'Others' }); // Add 'Others' at the end
-    return sizes;
-  };
+const main_size = () => {
+  let sizes = Array.from({ length: 15 }, (_, index) => 16 + index * 2).map((items, index) => {
+    return { value: items, label: items, key: index };
+  });
+  sizes.unshift({ value: '', label: 'Select Size' }); // Add empty array value at index [0]
+  sizes.push({ value: 'Others', label: 'Others' }); // Add 'Others' at the end
+  return sizes;
+};
 const customStyle = {
   option: (styles, { data, isDisabled, isFocused, isSelected }) => {
     // const color = chroma(data.color);
@@ -40,7 +41,8 @@ const customStyle = {
   }
 }
 
-function BulkEdit()  {
+const BulkEdit = () => {
+  const { nightmode } = useContext(AuthContext);
   const [description, setDescription] = useState("");
 
   const [sell, setSell] = useState("");
@@ -58,12 +60,6 @@ function BulkEdit()  {
   const [VariantSize, setVariantSize] = useState(main_size()[0]);
   const [VariantObject, setVariantObject] = useState([]);
   const [jsonData, setJsonData] = useState([]);
-
-  
-
-
-
-
 
   const calculateMargin = () => {
     const calculatedProfit = sell - cost;
@@ -100,11 +96,9 @@ function BulkEdit()  {
     ['clean']                                         // remove formatting button
   ];
   useEffect(() => {
-    if (VariantObject !== null || VariantObject !== "") {
-      localStorage.setItem('variantData',JSON.stringify(VariantObject))
-    }
+
     calculateMargin();
-  },[VariantObject]);
+  }, [VariantObject]);
 
   // console.log(ColorList)
   const handleDescriptionChange = (value) => {
@@ -118,18 +112,26 @@ function BulkEdit()  {
     // Add any additional logic for form submission
   };
   const handleVariant = (e) => {
-    const Result = {
-      id : VariantObject.length +1,
+    const newVariant = {
+      id: VariantObject.length + 1,
       color: VariantColor.value,
       size: VariantSize.value,
       quantity: 0,
       cost: 0,
-      price: 0
-    };  
-    if (localStorage.getItem('variantData') !== null) {
-      setJsonData(JSON.parse(localStorage.getItem('variantData')));
+      price: 0,
+      ImageData:[]
+    };
+
+    const storedVariantData = JSON.parse(localStorage.getItem('variantData'));
+
+    if (Array.isArray(storedVariantData)) {
+      const updatedVariantObject = VariantObject ? [...VariantObject, newVariant] : [newVariant];
+      localStorage.setItem('variantData', JSON.stringify(updatedVariantObject));
+      setVariantObject(updatedVariantObject);
+    } else {
+      localStorage.setItem('variantData', JSON.stringify([newVariant]));
+      setVariantObject([newVariant]);
     }
-    setVariantObject([...VariantObject,Result])
     if (variantSelect == 1) {
       setVariantColor(colorOption[0]);
     } else if (variantSelect == 2) {
@@ -139,8 +141,6 @@ function BulkEdit()  {
       setVariantSize(main_size()[0]);
     }
   };
-console.log(jsonData)
-
   return (
     <>
       <Form onSubmit={handleSubmit}>
@@ -304,7 +304,7 @@ console.log(jsonData)
         </Form.Group>
         <Form.Group controlId="formName" className="card my-3 p-3">
           <Form.Label className="fw-semibold me-3">
-            <Checkbox onChange={(e) => setVariantTure(!VariantTure)} sx={{ justifyContent: 'start' }} />Variant</Form.Label>
+            <Checkbox onChange={(e) => setVariantTure(!VariantTure)} sx={{ justifyContent: 'start', '&.Mui-checked': { color: nightmode ? '#fff' : '#000' } }} />Variant</Form.Label>
           {VariantTure ? (
             <>
               <div>
@@ -315,7 +315,7 @@ console.log(jsonData)
                   onChange={(e) => setVariantSelect(e.target.value)}
                   value={variantSelect}
                 >
-                  <FormControlLabel value='1' label='Color Variant' control={<Radio size="small" />} />
+                  <FormControlLabel value='1' label='Color Variant' control={<Radio size="small" sx={{ '&.Mui-checked': { color: nightmode ? '#fff' : '#000' } }} />} />
                   <FormControlLabel value='2' label='Size Variant' control={<Radio size="small" />} />
                   <FormControlLabel value='3' label='Both' control={<Radio size="small" />} />
 
@@ -323,26 +323,26 @@ console.log(jsonData)
               </div>
               <div className="d-flex align-items-center my-3">
                 <Select
-                value={VariantColor}
-                menuPlacement="top"
-                styles={{ ...customStyle, width: '10vw' }}
-                onChange={(selectedOption) => setVariantColor(selectedOption)}
+                  value={VariantColor}
+                  menuPlacement="top"
+                  styles={{ ...customStyle, width: '10vw' }}
+                  onChange={(selectedOption) => setVariantColor(selectedOption)}
                   options={mainColors.map((items, index) => {
                     return { value: items, label: items, Key: index }
                   })}
                 />
                 <Select
-                 value={VariantSize}
-                menuPlacement="top"
-                styles={{width:'10vw'}}
-                onChange={(selectedOption) => setVariantSize(selectedOption)}
+                  value={VariantSize}
+                  menuPlacement="top"
+                  styles={{ width: '10vw' }}
+                  onChange={(selectedOption) => setVariantSize(selectedOption)}
                   options={main_size()}
                 />
                 <Button variant="primary" onClick={handleVariant} type="submit">
                   Add Variant
                 </Button>
               </div>
-             <BulkEdiTable jsonData={jsonData}/>
+              <BulkEdiTable />
             </>
           ) : null}
 
