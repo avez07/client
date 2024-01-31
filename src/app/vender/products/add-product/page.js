@@ -342,7 +342,10 @@ const BulkEdit = () => {
                   Add Variant
                 </Button>
               </div>
+              { localStorage.getItem('variantData') && (
+                
               <BulkEdiTable />
+              )}
             </>
           ) : null}
 
