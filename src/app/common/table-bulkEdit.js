@@ -19,12 +19,10 @@
     const imageArr = variantData.filter((items) => items.id === dataId);
     
     React.useEffect(() => {
-      console.log('this')
+      // console.log('this')
       if (!variantDataString) {
         alert('No variant data found in localStorage');
-      } else if (imageArr.length === 0) {
-        alert('No matching variant data found');
-      }
+      }  
     }, [variantDataString, imageArr]);
 
     const handleImage =  (e, index) => {
@@ -46,11 +44,9 @@
         setUniquekey((prevKey)=>prevKey +1)
       }
     }
-    const handleInsertMore = () => {
-      setModalLength(prevLength => prevLength + 3); // Increment modal length by 3
-    };
-  console.log(Uniquekey)
-    return (
+  // console.log(mod)
+
+    return imageArr[0]?.ImageData ?  (
       <Modal
         {...rest}
         // key={Uniquekey}
@@ -79,21 +75,17 @@
                   </div>
                 )
               }
-
-
             })}
           </div>
-
-
         </Modal.Body>
         <Modal.Footer>
-          {modalLenght <= 3 && imageArr[0].ImageData.length < 6 ?(
+          {imageArr[0].ImageData.length <= 3 ?(
             <Button onClick={(e)=>setModallenght(modalLenght+3)}>Insert More</Button>
           ):null}
-          <Button onClick={props.onHide}>Close</Button>
+          <Button onClick={props.onHide}>Upload</Button>
         </Modal.Footer>
       </Modal>
-    )
+    ):null
   }
   const BulkEdiTable = () => {
     const { nightmode } = React.useContext(AuthContext)
