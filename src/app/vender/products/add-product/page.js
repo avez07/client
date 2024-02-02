@@ -58,8 +58,7 @@ const BulkEdit = () => {
   const [variantSelect, setVariantSelect] = useState(1)
   const [VariantColor, setVariantColor] = useState(colorOption[0]);
   const [VariantSize, setVariantSize] = useState(main_size()[0]);
-  const [VariantObject, setVariantObject] = useState([]);
-  const [jsonData, setJsonData] = useState([]);
+  const [Uniquekey, setUniquekey] = useState([]);
 
   const calculateMargin = () => {
     const calculatedProfit = sell - cost;
@@ -98,7 +97,7 @@ const BulkEdit = () => {
   useEffect(() => {
 
     calculateMargin();
-  }, [VariantObject]);
+  });
 
   // console.log(ColorList)
   const handleDescriptionChange = (value) => {
@@ -112,8 +111,9 @@ const BulkEdit = () => {
     // Add any additional logic for form submission
   };
   const handleVariant = (e) => {
+    const storedVariantData = JSON.parse(localStorage.getItem('variantData'));  
     const newVariant = {
-      id: VariantObject.length + 1,
+      id: storedVariantData ? storedVariantData[storedVariantData.length-1].id + 1 : 1,
       color: VariantColor.value,
       size: VariantSize.value,
       quantity: 0,
@@ -122,16 +122,15 @@ const BulkEdit = () => {
       ImageData:[]
     };
 
-    const storedVariantData = JSON.parse(localStorage.getItem('variantData'));
-
     if (Array.isArray(storedVariantData)) {
-      const updatedVariantObject = VariantObject ? [...VariantObject, newVariant] : [newVariant];
+      const updatedVariantObject =  storedVariantData ? [...storedVariantData, newVariant] : [newVariant];
       localStorage.setItem('variantData', JSON.stringify(updatedVariantObject));
-      setVariantObject(updatedVariantObject);
+      // setVariantObject(updatedVariantObject);
     } else {
       localStorage.setItem('variantData', JSON.stringify([newVariant]));
-      setVariantObject([newVariant]);
+      // setVariantObject([newVariant]);
     }
+    setUniquekey((preKey)=>preKey+1)
     if (variantSelect == 1) {
       setVariantColor(colorOption[0]);
     } else if (variantSelect == 2) {
@@ -344,13 +343,12 @@ const BulkEdit = () => {
               </div>
               { localStorage.getItem('variantData') && (
                 
-              <BulkEdiTable />
+              <BulkEdiTable key={Uniquekey} />
               )}
             </>
           ) : null}
 
         </Form.Group>
-
         <Button variant="primary" type="submit">
           Submit
         </Button>

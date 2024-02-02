@@ -37,11 +37,8 @@
         }else{
           const updatedImageDataArray = [...ImageData, newArray];
           Id[0].ImageData = updatedImageDataArray;
-
         }    
-        // return console.log(varianData)
         localStorage.setItem('variantData', JSON.stringify(varianData))
-        setUniquekey((prevKey)=>prevKey +1)
       }
     }
   // console.log(mod)
@@ -109,11 +106,18 @@
         backgroundColor: 'transparent'
       }
     }))
-    const handleInsertImage = (rowId) => {
+    const handleInsertImage = (rowId) => { //help to rerender the modal
       setShowModal(true);
       setDataId(rowId);
       setRefreshKey((prevKey) => prevKey + 1);
     };
+    const handlelVariantDelete = (e,Id)=>{ //help to delete the variant in local storage
+      const localStorageData = JSON.parse(localStorage.getItem('variantData'));
+      const data = localStorageData ? localStorageData.map((items)=> items).filter((items)=> items.id != Id) : null
+      localStorage.setItem('variantData',JSON.stringify(data))
+      setRefreshKey((prevKey) => prevKey + 1);
+
+    }
     return (
       <>
         <TableContainerStyle component={Paper}>
@@ -131,9 +135,9 @@
               </TableRow>
             </TableHead>
             <TableBody>
-              {jsonData !== null ? jsonData.map((row) => (
+              {jsonData !== null ? jsonData.map((row,index) => (
                 <TableRow
-                  key={row.id}
+                  key={index}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
                   <TableCell align='left'>
@@ -145,7 +149,7 @@
                   <TableCell align='center'>{row.cost}</TableCell>
                   <TableCell align='center'>{row.price - row.cost}</TableCell>
                   <TableCell align='center'><a href='#' onClick={(e)=>handleInsertImage(row.id)}>Insert Image</a></TableCell>
-                  <TableCell align='center' className='fs-5 text-danger'><MdDeleteSweep style={{ cursor: 'pointer' }} /></TableCell>
+                  <TableCell align='center' className='fs-5 text-danger'><MdDeleteSweep onClick={(e)=>handlelVariantDelete(e,row.id)} style={{ cursor: 'pointer' }} /></TableCell>
                 </TableRow>
               )) : null}
             </TableBody>
