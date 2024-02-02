@@ -112,8 +112,9 @@ const BulkEdit = () => {
   };
   const handleVariant = (e) => {
     const storedVariantData = JSON.parse(localStorage.getItem('variantData'));  
+    // console.log(storedVariantData.length); return false
     const newVariant = {
-      id: storedVariantData ? storedVariantData[storedVariantData.length-1].id + 1 : 1,
+      id: storedVariantData && storedVariantData.length > 0? storedVariantData[storedVariantData.length-1].id + 1 : 1,
       color: VariantColor.value,
       size: VariantSize.value,
       quantity: 0,
@@ -341,9 +342,9 @@ const BulkEdit = () => {
                   Add Variant
                 </Button>
               </div>
-              { localStorage.getItem('variantData') && (
+              { localStorage.getItem('variantData') &&  JSON.parse(localStorage.getItem('variantData')).length > 0  &&(
                 
-              <BulkEdiTable key={Uniquekey} />
+              <BulkEdiTable key={Uniquekey}/>
               )}
             </>
           ) : null}

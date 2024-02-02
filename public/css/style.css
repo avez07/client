@@ -535,6 +535,7 @@ body {
   align-items: center;
   justify-content: center;
   margin-bottom: 20px;
+  position: relative;
 }
 
 .image-input {
@@ -564,6 +565,14 @@ body {
   object-fit: contain;
   border-radius: 25px;
 }
+.close-button{
+  position: absolute;
+  top: -5px;
+  right: 0%;
+  font-size: 24px;
+  cursor: pointer;
+}
+
 
 @media only screen and (max-width: 767px) {
   .product-img {

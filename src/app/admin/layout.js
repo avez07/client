@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AdminNav from '../common/admin-header'
 import Sidebar from '../common/admin-sidebar'
-import CustomNav from "../common/customNav";
 import Container from 'react-bootstrap/Container';
 import { Inter } from 'next/font/google'
 import transparant from '/public/assets/transparent-backgroung.png'

@@ -6,6 +6,7 @@
   import { tableContainerClasses } from '@mui/material/TableContainer';
   import { MdDeleteSweep } from "react-icons/md";
   import { array } from 'yup';
+  import { RiCloseCircleFill } from "react-icons/ri";
 
   const ImageModal = (props) => {
     const { dataId, ...rest } = props
@@ -17,6 +18,7 @@
     const variantData = variantDataString ? JSON.parse(variantDataString) : [];
     
     const imageArr = variantData.filter((items) => items.id === dataId);
+    // console.log(imageArr[0].ImageData[0].imageurl)
     
     React.useEffect(() => {
       // console.log('this')
@@ -39,14 +41,25 @@
           Id[0].ImageData = updatedImageDataArray;
         }    
         localStorage.setItem('variantData', JSON.stringify(varianData))
+        setUniquekey((prevKey)=>prevKey +1)
       }
     }
-  // console.log(mod)
+  const handleImageDelete = (Id)=>{
+    const Data = JSON.parse(localStorage.getItem('variantData'))
+    const updatedData = Data.map((items)=>items).filter((items)=>items.id == 1)[0].ImageData.map((items)=>items).filter((items)=> items.id == Id)
+    updatedData[0].imageurl = ''
+    console.log(updatedData)
+  
+    Data.map((items)=>items).filter((items)=>items.id == dataId)[0].ImageData[Id] = updatedData[0]
+    localStorage.setItem('variantData',JSON.stringify(Data))
+    setUniquekey((prevKey)=>prevKey +1) 
+
+  }
 
     return imageArr[0]?.ImageData ?  (
       <Modal
         {...rest}
-        // key={Uniquekey}
+        // key={Uniquekey1}
         size='xl'
         aria-labelledby="contained-modal-title-vcenter"
         centered
@@ -57,8 +70,8 @@
         <Modal.Body>
           <div className='d-flex flex-wrap justify-content-around'>
             {Array.from({ length: imageArr[0].ImageData.length > 3 ? 6 :  modalLenght }).map((_, index) => {
-              
-              if (imageArr[0] == null || imageArr[0]?.ImageData[index]?.imageurl == null) {
+                // console.log(imageArr[0]?.ImageData[index]?.imageurl + index);return false
+              if (!imageArr[0].ImageData[index] || imageArr[0].ImageData[index]?.imageurl == '') {
                 const key = `image-input-${index}`;
                 return (
                   <div key={key} className='insert-image-container'>
@@ -66,8 +79,10 @@
                   </div>
                 )
               } else {
+              
                 return (
                   <div key={`image-${index}`} className='insert-image-container'>
+                      <span className='close-button' onClick={(e)=>handleImageDelete(index)}><RiCloseCircleFill/></span>
                     <img alt="preview image" className='product-image' src={imageArr[0].ImageData[index].imageurl} />
                   </div>
                 )
@@ -76,8 +91,8 @@
           </div>
         </Modal.Body>
         <Modal.Footer>
-          {imageArr[0].ImageData.length <= 3 ?(
-            <Button onClick={(e)=>setModallenght(modalLenght+3)}>Insert More</Button>
+          { modalLenght == 3 && imageArr[0].ImageData.length < 6 ?(
+            <Button onClick={(e)=>{setModallenght(modalLenght+3);console.log(imageArr[0].ImageData.length)}}>Insert More</Button>
           ):null}
           <Button onClick={props.onHide}>Upload</Button>
         </Modal.Footer>
