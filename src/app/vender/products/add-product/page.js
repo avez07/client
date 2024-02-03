@@ -111,27 +111,27 @@ const BulkEdit = () => {
     // Add any additional logic for form submission
   };
   const handleVariant = (e) => {
-    const storedVariantData = JSON.parse(localStorage.getItem('variantData'));  
+    const storedVariantData = JSON.parse(localStorage.getItem('variantData'));
     // console.log(storedVariantData.length); return false
     const newVariant = {
-      id: storedVariantData && storedVariantData.length > 0? storedVariantData[storedVariantData.length-1].id + 1 : 1,
+      id: storedVariantData && storedVariantData.length > 0 ? storedVariantData[storedVariantData.length - 1].id + 1 : 1,
       color: VariantColor.value,
       size: VariantSize.value,
       quantity: 0,
       cost: 0,
       price: 0,
-      ImageData:[]
+      ImageData: []
     };
 
     if (Array.isArray(storedVariantData)) {
-      const updatedVariantObject =  storedVariantData ? [...storedVariantData, newVariant] : [newVariant];
+      const updatedVariantObject = storedVariantData ? [...storedVariantData, newVariant] : [newVariant];
       localStorage.setItem('variantData', JSON.stringify(updatedVariantObject));
       // setVariantObject(updatedVariantObject);
     } else {
       localStorage.setItem('variantData', JSON.stringify([newVariant]));
       // setVariantObject([newVariant]);
     }
-    setUniquekey((preKey)=>preKey+1)
+    setUniquekey((preKey) => preKey + 1)
     if (variantSelect == 1) {
       setVariantColor(colorOption[0]);
     } else if (variantSelect == 2) {
@@ -342,9 +342,9 @@ const BulkEdit = () => {
                   Add Variant
                 </Button>
               </div>
-              { localStorage.getItem('variantData') &&  JSON.parse(localStorage.getItem('variantData')).length > 0  &&(
-                
-              <BulkEdiTable key={Uniquekey}/>
+              {localStorage.getItem('variantData') && JSON.parse(localStorage.getItem('variantData'))?.length > 0 && (
+
+                <BulkEdiTable key={Uniquekey} />
               )}
             </>
           ) : null}

@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from "react";
-import OrderTable from "/public/order-data";
+import OrderTable from "@/app/common/order-data";
 import { Stepper, Step } from '@material-tailwind/react'
 import { Col, Row, Card } from 'react-bootstrap'
 import Image from "next/image";
