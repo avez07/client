@@ -1,15 +1,14 @@
 import * as React from 'react';
-import { Form, Modal, Button } from 'react-bootstrap'
+import { Form, Modal, Button ,CloseButton} from 'react-bootstrap'
 import { AuthContext } from '@/app/common/auth'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, styled, TextField } from '@mui/material';
-import { tableCellClasses } from '@mui/material/TableCell';
-import { tableContainerClasses } from '@mui/material/TableContainer';
+
 import { MdDeleteSweep } from "react-icons/md";
-import { array } from 'yup';
 import { RiCloseCircleFill } from "react-icons/ri";
+import { IoCloseSharp } from "react-icons/io5";
 
 const ImageModal = (props) => {
   const { dataId, ...rest } = props
+  const { nightmode } = React.useContext(AuthContext)
   const [Uniquekey, setUniquekey] = React.useState(0)
   const [modalLenght, setModallenght] = React.useState(3)
 
@@ -18,7 +17,6 @@ const ImageModal = (props) => {
   const variantData = variantDataString ? JSON.parse(variantDataString) : [];
 
   const imageArr = variantData.filter((items) => items.id === dataId);
-  // console.log(imageArr[0].ImageData[0].imageurl)
 
   React.useEffect(() => {
     // console.log('this')
@@ -55,6 +53,10 @@ const ImageModal = (props) => {
     setUniquekey((prevKey) => prevKey + 1)
 
   }
+  const customStyle ={
+    background:'#0c1220',
+    color:'#fcfcfc'
+  }
 
   return imageArr[0]?.ImageData ? (
     <Modal
@@ -64,10 +66,11 @@ const ImageModal = (props) => {
       aria-labelledby="contained-modal-title-vcenter"
       centered
     >
-      <Modal.Header closeButton>
+      <Modal.Header   style={nightmode?customStyle:null}>
         <Modal.Title>Insert Image{dataId}</Modal.Title>
+        <IoCloseSharp style={{cursor:'pointer',fontSize:'28px'}} onClick={props.onHide}/>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body style={nightmode?customStyle:null}>
         <div className='d-flex flex-wrap justify-content-around'>
           {Array.from({ length: imageArr[0].ImageData.length > 3 ? 6 : modalLenght }).map((_, index) => {
             // console.log(imageArr[0]?.ImageData[index]?.imageurl + index);return false
@@ -90,7 +93,7 @@ const ImageModal = (props) => {
           })}
         </div>
       </Modal.Body>
-      <Modal.Footer>
+      <Modal.Footer style={nightmode?customStyle:null}>
         {modalLenght == 3 && imageArr[0].ImageData.length < 6 ? (
           <Button onClick={(e) => { setModallenght(modalLenght + 3); console.log(imageArr[0].ImageData.length) }}>Insert More</Button>
         ) : null}
@@ -148,9 +151,9 @@ const BulkEdiTable = () => {
             <tr key={index} className='text-center'>
               <td>{row.id}</td>
               <td>{row.color}/{row.size}</td>
-              <td><Form.Control defaultValue={row.quantity} type='text' onChange={(e) => handleInputChage(e, index, 'quantity')} /></td>
-              <td><Form.Control defaultValue={row.price} type='text' onChange={(e) => handleInputChage(e, index, 'price')} /></td>
-              <td><Form.Control defaultValue={row.cost} type='text' onChange={(e) => handleInputChage(e, index, 'cost')} /></td>
+              <td><Form.Control style={nightmode?{background:'#0c1220',color:'#fcfcfc',border:'currentcolor'}:null} defaultValue={row.quantity} type='text' onChange={(e) => handleInputChage(e, index, 'quantity')} /></td>
+              <td><Form.Control style={nightmode?{background:'#0c1220',color:'#fcfcfc',border:'currentcolor'}:null} defaultValue={row.price} type='text' onChange={(e) => handleInputChage(e, index, 'price')} /></td>
+              <td><Form.Control style={nightmode?{background:'#0c1220',color:'#fcfcfc',border:'currentcolor'}:null} defaultValue={row.cost} type='text' onChange={(e) => handleInputChage(e, index, 'cost')} /></td>
               <td>{Key}</td>
               <td><a href='#' onClick={(e) => handleInsertImage(row.id)}>Insert Image</a></td>
               <td className='fs-5 text-danger'><MdDeleteSweep style={{ cursor: 'pointer' }} onClick={(e) => handlelVariantDelete(e, row.id)} /></td>

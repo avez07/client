@@ -380,7 +380,7 @@ color: #fff !important;
     stroke: #e4e5e8 !important;
 }
  .content-night .add-name{
-    background: #1a202e!important;
+    background: #0c1220!important;
     border: none !important;
     color: #b8bbc3!important;
 }
@@ -391,8 +391,8 @@ color: #fff !important;
    min-height: 250px !important;
 }
 .content-night .quill, .content-night .ql-toolbar.ql-snow , .content-night .ql-editor, .content-night .ql-toolbar.ql-snow {
-    background :#1a202e!important;
-    border: 0.5px solid #626262 !important;
+    background :#0c1220!important;
+    /* border: 1px solid #fcfcfc !important; */
 
 }
 .content-night .ql-container.ql-snow {

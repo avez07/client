@@ -517,6 +517,10 @@ body {
   width: 15vw;
   margin-right: 15px;
 }
+.categoryName {
+  width: 100%;
+  z-index: 1;
+}
 
 .table-input {
   border: none !important;
@@ -572,7 +576,15 @@ body {
   font-size: 24px;
   cursor: pointer;
 }
-
+.content-night select, .content-night option{
+background: #0c1220 !important;
+color: #fcfcfc !important;
+border: currentColor;
+}
+.content-night  option:checked,option:hover{
+  background-color: #fcfcfc !important;
+  color: #000 !important;
+}
 
 @media only screen and (max-width: 767px) {
   .product-img {

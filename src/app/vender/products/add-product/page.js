@@ -30,16 +30,7 @@ const main_size = () => {
   sizes.push({ value: 'Others', label: 'Others' }); // Add 'Others' at the end
   return sizes;
 };
-const customStyle = {
-  option: (styles, { data, isDisabled, isFocused, isSelected }) => {
-    // const color = chroma(data.color);
-    return {
-      ...styles,
-      backgroundColor: isFocused ? "#999999" : null,
-      color: "#333333",
-    };
-  }
-}
+
 
 const BulkEdit = () => {
   const { nightmode } = useContext(AuthContext);
@@ -75,6 +66,30 @@ const BulkEdit = () => {
     setDiscount(finalDiscount.toFixed(2));
     setShipCharge(ShipingCharges.toFixed(2));
   };
+  const customStyle = {
+    control: (style)=>({...style,background:nightmode?'#0c1220':null,border:'currentColor'}),
+    singleValue: (style)=>({...style,color: nightmode?'#fff':null}),
+    menu: (style)=>({...style,background:nightmode?'#0c1220':null}),
+    option: (styles, { data, isDisabled, isFocused, isSelected  }) => {
+      // const color = chroma(data.color);
+      return {
+        ...styles,
+        backgroundColor: isFocused ? "#ff0000" : null,
+        background : nightmode ?'#0c1220' : '#fff',
+        color: nightmode? '#fcfcfc':"#333333",
+        ':active':{
+          ...styles['.active'],
+          background:'#232836'
+        },
+        ':hover':{
+          ...styles['.hover'],
+          backgroundColor:'#fcfcfc',
+          color:'#000'
+        }
+      };
+    }
+  }
+
   const toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
     ['blockquote', 'code-block'],
@@ -124,12 +139,16 @@ const BulkEdit = () => {
     };
 
     if (Array.isArray(storedVariantData)) {
-      const updatedVariantObject = storedVariantData ? [...storedVariantData, newVariant] : [newVariant];
-      localStorage.setItem('variantData', JSON.stringify(updatedVariantObject));
-      // setVariantObject(updatedVariantObject);
+      if (storedVariantData.some(variant => variant.color == VariantColor.value && variant.size == VariantSize.value)) {
+        alert('variant ALready Present')
+      }else if(!VariantColor.value || !VariantSize.value){
+        alert('variant Value Not Present')
+      }else{
+        const updatedVariantObject = storedVariantData ? [...storedVariantData, newVariant] : [newVariant];
+        localStorage.setItem('variantData', JSON.stringify(updatedVariantObject));        
+      }
     } else {
       localStorage.setItem('variantData', JSON.stringify([newVariant]));
-      // setVariantObject([newVariant]);
     }
     setUniquekey((preKey) => preKey + 1)
     if (variantSelect == 1) {
@@ -154,12 +173,19 @@ const BulkEdit = () => {
         </Form.Group>
         <Form.Group controlId="formName" className="card my-3 p-3">
           <Form.Label className="fw-semibold">Category</Form.Label>
-          <Form.Select>
-            <option value=''>Select Category</option>
-            <option value='kids wear'>Kid Wear</option>
-            <option value='bridal wear'>Bridal Wear</option>
-            <option value='kids wear'>Kid Wear</option>
-          </Form.Select>
+          <Select
+                  value={VariantSize}
+                  menuPlacement="top"
+                  className="categoryName"
+                  styles={{...customStyle,width:'100%' }}                  
+                  onChange={(selectedOption) => setVariantSize(selectedOption)}
+                  options={[
+                    { value: 'Kidwear', label: 'Kidwear'},
+                    { value: 'bridal wear', label: 'bridal wear'},
+                    { value: 'women', label: 'women'},
+                    { value: 'Men', label: 'Men'}
+                  ]}
+                />
         </Form.Group>
 
         <Form.Group controlId="formDescription" className="card my-3 p-3">
@@ -316,8 +342,8 @@ const BulkEdit = () => {
                   value={variantSelect}
                 >
                   <FormControlLabel value='1' label='Color Variant' control={<Radio size="small" sx={{ '&.Mui-checked': { color: nightmode ? '#fff' : '#000' } }} />} />
-                  <FormControlLabel value='2' label='Size Variant' control={<Radio size="small" />} />
-                  <FormControlLabel value='3' label='Both' control={<Radio size="small" />} />
+                  <FormControlLabel value='2' label='Size Variant' control={<Radio size="small" sx={{ '&.Mui-checked': { color: nightmode ? '#fff' : '#000' } }}/>} />
+                  <FormControlLabel value='3' label='Both' control={<Radio size="small" sx={{ '&.Mui-checked': { color: nightmode ? '#fff' : '#000' } }}/>} />
 
                 </RadioGroup>
               </div>
@@ -334,7 +360,8 @@ const BulkEdit = () => {
                 <Select
                   value={VariantSize}
                   menuPlacement="top"
-                  styles={{ width: '10vw' }}
+                  styles={{...customStyle,backgroundColor:'red', width: '10vw' }}
+                  
                   onChange={(selectedOption) => setVariantSize(selectedOption)}
                   options={main_size()}
                 />
