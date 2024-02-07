@@ -1,9 +1,10 @@
 "use client"
-import React, { useEffect, useRef, useState, forwardRef, useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import {useFormik} from 'formik'
+import * as yup from 'yup'
 import { AuthContext } from '@/app/common/auth'
 import dynamic from 'next/dynamic';
 import { RadioGroup, FormControlLabel, Radio, Checkbox } from '@mui/material'
-import { pink } from '@mui/material/colors'
 import { Form, Button, InputGroup } from "react-bootstrap";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
@@ -35,7 +36,6 @@ const main_size = () => {
 const BulkEdit = () => {
   const { nightmode } = useContext(AuthContext);
   const [description, setDescription] = useState("");
-
   const [sell, setSell] = useState("");
   const [cost, setCost] = useState("");
   const [profit, setProfit] = useState("");
@@ -115,16 +115,7 @@ const BulkEdit = () => {
   });
 
   // console.log(ColorList)
-  const handleDescriptionChange = (value) => {
-    setDescription(value);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // console.log("Name:", e.target.formName.value);
-    // console.log("Description:", description);
-    // Add any additional logic for form submission
-  };
+ 
   const handleVariant = (e) => {
     const storedVariantData = JSON.parse(localStorage.getItem('variantData'));
     // console.log(storedVariantData.length); return false
@@ -160,25 +151,56 @@ const BulkEdit = () => {
       setVariantSize(main_size()[0]);
     }
   };
+  const ProductValidationSchema = yup.object({
+    productName: yup.string().required('This Feild is Required'),
+    ProductCategory: yup.string().required('This Feild is Required'),
+    ProductDiscription : yup.string().required('This Feild is Required').max(200,'Discription Should Not Be More Than 200 Characters')
+
+  })
+const Formik = useFormik({
+  initialValues:{
+    productName : '',
+    ProductCategory: '',
+    ProductDiscription:'',
+    InitailPrice : '',
+    InitailCost : '',
+    CamparePrice : '',
+    Weight : ''
+
+  },validationSchema:ProductValidationSchema,
+onSubmit:(values)=>{
+console.log('form submited',values)
+}
+
+})
+  
   return (
     <>
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={Formik.handleSubmit}>
         <Form.Group controlId="formName" className="card my-3 p-3">
           <Form.Label className="fw-semibold">Name</Form.Label>
           <Form.Control
             className="add-name"
+            name="productName"
             type="text"
+            value={Formik.values.productName}
+            onChange={Formik.handleChange}
+            onBlur={Formik.handleBlur}
             placeholder="Enter name"
           />
+          {Formik.touched.productName && Formik.errors.productName? (
+                  <div className="text-danger">{Formik.errors.productName}</div>
+                ) : (null)}
         </Form.Group>
         <Form.Group controlId="formName" className="card my-3 p-3">
           <Form.Label className="fw-semibold">Category</Form.Label>
           <Select
-                  value={VariantSize}
+                  name="ProductCategory"
                   menuPlacement="top"
                   className="categoryName"
                   styles={{...customStyle,width:'100%' }}                  
-                  onChange={(selectedOption) => setVariantSize(selectedOption)}
+                  onChange={(e)=>Formik.setFieldValue('ProductCategory',e.value)}
+                  onBlur={Formik.handleBlur}
                   options={[
                     { value: 'Kidwear', label: 'Kidwear'},
                     { value: 'bridal wear', label: 'bridal wear'},
@@ -186,18 +208,26 @@ const BulkEdit = () => {
                     { value: 'Men', label: 'Men'}
                   ]}
                 />
+                 {Formik.touched.ProductCategory && Formik.errors.ProductCategory? (
+                  <div className="text-danger">{Formik.errors.ProductCategory}</div>
+                ) : (null)}
         </Form.Group>
 
         <Form.Group controlId="formDescription" className="card my-3 p-3">
-          <Form.Label className="fw-semibold">Description</Form.Label>
+          <Form.Label  className="fw-semibold">Description</Form.Label>
           <Quill theme="snow"
-            id="Discription"
+            id="Discription"           
             modules={{
               toolbar: toolbarOptions
             }}
-            value={description}
-            onChange={handleDescriptionChange}
+            // name='ProductDiscription'
+            value={Formik.values.ProductDiscription}
+            onChange={Formik.handleChange}
+            onBlur={Formik.handleBlur}
           />
+           {Formik.touched.ProductDiscription && Formik.errors.ProductDiscription? (
+                  <div className="text-danger">{Formik.errors.ProductDiscription}</div>
+                ) : (null)}
         </Form.Group>
         <Form.Group controlId="formName" className="card my-3 p-3">
           <Form.Label className="fw-semibold me-3">Pricing</Form.Label>
