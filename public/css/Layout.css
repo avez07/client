@@ -381,9 +381,14 @@ color: #fff !important;
 }
  .content-night .add-name{
     background: #0c1220!important;
-    border: none !important;
+    /* border: 1px solid #fcfcfc !important; */
+    border-radius: 7px;
     color: #b8bbc3!important;
 }
+.content-night input{
+    color: #fcfcfcfc;
+}
+
 .content-night .add-name::placeholder{
     color: #8a8b8f!important;
 }

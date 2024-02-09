@@ -220,6 +220,18 @@ body {
   background: red;
   border-radius: 7px;
 }
+.pricingInputContainer{
+  display: flex;
+  flex-wrap:wrap;
+}
+.pricingInputContainer .price-inputContainer{
+  flex: 1 0 calc(33.33% - 10px);
+  margin: 5px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  border-radius: 7px;
+}
 
 
 
