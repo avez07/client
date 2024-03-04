@@ -66,7 +66,7 @@ const Sidebar = ({ isOpen, isNightMode }) => {
               </ul>
             </li>
             <li className={`${active == 6? 'active': ''}`} >
-              <Link href="/" onClick={()=>handleactive(6)}><span className="menu-items"><FaGear /></span>settings</Link>
+              <Link href="/vender/setting" onClick={()=>handleactive(6)}><span className="menu-items"><FaGear /></span>settings</Link>
             </li>
             <li className={`${active == 7? 'active': ''}`} >
               <Link href="/" onClick={()=>handleactive(7)}><span className="menu-items"><RiLogoutBoxFill /></span>Logout</Link>
