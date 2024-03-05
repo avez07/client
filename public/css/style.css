@@ -635,9 +635,20 @@ border: 1px solid #d3d3d3;
   border-radius: 11px;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
-.store form label{
+.store form label ,form label{
   text-transform: capitalize;
 }
+/* coupans section*/
+.cupons-button button:active{
+  transform: translate(1px,0.5px);
+  box-shadow: none;
+
+}
+.cupons-button{
+  height: 40px;
+  margin-bottom: 10px;
+}
+.cupons-button button{box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;}
 
 @media only screen and (max-width: 767px) {
   .product-img {

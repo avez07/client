@@ -1,9 +1,11 @@
 "use client"
 import React from "react";
+import CuponModel from "@/app/common/cupoan-model";
 import { Row, Col, Container, Card, Form, Button, Alert } from 'react-bootstrap'
-import { FaBell } from "react-icons/fa";
+import { FaBell, FaThumbsUp } from "react-icons/fa";
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+
 
 const schema = yup.object().shape({
     storeName: yup.string().required(),
@@ -28,6 +30,7 @@ const schema = yup.object().shape({
 const Setting = () => {
     const [active, setActive] = React.useState(1);
     const [additionalRate, setAdditionalRate] = React.useState(0);
+    const [modalShow, setModalShow] = React.useState(false);
 
     const formik = useFormik({
         initialValues: {
@@ -59,8 +62,9 @@ const Setting = () => {
                     <p>Getting Started</p>
                     <ul className="setting-list-group">
                         <li onClick={(e) => setActive(1)} className={`${active == 1 ? 'active' : ''}`}>store detail</li>
-                        <li onClick={(e) => setActive(2)} className={`${active == 2 ? 'active' : ''}`}>shipping and delivery</li>
-                        <li onClick={(e) => setActive(3)} className={`${active == 3 ? 'active' : ''}`}>Carrier allowed</li>
+                        <li onClick={(e) => setActive(2)} className={`${active == 2 ? 'active' : ''}`}>Cupons</li>
+                        <li onClick={(e) => setActive(3)} className={`${active == 3 ? 'active' : ''}`}>shipping and delivery</li>
+                        <li onClick={(e) => setActive(4)} className={`${active == 4 ? 'active' : ''}`}>Carrier allowed</li>
                     </ul>
                 </Col>
                 <Col md={8} className={`store ${active == 1 ? 'd-block' : 'd-none'} `}>
@@ -229,7 +233,7 @@ const Setting = () => {
                                 <Card.Body>
                                     <Card.Title>Verification</Card.Title>
                                     <Row xs={1} md={1} className="g-4 mt-3">
-                                    <Col md={12}>
+                                        <Col md={12}>
                                             <Form.Label>Gstin No</Form.Label>
                                             <Form.Control
                                                 type="text"
@@ -240,7 +244,7 @@ const Setting = () => {
                                             {formik.touched.Gstin && formik.errors.Gstin ? (
                                                 <div className="text-danger">{formik.errors.Gstin}</div>
                                             ) : (null)}
-                                        </Col> 
+                                        </Col>
                                         <Col md={12}>
                                             <Form.Label>Pancard No<span className="text-danger">*</span></Form.Label>
                                             <Form.Control
@@ -252,18 +256,32 @@ const Setting = () => {
                                             {formik.touched.panNo && formik.errors.panNo ? (
                                                 <div className="text-danger">{formik.errors.panNo}</div>
                                             ) : (null)}
-                                        </Col>      
+                                        </Col>
                                     </Row>
                                 </Card.Body>
                             </Card>
 
                         </div>
                         <div className="d-flex justify-content-end">
-                        <Button style={{ background: '#3e2d68', border: 'none' }} className="mt-2" type="submit">Save</Button>
+                            <Button style={{ background: '#3e2d68', border: 'none' }} className="mt-2" type="submit">Save</Button>
                         </div>
                     </form>
                 </Col>
                 <Col md={8} className={`store ${active == 2 ? 'd-block' : 'd-none'} `}>
+                        <div className="store detail">
+                            <div className="cupons-button d-flex justify-content-end">
+                        <Button style={{ background: '#3e2d68', border: 'none', fontSize:'15px' }}  onClick={() => setModalShow(true)} className="mx-2 text-capitalize" >create cupons</Button>
+                        <CuponModel show={modalShow}   onHide={() => setModalShow(false)}/>      
+                            </div>
+                            <Card>
+                                <Card.Body>
+                                    <Card.Title>Cupons</Card.Title>
+                                  
+                                </Card.Body>
+                            </Card>
+                        </div>
+                </Col>
+                <Col md={8} className={`store ${active == 3 ? 'd-block' : 'd-none'} `}>
                     <form>
                         <div className="store detail">
                             <Card>
@@ -271,79 +289,124 @@ const Setting = () => {
                                     <Card.Title>Shipping Zone</Card.Title>
                                     <Row xs={1} md={1} className="g-4 mt-2">
                                         <Col md={12}>
-                                          <p>Domestic Rates</p>
-                                          <table className="shipRates-Table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Mode</th>
-                                                    <th>Weight(min)</th>
-                                                    <th>With in City</th>
-                                                    <th>With in state</th>
-                                                    <th>Rest of India</th>
-                                                    <th>J & k</th>
-                                                    <th>additional  charges</th>
-                                                </tr>
-                                            </thead>    
-                                            <tbody>
-                                                <tr>
-                                                    <td>Standard</td>
-                                                    <td>0.5kg</td>
-                                                    <td>47</td>
-                                                    <td>56</td>
-                                                    <td>85</td>
-                                                    <td>113</td>
-                                                    <td>
-                                                        <Form.Control
-                                                        type="number"
-                                                        name="dom_std"
-                                                        value={additionalRate}
-                                                        onChange={(e)=>setAdditionalRate(e.target.value)}
-                                                        />
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Economy</td>
-                                                    <td>1kg</td>
-                                                    <td>47</td>
-                                                    <td>56</td>
-                                                    <td>85</td>
-                                                    <td>113</td>
-                                                    <td>
-                                                        <Form.Control
-                                                        type="number"
-                                                        name="dom_std"
-                                                        value={additionalRate}
-                                                        onChange={(e)=>setAdditionalRate(e.target.value)}
-                                                        />
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Cargo</td>
-                                                    <td>3kg</td>
-                                                    <td>47</td>
-                                                    <td>56</td>
-                                                    <td>85</td>
-                                                    <td>113</td>
-                                                    <td>
-                                                        <Form.Control
-                                                        type="number"
-                                                        name="dom_std"
-                                                        value={additionalRate}
-                                                        onChange={(e)=>setAdditionalRate(e.target.value)}
-                                                        />
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                          </table>
+                                            <p>Domestic Rates</p>
+                                            <table className="shipRates-Table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Mode</th>
+                                                        <th>Weight(min)</th>
+                                                        <th>With in City</th>
+                                                        <th>With in state</th>
+                                                        <th>Rest of India</th>
+                                                        <th>J & k</th>
+                                                        <th>additional  charges</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Standard</td>
+                                                        <td>0.5kg</td>
+                                                        <td>47</td>
+                                                        <td>56</td>
+                                                        <td>85</td>
+                                                        <td>113</td>
+                                                        <td>
+                                                            <Form.Control
+                                                                type="number"
+                                                                name="dom_std"
+                                                                value={additionalRate}
+                                                                onChange={(e) => setAdditionalRate(e.target.value)}
+                                                            />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Economy</td>
+                                                        <td>1kg</td>
+                                                        <td>47</td>
+                                                        <td>56</td>
+                                                        <td>85</td>
+                                                        <td>113</td>
+                                                        <td>
+                                                            <Form.Control
+                                                                type="number"
+                                                                name="dom_std"
+                                                                value={additionalRate}
+                                                                onChange={(e) => setAdditionalRate(e.target.value)}
+                                                            />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Cargo</td>
+                                                        <td>3kg</td>
+                                                        <td>47</td>
+                                                        <td>56</td>
+                                                        <td>85</td>
+                                                        <td>113</td>
+                                                        <td>
+                                                            <Form.Control
+                                                                type="number"
+                                                                name="dom_std"
+                                                                value={additionalRate}
+                                                                onChange={(e) => setAdditionalRate(e.target.value)}
+                                                            />
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </Col>
-                                      
-                                                                          
                                     </Row>
                                 </Card.Body>
                             </Card>
                         </div>
                         <div className="d-flex justify-content-end">
-                        <Button style={{ background: '#3e2d68', border: 'none' }} className="mt-2" type="submit">Save</Button>
+                            <Button style={{ background: '#3e2d68', border: 'none' }} className="mt-2" type="submit">Save</Button>
+                        </div>
+                    </form>
+                </Col>
+                <Col md={8} className={`store ${active == 4 ? 'd-block' : 'd-none'} `}>
+                    <form>
+                        <div className="store detail">
+                            <Card>
+                                <Card.Body>
+                                    <Card.Title>Carriers</Card.Title>
+                                    <Row xs={1} md={1} className="g-4 mt-2">
+                                        <Col md={12}>
+                                            <p>Domestic Carriers</p>
+                                            <table className="shipRates-Table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Carrier</th>
+                                                        <th>Mode</th>
+                                                        <th>weight(min)</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td rowSpan = '3'>Bludart</td>
+                                                        <td>Standard</td>
+                                                        <td>47</td>
+                                                        <td><FaThumbsUp/></td>
+                                                    </tr>
+                                                    <tr>                                                    
+                                                        <td>Economy</td>
+                                                        <td>47</td>
+                                                        <td><FaThumbsUp/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Cargo</td>
+                                                        <td>3kg</td>
+                                                        <td><FaThumbsUp/></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </Col>
+                                    </Row>
+                                </Card.Body>
+                            </Card>
+                        </div>
+                        <div className="d-flex justify-content-end">
+                            <Button style={{ background: '#3e2d68', border: 'none' }} className="mt-2" type="submit">Save</Button>
                         </div>
                     </form>
                 </Col>
