@@ -11,6 +11,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { jsPDF } from 'jspdf'; //or use your library of choice here
 import autoTable from 'jspdf-autotable';
 import { columns,data } from '/public/data';
+import { FaSquareCheck } from 'react-icons/fa6';
 
 const handleExportRows = (rows) => {
   const rowData = rows.map((row) => row.original);
@@ -18,7 +19,7 @@ const handleExportRows = (rows) => {
   download(csvConfig)(csv);
 };
 
-const Inventory = () => {
+const PlacedOrders = () => {
   const handleExportRowsPDF = (rows) => {
     const doc = new jsPDF();
     const tableData = rows.map((row) => Object.values(row.original));
@@ -60,7 +61,7 @@ const Inventory = () => {
           onClick={() => handleExportRowsPDF(table.getSelectedRowModel().rows)}
           startIcon={<FileDownloadIcon />}
         >
-          Export Selected Rows PDF
+          Export  PDF
         </Button>
         <Button
           disabled={
@@ -70,7 +71,17 @@ const Inventory = () => {
           onClick={() => handleExportRows(table.getSelectedRowModel().rows)}
           startIcon={<FileDownloadIcon />}
         >
-          Export Selected Rows
+          Export EXCEL
+        </Button>
+        <Button
+          disabled={
+            !table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()
+          }
+          //only export selected rows
+          onClick={() => handleExportRows(table.getSelectedRowModel().rows)}
+          startIcon={<FaSquareCheck />}
+        >
+          Cencel Orders
         </Button>
       </Box>
     ),
@@ -79,4 +90,4 @@ const Inventory = () => {
   return <MaterialReactTable table={table} />;
 };
 
-export default  Inventory;
+export default PlacedOrders;

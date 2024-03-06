@@ -25,10 +25,10 @@ const schmea = Yup.object().shape({
 const CuponModel = (props) => {
     const [active, setActive] = React.useState(1);
 
-    const getcuponcode = () => {
+    const getcouponcode = () => {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
         let code = '';
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < 9; i++) {
             code += characters[Math.floor(Math.random() * characters.length)];
         }
         Formik.setFieldValue('coupen_Code', code);
@@ -91,8 +91,8 @@ const CuponModel = (props) => {
                                                 <div className="text-danger">{Formik.errors.coupen_Code}</div>
                                             ) : (null)}
                                         </Col>
-                                        <Col md={3} className="mt-auto mb-0 cupons-button">
-                                            <Button type="button" onClick={() => getcuponcode()} className="mt-auto border-0" style={{ background: '#3e2d68' }}>Generate Coupon</Button>
+                                        <Col md={3} className="mt-auto mb-0 coupons-button">
+                                            <Button type="button" onClick={() => getcouponcode()} className="mt-auto border-0" style={{ background: '#3e2d68' }}>Generate Coupon</Button>
                                         </Col>
                                         <Col md={12}>
                                             <Form.Label>discription</Form.Label>
@@ -287,7 +287,7 @@ const CuponModel = (props) => {
                             </Card>
                         </Col>
                     </Row>
-                    <div className="d-flex justify-content-end mt-3 mb-0 cupons-button">
+                    <div className="d-flex justify-content-end mt-3 mb-0 coupons-button">
                 <Button type="submit" style={{ background: '#3e2d68', border: 'none' }}>Publish coupon</Button>
                     </div>
                 </form>
