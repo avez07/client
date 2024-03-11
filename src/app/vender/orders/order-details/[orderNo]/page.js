@@ -12,11 +12,11 @@ const OrderDetails = ({ params }) => {
     return (
         <>
             <h3 className="mb-4">Order Details #{params.orderNo}</h3>
-            <div className="d-flex justify-content-between" style={{ width: '100%' }}>
+            <div className="d-flex justify-content-between" style={{ width: '99%' }}>
                 <div className="orderDetails" style={{ width: '65%' }}>
                     <Row xs={1} md={1} className="g-4">
                         <Col key={1}>
-                            <Card>
+                            <Card style={{overflowX:'auto'}}>
                                 <Card.Body className="p-0">
                                     <p className="text-capitalize fw-semibold m-0 p-3 fs-5">Order details</p>
                                     <div id='orderTable'>

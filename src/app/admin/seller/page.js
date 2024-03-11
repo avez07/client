@@ -18,14 +18,14 @@ import { RiCheckDoubleLine } from 'react-icons/ri';
 import { HiMiniReceiptRefund } from 'react-icons/hi2';
 import { MdDangerous } from 'react-icons/md';
 
-console.log(columns);
+//console.log(columns);
 const handleExportRows = (rows) => {
     const rowData = rows.map((row) => row.original);
     const csv = generateCsv(csvConfig)(rowData);
     download(csvConfig)(csv);
 };
 
-const Example = () => {
+const Seller = () => {
     const handleExportRowsPDF = (rows) => {
         const doc = new jsPDF();
         const tableData = rows.map((row) => Object.values(row.original));
@@ -85,36 +85,7 @@ const Example = () => {
 
     return (
         <>
-            <div className='mb-5'>
-                <Card style={{ width: '100%' }}>
-                    <Card.Body className='d-flex justify-content-between py-4'>
-                        <div className='orders_statics d-flex'>
-                            <div className='order-status-value d-flex flex-column'>
-                                <span className='order-track-no'>56</span><span className='order-status text-muted text-capitalize'>pending Payments</span>
-                            </div>
-                            <div className='order-status-icon'><FaClockRotateLeft /></div>
-                        </div>
-                        <div className='orders_statics d-flex'>
-                            <div className='order-status-value d-flex flex-column'>
-                                <span className='order-track-no'>27</span><span className='order-status text-muted text-capitalize'>Unfulfilled</span>
-                            </div>
-                            <div className='order-status-icon'><MdDangerous /></div>
-                        </div>
-                        <div className='orders_statics d-flex'>
-                            <div className='order-status-value d-flex flex-column'>
-                                <span className='order-track-no'>1249</span><span className='order-status text-muted text-capitalize'>Completed</span>
-                            </div>
-                            <div className='order-status-icon'><RiCheckDoubleLine /></div>
-                        </div>
-                        <div className='orders_statics d-flex'>
-                            <div className='order-status-value d-flex flex-column'>
-                                <span className='order-track-no'>13</span><span className='order-status text-muted text-capitalize'>Refunded</span>
-                            </div>
-                            <div className='order-status-icon'><HiMiniReceiptRefund /></div>
-                        </div>
-                    </Card.Body>
-                </Card>
-            </div>
+           
             <div>
                 <MaterialReactTable table={table} />
             </div>
@@ -124,4 +95,4 @@ const Example = () => {
     );
 };
 
-export default Example;
+export default Seller;
