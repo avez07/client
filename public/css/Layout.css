@@ -387,6 +387,8 @@ color: #fff !important;
 }
 .content-night input{
     color: #fcfcfcfc;
+    background-color: #0c1220 !important;
+    border: none;
 }
 
 .content-night .add-name::placeholder{

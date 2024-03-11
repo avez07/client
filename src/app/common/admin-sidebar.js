@@ -38,7 +38,7 @@ const Sidebar = ({ isOpen, isNightMode }) => {
               <Link href="/admin" onClick={()=>handleactive(1)}><span className='menu-items'><FaHome /></span>Dashboard</Link>
             </li>
             <li className={`${active == 2? 'active': ''}`}>
-              <Link href="/admin/seller" onClick={()=>handleactive(2)} ><span className="menu-items"><FaBoxOpen /></span>Seller<span className="ms-auto right-arrow"><FaAngleRight/></span></Link>
+              <Link href="/admin/seller" onClick={()=>handleactive(2)} ><span className="menu-items"><FaBoxOpen /></span>Seller</Link>
             </li>
             <li className={`${active == 3? 'active': ''}`} >
               <Link href="/admin/orders" onClick={()=>handleactive(3)} ><span className="menu-items"><FaCartPlus /></span>Orders<span className="ms-auto right-arrow"><FaAngleRight/></span></Link>
