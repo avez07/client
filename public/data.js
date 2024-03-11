@@ -1,43 +1,43 @@
 
 import React from "react";
 import {
-  MaterialReactTable,
-  createMRTColumnHelper,
-  useMaterialReactTable,
+	MaterialReactTable,
+	createMRTColumnHelper,
+	useMaterialReactTable,
 } from 'material-react-table';
 
 
 // console.log(res); 
 const columnHelper = createMRTColumnHelper();
 const columns = [
-  columnHelper.accessor('name', {
-    header: 'Name',
-    size: 40,
-  }),
-  columnHelper.accessor('phone', {
-    header: 'Phone No.',
-    size: 40,
-  }),
-  columnHelper.accessor('email', {
-    header: 'Email ID',
-    size: 120,
-  }),
-  columnHelper.accessor('address', {
-    header: 'Address',
-    size: 120,
-  }),
-  columnHelper.accessor('postalZip', {
-    header: 'Pincode',
-    size: 120,
-  }),
-  columnHelper.accessor('region', {
-    header: 'Region',
-    size: 120,
-  }),
-  columnHelper.accessor('country', {
-    header: 'Country',
-    size: 120,
-  }),
+	columnHelper.accessor('name', {
+		header: 'Name',
+		size: 40,
+	}),
+	columnHelper.accessor('phone', {
+		header: 'Phone No.',
+		size: 40,
+	}),
+	columnHelper.accessor('email', {
+		header: 'Email ID',
+		size: 120,
+	}),
+	columnHelper.accessor('address', {
+		header: 'Address',
+		size: 120,
+	}),
+	columnHelper.accessor('postalZip', {
+		header: 'Pincode',
+		size: 120,
+	}),
+	columnHelper.accessor('region', {
+		header: 'Region',
+		size: 120,
+	}),
+	columnHelper.accessor('country', {
+		header: 'Country',
+		size: 120,
+	}),
 
 ];
 
@@ -88,7 +88,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -133,7 +133,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -178,7 +178,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -223,7 +223,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -268,7 +268,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -313,7 +313,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -358,7 +358,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -403,7 +403,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -448,7 +448,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -493,7 +493,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -538,7 +538,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -583,7 +583,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -628,7 +628,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -673,7 +673,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -718,7 +718,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -763,7 +763,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -808,7 +808,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -853,7 +853,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -898,7 +898,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -943,7 +943,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -988,7 +988,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1033,7 +1033,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1078,7 +1078,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1123,7 +1123,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1168,7 +1168,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1213,7 +1213,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1258,7 +1258,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1303,7 +1303,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1348,7 +1348,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1393,7 +1393,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1438,7 +1438,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1483,7 +1483,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1528,7 +1528,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1573,7 +1573,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1618,7 +1618,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1663,7 +1663,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1708,7 +1708,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1753,7 +1753,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1798,7 +1798,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1843,7 +1843,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1888,7 +1888,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1933,7 +1933,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -1978,7 +1978,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2023,7 +2023,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2068,7 +2068,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2113,7 +2113,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2158,7 +2158,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2203,7 +2203,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2248,7 +2248,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2293,7 +2293,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2338,7 +2338,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2383,7 +2383,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2428,7 +2428,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2473,7 +2473,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2518,7 +2518,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2563,7 +2563,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2608,7 +2608,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2653,7 +2653,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2698,7 +2698,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2743,7 +2743,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2788,7 +2788,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2833,7 +2833,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2878,7 +2878,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2923,7 +2923,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -2968,7 +2968,7 @@ const data = [
 		"region": "North-East Region",
 		"country": "Philippines"
 	},
-  {
+	{
 		"name": "Thomas Byers",
 		"phone": "(252) 780-1398",
 		"email": "arcu@aol.com",
@@ -3014,4 +3014,4 @@ const data = [
 		"country": "Philippines"
 	},
 ]
-export  {columns,data}
+export { columns, data }
