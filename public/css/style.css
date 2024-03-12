@@ -647,4 +647,5 @@ border: 1px solid #d3d3d3;
   background-color: #dcf6e8 !important;
   color: #40cd7f !important;
 }
-.content-night .seller-status{background-color: #2d4b4f !important;}
+.content-night .seller-status , .content-night .order-cart{background-color: #2d4b4f !important;}
+.content-night .order-cart svg{color: #40cd7f !important;}

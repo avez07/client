@@ -8,10 +8,101 @@ import { Col, Row, Card, Form, Button } from 'react-bootstrap'
 import Image from "next/image";
 import defaul_logp from '/public/assets/Default_pfp.svg.png'
 import { BsCart3, BsCurrencyDollar } from "react-icons/bs";
+import {
+    MaterialReactTable,
+    createMRTColumnHelper,
+    useMaterialReactTable,
+  } from 'material-react-table';
+  import { mkConfig, generateCsv, download } from 'export-to-csv';
+  import { Box } from '@mui/material';
+  import Button2 from '@mui/material/Button';
+  import FileDownloadIcon from '@mui/icons-material/FileDownload';
+  import { jsPDF } from 'jspdf'; //or use your library of choice here
+  import autoTable from 'jspdf-autotable';
+  import { columns, data } from '/public/data.js';
+  import { FaClockRotateLeft } from 'react-icons/fa6';
+  import { FaClock, FaUser } from 'react-icons/fa';
+  import { RiCheckDoubleLine } from 'react-icons/ri';
+  import { HiMiniReceiptRefund } from 'react-icons/hi2';
+  import { MdDangerous } from 'react-icons/md';
+  console.log(columns)
+  const handleExportRows = (rows) => {
+    const rowData = rows.map((row) => row.original);
+    const csvConfig = { header: ['name','age','country'] };
+    const csv = generateCsv(csvConfig)(rowData);
+    download(csvConfig)(csv);
+  };
+  const handleExportRowsPDF = (rows) => {
+    const doc = new jsPDF();
+    const tableData = rows.map((row) => Object.values(row.original));
+    const tableHeaders = columns.map((c) => c.header);
+
+    autoTable(doc, {
+      head: [tableHeaders],
+      body: tableData,
+    });
+
+    doc.save('mrt-pdf-example.pdf');
+  };
+  
+
+
 const OrderDetails = ({ params }) => {
 
     const [active, setActive] = useState(1);
     const [showPass, setShowPass] = useState(false)
+
+    const table = useMaterialReactTable({
+        columns,
+        data,
+        enableRowSelection: true,
+        enableColumnOrdering: true,
+        enableStickyHeader: true,
+        columnFilterDisplayMode: 'popover',
+        paginationDisplayMode: 'pages',
+        positionToolbarAlertBanner: 'bottom',
+        renderTopToolbarCustomActions: ({ table }) => (
+          <Box
+            sx={{
+              display: 'flex',
+              gap: '16px',
+              padding: '8px',
+              flexWrap: 'wrap',
+              color: 'red'
+            }}
+          >
+    
+            <Button2
+              disabled={
+                !table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()
+              }
+              //only export selected rows
+              onClick={() => handleExportRowsPDF(table.getSelectedRowModel().rows)}
+            >
+              Export  PDF
+            </Button2>
+            <Button2
+              disabled={
+                !table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()
+              }
+              //only export selected rows
+              onClick={() => handleExportRows(table.getSelectedRowModel().rows)}
+            >
+              Export EXCEL
+            </Button2>
+            <Button2
+              disabled={
+                !table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()
+              }
+              //only export selected rows
+              onClick={() => handleExportRows(table.getSelectedRowModel().rows.name)}
+            >
+              PayAll
+            </Button2>
+          </Box>
+        ),
+      });
+    
     return (
         <>
             <h3 className="mb-4">Seller Details #{params.sellerID}</h3>
@@ -38,10 +129,11 @@ const OrderDetails = ({ params }) => {
                                     <div className="pt-3">
                                         <div className="text-capitalize mb-2 fw-semibold">Details</div>
                                         <div className="text-capitalize">
-                                            <div className="d-flex mt-2"><span style={{ width: '30%' }}>Billing email </span> <span className="text-lowercase">: testemail@gmail.com</span></div>
-                                            <div className="d-flex mt-2"><span style={{ width: '30%' }}>contact</span> <span>: 999999999</span></div>
                                             <div className="d-flex mt-2"><span style={{ width: '30%' }}>UserName </span> <span className="text-lowercase">: Jhon Tuttle</span></div>
-                                            <div className="d-flex mt-2"><span style={{ width: '30%' }}>status</span> <span className="this-week seller-status">Active</span></div>
+                                            <div className="d-flex mt-2"><span style={{ width: '30%' }}>Billing email </span> <span className="text-lowercase">: testemail@gmail.com</span></div>
+                                            <div className="d-flex mt-2"><span style={{ width: '30%' }}>status :</span> <span className="this-week seller-status">Active</span></div>
+                                            <div className="d-flex mt-2"><span style={{ width: '30%' }}>contact</span> <span>: 999999999</span></div>
+                                            <div className="d-flex mt-2"><span style={{ width: '30%' }}>Country</span> <span>: INDIA</span></div>
                                         </div>
                                     </div>
                                 </Card.Body>
@@ -161,6 +253,9 @@ const OrderDetails = ({ params }) => {
                                 </Card.Body>
                             </Card>
                             </Row>
+                        </Col>
+                        <Col key={4} className={`${active == 3 ? 'd-block' : 'd-none'} tab-item`}>
+                            <MaterialReactTable table={table}/>
                         </Col>
                     </Row>
                 </div>

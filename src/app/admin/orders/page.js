@@ -19,6 +19,9 @@ import { HiMiniReceiptRefund } from 'react-icons/hi2';
 import { MdDangerous } from 'react-icons/md';
 
 console.log(columns);
+const csvConfig = {
+  header: ['Name', 'Age', 'Location'],
+};
 const handleExportRows = (rows) => {
   const rowData = rows.map((row) => row.original);
   const csv = generateCsv(csvConfig)(rowData);
