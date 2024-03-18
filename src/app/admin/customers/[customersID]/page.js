@@ -106,7 +106,7 @@ const OrderDetails = ({ params }) => {
 
     return (
         <>
-            <h3 className="mb-4">Seller Details #{params.sellerID}</h3>
+            <h3 className="mb-4">Customer Details #{params.customersID}</h3>
             <div className="d-flex justify-content-between" style={{ width: '99%' }}>
                 <div className="orderDetails" style={{ width: '33%' }}>
                     <Row xs={1} md={1} className="g-4">
@@ -125,14 +125,14 @@ const OrderDetails = ({ params }) => {
                                     </div>
                                     <div className="d-flex align-items-center justify-content-between pb-3 order-info" style={{ borderBottom: '2px dashed #ddd' }}>
                                         <span className="order-cart"><BsCart3 /></span><span className="fw-semibold ms-2 text-muted"> 12 Orders</span>
-                                        <span className="order-cart"><BsCurrencyDollar /></span><span className="fw-semibold ms-2 text-muted"> $12389 Pending</span>
+                                        <span className="order-cart"><BsCurrencyDollar /></span><span className="fw-semibold ms-2 text-muted"> $12389 spent</span>
                                     </div>
                                     <div className="pt-3">
                                         <div className="text-capitalize mb-2 fw-semibold">Details</div>
                                         <div className="text-capitalize">
                                             <div className="d-flex mt-2"><span style={{ width: '30%' }}>UserName </span> <span className="text-lowercase">: Jhon Tuttle</span></div>
-                                            <div className="d-flex mt-2"><span style={{ width: '30%' }}>Billing email </span> <span className="text-lowercase">: testemail@gmail.com</span></div>
-                                            <div className="d-flex mt-2"><span style={{ width: '30%' }}>status :</span> <span className="this-week seller-status">Active</span></div>
+                                            <div className="d-flex mt-2"><span style={{ width: '30%' }}> email </span> <span className="text-lowercase">: testemail@gmail.com</span></div>
+                                            <div className="d-flex mt-2"><span style={{ width: '30%' }}>status :</span> <span className="status">:<span className="this-week seller-status">Active</span></span></div>
                                             <div className="d-flex mt-2"><span style={{ width: '30%' }}>contact</span> <span>: 999999999</span></div>
                                             <div className="d-flex mt-2"><span style={{ width: '30%' }}>Country</span> <span>: INDIA</span></div>
                                         </div>
@@ -149,7 +149,7 @@ const OrderDetails = ({ params }) => {
                             <ul className="setting-list-group d-flex">
                                 <li onClick={(e) => setActive(1)} className={`${active == 1 ? 'active' : ''}`}>Overview</li>
                                 <li onClick={(e) => setActive(2)} className={`${active == 2 ? 'active' : ''}`}>Security</li>
-                                <li onClick={(e) => setActive(3)} className={`${active == 3 ? 'active' : ''}`}>Pending Payment</li>
+                                <li onClick={(e) => setActive(3)} className={`${active == 3 ? 'active' : ''}`}>Pending Orders</li>
                                 <li onClick={(e) => setActive(4)} className={`${active == 4 ? 'active' : ''}`}>Coupens</li>
                             </ul>
                         </Col>
@@ -173,7 +173,7 @@ const OrderDetails = ({ params }) => {
                                             <p className="fs-5 fw-semibold text-capitalize"><span className="order-cart me-2 d-inline-block dicount-icon"><CiDiscount1 /></span>Coupons</p>
                                             <div className="d-flex justify-content-between text-capitalize">
                                                 <div className="d-flex flex-column"><span>total discount</span><span className="mt-2 fw-semibold">$1298</span></div>
-                                                <div className="d-flex flex-column"><span>total created</span><span className="mt-2 fw-semibold text-end">21</span></div>
+                                                <div className="d-flex flex-column"><span>total Used</span><span className="mt-2 fw-semibold text-end">21</span></div>
                                             </div>
                                         </Card.Body>
                                     </Card>
@@ -181,9 +181,9 @@ const OrderDetails = ({ params }) => {
                                 <Col>
                                     <Card>
                                         <Card.Body>
-                                            <p className="fs-5 fw-semibold text-capitalize"><span className="order-cart me-2 d-inline-block dicount-icon"><CiDiscount1 /></span>Pending payment</p>
+                                            <p className="fs-5 fw-semibold text-capitalize"><span className="order-cart me-2 d-inline-block dicount-icon"><CiDiscount1 /></span>Total Spent</p>
                                             <div className="text-capitalize">
-                                                <div className=""><span className="mt-2 me-2 fs-4 fw-semibold" style={{ color: '#362465' }}>$12389</span><span>Credit Left</span></div>
+                                                <div className=""><span className="mt-2 me-2 fs-4 fw-semibold" style={{ color: '#362465' }}>$12389</span><span> Spent</span></div>
                                             </div>
                                             <div className="text-muted mt-2 muted-text">Account balance for Previous purchase</div>
                                         </Card.Body>
@@ -268,13 +268,6 @@ const OrderDetails = ({ params }) => {
                                                 <Card className="copen-card">
                                                     <Card.Body className="p-2">
                                                         <Card.Title>BKRSKP4I7</Card.Title>
-                                                        <div>
-                                                            <Form.Check // prettier-ignore
-                                                                type="switch"
-                                                                className="cuopens-switch"
-                                                                value='1'
-                                                            />
-                                                        </div>
                                                         <div className="cupon-item">
                                                             <p className="subtag mb-2 fw-semibold">15% off on order above  Rs.300.</p>
                                                             <div className="d-flex justify-content-between">
@@ -293,7 +286,7 @@ const OrderDetails = ({ params }) => {
                         </Col>
                     </Row>
                 </div>
-            </div >
+            </div>
         </>
     )
 }

@@ -2,7 +2,7 @@
 import React from "react";
 import CouponModel from "@/app/common/cupoan-model";
 import { Row, Col, Container, Card, Form, Button, Alert } from 'react-bootstrap'
-import { FaBell, FaThumbsUp,FaShareAlt } from "react-icons/fa";
+import { FaBell, FaThumbsUp, FaShareAlt } from "react-icons/fa";
 import { HiOutlineShare } from "react-icons/hi";
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -268,8 +268,8 @@ const Setting = () => {
                         </div>
                     </form>
                 </Col>
-                <Col md={8} className={`store ${active == 2 ? 'd-block' : 'd-none'} `}>
-                    <div className="store detail">
+                <Col md={8} className={`cuopens ${active == 2 ? 'd-block' : 'd-none'} `}>
+                    <div className="store-detail">
                         <div className="coupons-button d-flex justify-content-end">
                             <Button style={{ background: '#3e2d68', border: 'none', fontSize: '15px' }} onClick={() => setModalShow(true)} className="mb-3 text-capitalize" >create coupons</Button>
                             <CouponModel show={modalShow} onHide={() => setModalShow(false)} />
@@ -283,6 +283,13 @@ const Setting = () => {
                                             <Card className="copen-card">
                                                 <Card.Body className="p-2">
                                                     <Card.Title>BKRSKP4I7</Card.Title>
+                                                    <div>
+                                                        <Form.Check // prettier-ignore
+                                                            type="switch"
+                                                            className="cuopens-switch"
+                                                            value='1'
+                                                        />
+                                                    </div>
                                                     <div className="cupon-item">
                                                         <p className="subtag mb-2 fw-semibold">15% off on order above  Rs.300.</p>
                                                         <div className="d-flex justify-content-between">
@@ -290,7 +297,7 @@ const Setting = () => {
                                                             <div><p className="subtag">Total revenew:</p><p className="fw-bold">&#8377;0</p></div>
                                                         </div>
                                                     </div>
-                                                    <div className="share-button text-capitalize text-center d-flex justify-content-center align-items-center py-1" style={{cursor:'pointer'}}><HiOutlineShare/> share now </div>
+                                                    <div className="share-button text-capitalize text-center d-flex justify-content-center align-items-center py-1" style={{ cursor: 'pointer' }}><HiOutlineShare /> share now </div>
                                                 </Card.Body>
                                             </Card>
                                         </Col>

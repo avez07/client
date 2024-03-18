@@ -649,3 +649,6 @@ border: 1px solid #d3d3d3;
 }
 .content-night .seller-status , .content-night .order-cart{background-color: #2d4b4f !important;}
 .content-night .order-cart svg{color: #40cd7f !important;}
+.cuopens-switch{position: absolute; right: 0; top: 0;}
+.cuopens-switch input {cursor: pointer;}
+.content-night .cuopens-switch input {background-color: #91959e !important ;}
