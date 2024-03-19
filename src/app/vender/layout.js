@@ -10,7 +10,6 @@ import transparant from '/public/assets/transparent-backgroung.png'
 // import '../globals.css'
 import '/public/css/Layout.css'
 import '/public/css/style.css'
-import '/public/css/App.css'
 import '/public/css/datatable.css'
 
 

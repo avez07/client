@@ -1,0 +1,25 @@
+/* components/ProductImage.module.css */
+.productImageContainer {
+    position: relative;
+    overflow: hidden;
+    width: 300px; /* Set the desired width for your product image container */
+    height: 300px; /* Set the desired height for your product image container */
+  }
+  
+  .productImage {
+    width: 100%;
+    height: auto;
+  }
+  
+  .imageZoom {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%; /* Set the zoomed image width */
+    height: 200%; /* Set the zoomed image height */
+    background-size: cover;
+    pointer-events: none;
+    opacity: 0.5; /* Adjust the opacity of the zoomed image overlay */
+    z-index: 1;
+  }
+  

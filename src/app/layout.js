@@ -5,7 +5,6 @@ import NextTopLoader from 'nextjs-toploader'
 // import './globals.css'
 import '/public/css/style.css'
 import '/public/css/Layout.css'
-import '/public/css/App.css'
 import '/public/css/datatable.css'
 
 import 'bootstrap/dist/css/bootstrap.min.css';

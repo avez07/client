@@ -5,10 +5,9 @@ import Footer from '../common/footer'
 import { Inter } from 'next/font/google'
 import {usePathname} from 'next/navigation'
 // import './globals.css'
-import '../../../public/css/style.css'
-import '../../../public/css/Layout.css'
-import '../../../public/css/App.css'
-import '../../../public/css/datatable.css'
+import '/public/css/style.css'
+import '/public/css/Layout.css'
+import '/public/css/datatable.css'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
