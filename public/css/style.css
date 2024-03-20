@@ -670,3 +670,32 @@ position: absolute;
 height: 258%;
 width: 146%;
 }
+.star-contain{
+  background: green;
+  color: white;
+  padding: 0 3px 0 5px;
+  border-radius: 4px;
+  font-size: 14px;
+  display: flex;
+  width: 45px;
+  align-items: center;
+}
+.deals-span{
+  background: #cc0c39;
+  border-radius: 7px;
+  padding: 4px 8px;
+  font-size: 13px;
+}
+.rs-symbols{
+  font-size: 18px;
+}
+.sizetab{
+  background-color: #f1efef;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin: 7px;
+}
+.sizetab:hover{
+  border: 1px solid #ccc;
+}
