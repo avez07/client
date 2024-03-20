@@ -654,4 +654,19 @@ border: 1px solid #d3d3d3;
 .content-night .cuopens-switch input {background-color: #91959e !important ;}
 .single-page-imge-view{margin: 10px; border-radius: 7px; cursor: pointer;}
 .single-page-imgcollect .active{border: 2px solid #989898;}
-.hover-mouse{position: absolute; background-color: red; height: 75px;width: 150px;}
+.hover-mouse{position: absolute; background-color: #e3e3e363; height: 120px;width: 240px;}
+.zoomin-img{
+  max-height: 266px;
+  overflow: hidden;
+  position: relative;
+  top: 25%;
+  width: 100%;
+  height: 100vh;
+  background: #fff;
+}
+.zoomimg-partent{max-height: 226px; height: 100vh; position: absolute; right: 1%; width: 50%;}
+.zoomin-img img{
+position: absolute;
+height: 258%;
+width: 146%;
+}
