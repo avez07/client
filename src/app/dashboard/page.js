@@ -34,12 +34,16 @@ import white from "/public/assets/white.jpg";
 import red from "/public/assets/red.jpg";
 import brown from "/public/assets/brown.jpg";
 import blue from "/public/assets/blue.jpg";
+import review_1 from "/public/assets/review/review-1.jpg";
+import review_2 from "/public/assets/review/review-2.jpg";
+import review_3 from "/public/assets/review/review-3.jpg";
+import review_4 from "/public/assets/review/review-4.jpg";
 
 function home() {
   return (
     <>
-      <Container fluid className="px-0 py-3" style={{ background: "#f7f0f1" }}>
-        <Carousel className="mt-4">
+      <Container fluid className="px-0 pb-3" style={{ background: "#f7f0f1" }}>
+        <Carousel className="">
           <Carousel.Item>
             <Image src={carousal_img_1}  priority={true} className="img-fluid" alt="" />
           </Carousel.Item>
@@ -261,6 +265,65 @@ function home() {
                      
           </Row>
         </div>
+        <div className="mx-4  px-4 py-3">
+        <div className="text-center my-4 text-capitalize head">
+          <h3>Read some of our recent blogs</h3>
+        </div>
+        <Row xs={2} md={4} className="g-4">
+          <Col key={1}>
+            <Card>
+              <Card.Img variant="top" className="p-2" src={review_1.src} />
+              <Card.Body>
+                <Card.Title>Amazing Cake!</Card.Title>
+                <Card.Text>
+                  I ordered a cake from this website, and it was simply amazing!
+                  The flavor, decoration, and service were top-notch. I&apos;ll be
+                  ordering again for sure
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col key={2}>
+            <Card>
+              <Card.Img variant="top" className="p-2" src={review_2.src} />
+              <Card.Body>
+                <Card.Title>Impressive Cake!</Card.Title>
+                <Card.Text>
+                  I was thoroughly impressed. The cake was delicious, and the
+                  design was stunning. It was a hit at our event, and the
+                  ordering process was a breeze. I highly recommend it!
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col key={3}>
+            <Card>
+              <Card.Img variant="top" className="p-2" src={review_3.src} />
+              <Card.Body>
+                <Card.Title>Impressive Cake Selection!</Card.Title>
+                <Card.Text>
+                  I must say, the selection they offer is truly impressive. The
+                  cake I chose was not only beautiful but also scrumptious.
+                  Highly recommended!
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col key={4}>
+            <Card>
+              <Card.Img variant="top" className="p-2" src={review_4.src} />
+              <Card.Body>
+                <Card.Title>Exquisite Cake and Outstanding Service!</Card.Title>
+                <Card.Text>
+                  The cake was not only delicious but also beautifully
+                  presented. The service and delivery were top-notch. Highly
+                  recommended!
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </div>
       </Container>
     </>
   );

@@ -19,8 +19,8 @@ const playball = Playball({ weight: '400', style: 'normal', subsets: ['latin'], 
 function Header() {
   return (
     // <Navbar expand="lg" className=" py-3 fixed-top" style={{ background: "#f7c8d4", height: '80px' }}>
-    <Container fluid>
-      <Navbar expand='lg' className='fixed-top justify-content-between px-2' style={{ background: "#f7c8d4", height: '80px' }}>
+    <Container fluid className='p-0'>
+      <Navbar expand='lg' className=' justify-content-between px-2' style={{ background: "#f7c8d4", height: '80px' }}>
         <Link href={'/dashboard'} style={{ width: '21%' }}><Image src={brandImage} priority={true} alt='bramg img' height={70} /><span className={`${playball.className} text-dark website-name`}>Sweet delight</span></Link>
         <Form className="d-flex justify-content-around" style={{ width: '50%' }}>
           <div style={{ width: '60%' }}>
