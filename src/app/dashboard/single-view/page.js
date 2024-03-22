@@ -41,15 +41,17 @@ const SinglePage = () => {
     const settings = {
         dots: true,
         infinite: true,
-        slidesToShow: 2,
-        slidesToScroll: 1,
-        autoplay: false,
-        speed: 500,
-        autoplaySpeed: 3000,
-        cssEase: "linear",
+        focusOnSelect: true,
+        slidesToShow: 3,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 2000,
+    pauseOnHover: true,
         className: "center",
         centerMode: true,
-    };
+        centerPadding: "0px", // Adjust the padding to 0 to remove any additional padding
+      };
+      
 
 
     return (
@@ -153,8 +155,8 @@ const SinglePage = () => {
                     <div className="slider-container">
                         <Slider {...settings}>
                             {Array(6).fill().map((_, index) => (
-                                <div key={index}>
-                                    <Card>
+                                <div key={index} className="mx-3">
+                                    <Card style={{width:'92%'}}>
                                         <Card.Body>
                                             <div className="d-flex">
                                                 <Image src={default_image} priority={true} height={40} width={40} alt="review" />
