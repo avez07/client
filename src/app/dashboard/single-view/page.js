@@ -4,8 +4,8 @@ import Image from "next/image";
 import Slider from "react-slick";
 import { FaStar } from "react-icons/fa";
 import Link from 'next/link'
-import { FaPlus, FaMinus } from "react-icons/fa6";
-import { Row, Col, Container, Button, Card, Form } from 'react-bootstrap'
+import { FaPlus, FaMinus, FaChevronRight, FaChevronLeft } from "react-icons/fa6";
+import { Row, Col, Container, Button, Card, Form,ProgressBar } from 'react-bootstrap'
 import cake from '/public/assets/red.jpg';
 import default_image from '/public/assets/Default_pfp.svg.png'
 import "slick-carousel/slick/slick.css";
@@ -38,21 +38,18 @@ const SinglePage = () => {
         const hoverY = Math.min(Math.max(0, offsetY), maxY);
         setHoverPosition({ x: hoverX, y: hoverY });
     };
-    const settings = {
-        dots: true,
-        infinite: true,
-        focusOnSelect: true,
-        slidesToShow: 3,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 2000,
-    pauseOnHover: true,
-        className: "center",
-        centerMode: true,
-        centerPadding: "0px", // Adjust the padding to 0 to remove any additional padding
-      };
-      
 
+    const CustomNextArrow = ({ onClick, className }) => (
+        <div className="custom-next-arrow" onClick={onClick}>
+            <FaChevronRight />
+        </div>
+    );
+
+    const CustomPrevArrow = ({ onClick }) => (
+        <div className="custom-prev-arrow" onClick={onClick}>
+            <FaChevronLeft />
+        </div>
+    );
 
     return (
         <Container fluid className="my-4">
@@ -151,12 +148,63 @@ const SinglePage = () => {
                 </Col>
             </Row>
             <Row xs={1} className="g-4">
-                <Col style={{overflow:'hidden'}}>
+                <Col style={{ overflow: 'hidden' }}>
+                    <div className="fw-bold mt-3 ms-3 mb-4 fs-4">Customers also viewed: </div>
                     <div className="slider-container">
-                        <Slider {...settings}>
+                        <Slider {...{
+                            dots: false,
+                            infinite: true,
+                            focusOnSelect: true,
+                            slidesToShow: 6,
+                            slidesToScroll: 1,
+                            className: "center",
+                            centerMode: true,
+                            centerPadding: "0px",
+                            nextArrow: <CustomNextArrow />,
+                            prevArrow: <CustomPrevArrow />
+
+                        }}>
                             {Array(6).fill().map((_, index) => (
                                 <div key={index} className="mx-3">
-                                    <Card style={{width:'92%'}}>
+                                    <Card style={{ width: '92%' }}>
+                                        <Image src={cake} priority={true} style={{ height: "auto", width: "100%" }} alt="review" />
+                                        <Card.Body>
+                                            <div className="other-options">
+                                                <a href="#">
+                                                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since
+                                                </a>
+                                            </div>
+                                            <div className="fs-5">&#8377;299 <span className="text-muted fs-6">onwords</span></div>
+                                            <div className="review-body">
+                                                <span className="text-warning"><FaStar /><FaStar /><FaStar /><FaStar /></span>
+                                                <span style={{ fontSize: '12px' }}><a href="#" className="ms-2">91 reviews</a></span>
+                                            </div>
+                                        </Card.Body>
+                                    </Card>
+                                </div>
+                            ))}
+                        </Slider>
+                    </div>
+                </Col>
+                <Col style={{ overflow: 'hidden', padding: '30px 0 0 0', background: '#f7f0f1' }} >
+                    <div className="fw-semibold mt-3 ms-3 mb-4 fs-4 text-capitalize">Reviws on this product: </div>
+                    <div className="slider-container reviews">
+                        <Slider {...{
+                            dots: false,
+                            infinite: true,
+                            focusOnSelect: true,
+                            slidesToShow: 3,
+                            slidesToScroll: 1,
+                            autoplay: true,
+                            autoplaySpeed: 2000,
+                            pauseOnHover: true,
+                            className: "center-review",
+                            centerMode: true,
+                            centerPadding: "0px", // Adjust the padding to 0 to remove any additional padding
+                        }}>
+                            {Array(6).fill().map((_, index) => (
+                                <div key={index} className="mx-3">
+                                    <Card style={{ width: '92%' }}>
                                         <Card.Body>
                                             <div className="d-flex">
                                                 <Image src={default_image} priority={true} height={40} width={40} alt="review" />
@@ -175,7 +223,17 @@ const SinglePage = () => {
                         </Slider>
                     </div>
                 </Col>
-
+                <Col style={{ overflow: 'hidden', padding: '30px 0 0 0', background: '#f7f0f1' }}>
+                    <div>
+                        <div className='statistics px-2' style={{ width: '50%', fontSize: '14px' }}>
+                            <div className='d-flex align-items-center justify-content-between  text-capitalize'><span>5 star</span><span className='progressbar-span'><ProgressBar now={75} /></span><span style={{ width: '13%', textAlign: 'end' }}>124</span></div>
+                            <div className='d-flex align-items-center justify-content-between my-2 text-capitalize'><span>4 star</span><span className='progressbar-span'><ProgressBar now={60} /></span><span style={{ width: '13%', textAlign: 'end' }}>40</span></div>
+                            <div className='d-flex align-items-center justify-content-between my-2 text-capitalize'><span>3 star</span><span className='progressbar-span'><ProgressBar now={45} /></span><span style={{ width: '13%', textAlign: 'end' }}>12</span></div>
+                            <div className='d-flex align-items-center justify-content-between my-2 text-capitalize'><span>2 star</span><span className='progressbar-span'><ProgressBar now={20} /></span><span style={{ width: '13%', textAlign: 'end' }}>7</span></div>
+                            <div className='d-flex align-items-center justify-content-between my-2 text-capitalize'><span>1 star</span><span className='progressbar-span'><ProgressBar now={3} /></span><span style={{ width: '13%', textAlign: 'end' }}>2</span></div>
+                        </div>
+                    </div>
+                </Col>
             </Row>
         </Container>
     )

@@ -5,9 +5,12 @@ import Row from "react-bootstrap/Row";
 import Nav from "react-bootstrap/Nav";
 import Button from 'react-bootstrap/Button';
 import Link from "next/link";
+import Image from 'next/image';
 import Container from "react-bootstrap/esm/Container";
+import { Playball } from "next/font/google"
+import brandImage from '/public/assets/wesite-logo.png'
 
-import { BsFacebook, BsInstagram, BsTwitter } from 'react-icons/bs';
+import { BsFacebook, BsInstagram, BsTwitter } from 'react-icons/bs';const playball = Playball({ weight: '400', style: 'normal', subsets: ['latin'], display: 'swap', })
 
 function footer() {
   return (
@@ -16,7 +19,7 @@ function footer() {
       <div>
         <Row xs={2} md={5} className="footer-image g-4" style={{ width: "100%" }}>
           <Col key={1}>
-            <h5>logo</h5>
+          <Link href={'/dashboard'} style={{ width: '21%' }}><Image src={brandImage} priority={true} alt='bramg img' height={70} /><span className={`${playball.className} text-dark website-name`}>Sweet delight</span></Link>
           </Col>
           <Col key={2}>
             <h5>Know us</h5>

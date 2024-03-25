@@ -704,3 +704,27 @@ width: 146%;
   height: 540px;
   overflow-y: auto;
 }
+.custom-next-arrow,.custom-prev-arrow{
+position: absolute;
+right: 0;
+top: 50%;
+font-size: 20px;
+background: #fff;
+border: 1px solid #ccb0a3;
+width: fit-content;
+z-index: 1;
+cursor: pointer;
+}
+.custom-prev-arrow{  left: 0;  top: 40%;}
+.custom-next-arrow{right: 0;  top: 40%;}
+.other-options{
+  white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.other-options a{
+  color: #000;
+  text-decoration: none;
+}
+.other-options a:hover{text-decoration: underline;}
+.reviews .slick-current .card{box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;}
