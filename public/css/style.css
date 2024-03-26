@@ -316,7 +316,6 @@ body {
   font-weight: 700;
   color: #90949d;
 }
-
 @keyframes progressBar {
   from {
     width: 0;
@@ -728,3 +727,31 @@ cursor: pointer;
 }
 .other-options a:hover{text-decoration: underline;}
 .reviews .slick-current .card{box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;}
+.review-progressbar{width: 70%;}
+.review-progressbar .progress{
+background: #fff !important;
+height: 18px !important;
+}
+.review-progressbar .progress .progress-bar{background: #f7ac03 !important;}
+.review-file-image{
+  visibility: hidden;
+  cursor: pointer;
+}
+.review-file-image::before{
+  content: " ";
+  height: 10%;
+  width: 50%;
+  display: block;
+  background-color: transparent;
+  visibility: visible;
+  position: absolute;
+  right: 25%;
+  border-radius: 7px;
+  z-index: 1;  
+}
+.add-imagebtn{
+position: absolute;
+right: 25%;
+width: 50% !important;
+}
+

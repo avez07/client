@@ -87,7 +87,7 @@ const CuponModel = (props) => {
                                                 onChange={Formik.handleChange}
                                                 name="coupen_Code"
                                             />
-                                             {Formik.touched.coupen_Code && Formik.errors.coupen_Code ? (
+                                            {Formik.touched.coupen_Code && Formik.errors.coupen_Code ? (
                                                 <div className="text-danger">{Formik.errors.coupen_Code}</div>
                                             ) : (null)}
                                         </Col>
@@ -102,7 +102,7 @@ const CuponModel = (props) => {
                                                 value={Formik.values.discription}
                                                 onChange={Formik.handleChange}
                                             />
-                                             {Formik.touched.discription && Formik.errors.discription ? (
+                                            {Formik.touched.discription && Formik.errors.discription ? (
                                                 <div className="text-danger">{Formik.errors.discription}</div>
                                             ) : (null)}
                                         </Col>
@@ -114,7 +114,7 @@ const CuponModel = (props) => {
                                                 value={Formik.values.Title}
                                                 onChange={Formik.handleChange}
                                             />
-                                             {Formik.touched.Title && Formik.errors.Title ? (
+                                            {Formik.touched.Title && Formik.errors.Title ? (
                                                 <div className="text-danger">{Formik.errors.Title}</div>
                                             ) : (null)}
                                         </Col>
@@ -138,7 +138,7 @@ const CuponModel = (props) => {
                                                 value={Formik.values.coupen_ammount}
                                                 onChange={Formik.handleChange}
                                             />
-                                             {Formik.touched.coupen_ammount && Formik.errors.coupen_ammount ? (
+                                            {Formik.touched.coupen_ammount && Formik.errors.coupen_ammount ? (
                                                 <div className="text-danger">{Formik.errors.coupen_ammount}</div>
                                             ) : (null)}
                                         </Col>
@@ -150,7 +150,7 @@ const CuponModel = (props) => {
                                                 value={Formik.values.start_at}
                                                 onChange={Formik.handleChange}
                                             />
-                                             {Formik.touched.start_at && Formik.errors.start_at ? (
+                                            {Formik.touched.start_at && Formik.errors.start_at ? (
                                                 <div className="text-danger">{Formik.errors.start_at}</div>
                                             ) : (null)}
                                         </Col>
@@ -162,7 +162,7 @@ const CuponModel = (props) => {
                                                 value={Formik.values.expired_at}
                                                 onChange={Formik.handleChange}
                                             />
-                                             {Formik.touched.expired_at && Formik.errors.expired_at ? (
+                                            {Formik.touched.expired_at && Formik.errors.expired_at ? (
                                                 <div className="text-danger">{Formik.errors.expired_at}</div>
                                             ) : (null)}
                                         </Col>
@@ -174,7 +174,7 @@ const CuponModel = (props) => {
                                                 value={Formik.values.free_shipping}
                                                 onChange={Formik.handleChange}
                                             />
-                                             {Formik.touched.free_shipping && Formik.errors.free_shipping ? (
+                                            {Formik.touched.free_shipping && Formik.errors.free_shipping ? (
                                                 <div className="text-danger">{Formik.errors.free_shipping}</div>
                                             ) : (null)}
                                         </Col>
@@ -194,7 +194,7 @@ const CuponModel = (props) => {
                                                 value={Formik.values.mimimum_limit}
                                                 onChange={Formik.handleChange}
                                             />
-                                             {Formik.touched.mimimum_limit && Formik.errors.mimimum_limit ? (
+                                            {Formik.touched.mimimum_limit && Formik.errors.mimimum_limit ? (
                                                 <div className="text-danger">{Formik.errors.mimimum_limit}</div>
                                             ) : (null)}
                                         </Col>
@@ -206,7 +206,7 @@ const CuponModel = (props) => {
                                                 value={Formik.values.maximum_limit}
                                                 onChange={Formik.handleChange}
                                             />
-                                             {Formik.touched.maximum_limit && Formik.errors.maximum_limit ? (
+                                            {Formik.touched.maximum_limit && Formik.errors.maximum_limit ? (
                                                 <div className="text-danger">{Formik.errors.maximum_limit}</div>
                                             ) : (null)}
                                         </Col>
@@ -218,7 +218,7 @@ const CuponModel = (props) => {
                                                 value={Formik.values.product_category}
                                                 onChange={Formik.handleChange}
                                             />
-                                             {Formik.touched.product_category && Formik.errors.product_category ? (
+                                            {Formik.touched.product_category && Formik.errors.product_category ? (
                                                 <div className="text-danger">{Formik.errors.product_category}</div>
                                             ) : (null)}
                                         </Col>
@@ -227,11 +227,11 @@ const CuponModel = (props) => {
                                             <Form.Control
                                                 type="text"
                                                 placeholder=""
-                                                  name="exclude_product"
+                                                name="exclude_product"
                                                 value={Formik.values.exclude_product}
                                                 onChange={Formik.handleChange}
                                             />
-                                             {Formik.touched.exclude_product && Formik.errors.exclude_product ? (
+                                            {Formik.touched.exclude_product && Formik.errors.exclude_product ? (
                                                 <div className="text-danger">{Formik.errors.exclude_product}</div>
                                             ) : (null)}
                                         </Col>
@@ -248,11 +248,11 @@ const CuponModel = (props) => {
                                             <Form.Label>Usage Limit Per Coupen:</Form.Label>
                                             <Form.Control
                                                 type="text"
-                                                  name="usage_copenLimit"
+                                                name="usage_copenLimit"
                                                 value={Formik.values.usage_copenLimit}
                                                 onChange={Formik.handleChange}
                                             />
-                                             {Formik.touched.usage_copenLimit && Formik.errors.usage_copenLimit ? (
+                                            {Formik.touched.usage_copenLimit && Formik.errors.usage_copenLimit ? (
                                                 <div className="text-danger">{Formik.errors.usage_copenLimit}</div>
                                             ) : (null)}
                                         </Col>
@@ -261,11 +261,11 @@ const CuponModel = (props) => {
                                             <Form.Control
                                                 type="text"
                                                 placeholder=""
-                                                  name="usage_XitemLimit"
+                                                name="usage_XitemLimit"
                                                 value={Formik.values.usage_XitemLimit}
                                                 onChange={Formik.handleChange}
                                             />
-                                             {Formik.touched.usage_XitemLimit && Formik.errors.usage_XitemLimit ? (
+                                            {Formik.touched.usage_XitemLimit && Formik.errors.usage_XitemLimit ? (
                                                 <div className="text-danger">{Formik.errors.usage_XitemLimit}</div>
                                             ) : (null)}
                                         </Col>
@@ -274,11 +274,11 @@ const CuponModel = (props) => {
                                             <Form.Control
                                                 type="text"
                                                 placeholder=""
-                                                  name="usage_UserLimit"
+                                                name="usage_UserLimit"
                                                 value={Formik.values.usage_UserLimit}
                                                 onChange={Formik.handleChange}
                                             />
-                                             {Formik.touched.usage_UserLimit && Formik.errors.usage_UserLimit ? (
+                                            {Formik.touched.usage_UserLimit && Formik.errors.usage_UserLimit ? (
                                                 <div className="text-danger">{Formik.errors.usage_UserLimit}</div>
                                             ) : (null)}
                                         </Col>
@@ -288,11 +288,11 @@ const CuponModel = (props) => {
                         </Col>
                     </Row>
                     <div className="d-flex justify-content-end mt-3 mb-0 coupons-button">
-                <Button type="submit" style={{ background: '#3e2d68', border: 'none' }}>Publish coupon</Button>
+                        <Button type="submit" style={{ background: '#3e2d68', border: 'none' }}>Publish coupon</Button>
                     </div>
                 </form>
             </Modal.Body>
-          
+
         </Modal>
 
     )
