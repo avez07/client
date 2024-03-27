@@ -1,6 +1,6 @@
 
 import { Inter } from 'next/font/google'
-import {AuthProvider} from '/src/app/common/auth'
+import { AuthProvider } from '/src/app/common/auth'
 import NextTopLoader from 'nextjs-toploader'
 // import './globals.css'
 import '/public/css/style.css'
@@ -19,15 +19,15 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    
+
     <html lang="en">
       <body className={inter.className}>
- 
-       <AuthProvider>
-       <NextTopLoader/>
-       {children}
-       </AuthProvider>      
-        </body>
+
+        <AuthProvider>
+          <NextTopLoader />
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   )
 }
