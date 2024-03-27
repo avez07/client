@@ -6,7 +6,7 @@ import { FaStar, FaRegStar, FaCamera } from "react-icons/fa";
 import { IoStar, IoStarOutline } from "react-icons/io5";
 import Link from 'next/link'
 import { FaPlus, FaMinus, FaChevronRight, FaChevronLeft } from "react-icons/fa6";
-import { BsInfoCircleFill } from 'react-icons/bs'
+import { BsInfoCircleFill ,BsFillQuestionCircleFill} from 'react-icons/bs'
 import { Row, Col, Container, Button, Card, Form, ProgressBar, Modal } from 'react-bootstrap'
 import cake from '/public/assets/red.jpg';
 import default_image from '/public/assets/Default_pfp.svg.png'
@@ -22,6 +22,7 @@ const SinglePage = () => {
     const [zoomin, setZoomin] = React.useState(false)
     const [qty, setQty] = React.useState(1)
     const [showReviewModal, setShowReviewModal] = React.useState(false)
+    const [showQuestionModal, setShowQuestionModal] = React.useState(false)
     const [ratingStar, setRatingStar] = React.useState(0)
 
 
@@ -242,7 +243,7 @@ const SinglePage = () => {
                             <div className="text-center mt-5 fw-semibold">Have you tried our product? <br /> Let us and other customers know what you think!</div>
                             <div className="d-flex flex-wrap flex-md-row flex-column  justify-content-between mt-3 cart-button">
                                 <Button type='button' onClick={() => setShowReviewModal(true)} variant="danger" style={{ width: '48%' }}>Write Review</Button>
-                                <Button type="button" variant="outline-danger" style={{ width: '48%' }}>Ask Question</Button>
+                                <Button type="button"  onClick={() => setShowQuestionModal(true)} variant="outline-danger" style={{ width: '48%' }}>Ask Question</Button>
                             </div>
                         </div>
                     </Col>
@@ -274,8 +275,33 @@ const SinglePage = () => {
                         <input type="file" className="review-file-image" multiple/>
                         <Button type="button" variant="outline-danger" className="add-imagebtn" style={{ width: '48%' }}><Image src={camera} height={25} className="me-2" alt="camera"/>Add Photos</Button>
                     </div>
-                    <div style={{width:'20%'}} className="d-flex justify-content-between ms-auto">
+                    <div style={{width:'20%'}} className="d-flex justify-content-between mt-3 ms-auto">
                     <Button type="button" onClick={()=>setShowReviewModal(false)} variant="secondary" className="close btn" >Discart</Button>
+                    <Button type="button" variant="outline-danger" className="close btn" >Post</Button>
+                    </div>
+                </Modal.Body>
+            </Modal>
+            <Modal size="lg" centered show={showQuestionModal} onHide={() => setShowQuestionModal(false)}>
+                <Modal.Body>
+                    <div className="fs-5 fw-semibold text-center text-capitalize">Ask Question <BsFillQuestionCircleFill /></div>
+                    <div className="d-flex mt-5">
+                        <Image src={default_image} priority={true} height={40} width={40} alt="review" />
+                        <span>
+                            <p className="text-capitalize mb-0 fw-semibold ms-2">Jhon smit</p>
+                            <span className="text-dark ms-2" style={{ fontSize: '13px' }}>Your Review, Shared Public!</span>
+                        </span>
+                    </div>
+                   
+                    <div className="mt-4">
+                        <Form.Control
+                            as="textarea"
+                            placeholder="Ask a Question and get advice from owner"
+                            style={{ height: '100px' }}
+                        />
+                    </div>
+                  
+                    <div style={{width:'20%'}} className="d-flex justify-content-between mt-3 ms-auto">
+                    <Button type="button" onClick={()=>setShowQuestionModal(false)} variant="secondary" className="close btn" >Discart</Button>
                     <Button type="button" variant="outline-danger" className="close btn" >Post</Button>
                     </div>
                 </Modal.Body>

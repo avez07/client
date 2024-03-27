@@ -56,9 +56,7 @@ function home() {
           <Carousel.Item>
             <Image src={carousal_img_4}  priority={true} className="img-fluid" alt="" />
           </Carousel.Item>
-          {/* <Carousel.Item>
-            <img src={carousal_img_5} className="img-fluid" alt="" />
-          </Carousel.Item> */}
+        
         </Carousel>
 
         <div className="mx-4 my-3 bg-light px-4 py-3">
