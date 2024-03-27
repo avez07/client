@@ -1,10 +1,12 @@
+"use client"
 import * as React from 'react';
 import { Form, Modal, Button ,CloseButton} from 'react-bootstrap'
 import { AuthContext } from '@/app/common/auth'
-
+import Image from 'next/image';
 import { MdDeleteSweep } from "react-icons/md";
 import { RiCloseCircleFill } from "react-icons/ri";
 import { IoCloseSharp } from "react-icons/io5";
+
 
 const ImageModal = (props) => {
   const { dataId, ...rest } = props
@@ -78,7 +80,7 @@ const ImageModal = (props) => {
               const key = `image-input-${index}`;
               return (
                 <div key={key} className='insert-image-container'>
-                  <input type='file' onChange={(e) => handleImage(e, index)} className='image-input' />
+                  <Form.Control type='file' onChange={(e) => handleImage(e, index)} className='image-input' />
                 </div>
               )
             } else {
@@ -86,7 +88,7 @@ const ImageModal = (props) => {
               return (
                 <div key={`image-${index}`} className='insert-image-container'>
                   <span className='close-button' onClick={(e) => handleImageDelete(index)}><RiCloseCircleFill /></span>
-                  <img alt="preview image" className='product-image' src={imageArr[0].ImageData[index].imageurl} />
+                  <Image alt="preview image" className='product-image' width={100} height={100} src={imageArr[0].ImageData[index].imageurl} />
                 </div>
               )
             }

@@ -12,7 +12,6 @@ import '/public/css/datatable.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
-const inter = Inter({ subsets: ['latin'] })
 
 // export const metadata = {
 //   title: 'Create Next App',
@@ -20,8 +19,7 @@ const inter = Inter({ subsets: ['latin'] })
 // }
 
 export default function ClientLayout({ children }) {
-  const pathname = usePathname();
-
+const pathname =  usePathname()
   return  (
     <>
      {pathname !== '/dashboard/checkout' ? <Header />: ''} 
