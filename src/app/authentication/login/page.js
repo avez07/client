@@ -3,90 +3,55 @@ import React, { useContext, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
-import axios from "axios";
-// import { AuthContext } from "./auth";
-// import {Redirect} from "react-router-dom"
+import { Playball } from "next/font/google"
+import Link from 'next/link';
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import brandImage from '/public/assets/wesite-logo.png'
+import Image from 'next/image';
 
+const playball = Playball({ weight: '400', style: 'normal', subsets: ['latin'], display: 'swap', })
 
 function Login() {
-//  const {authenticate} = useContext(AuthContext)
+  //  const {authenticate} = useContext(AuthContext)
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [redirect, setRedirect] = useState(false);
   const [open, setOpen] = useState(false);
   const [openMessage, setOpenMessage] = useState("");
 
-  const handleClick = () => {
-    setOpen(true);
-  };
 
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpen(false);
-  };
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    
     try {
-      const apiUrl = process.env.REACT_APP_URL + 'api/login';
-      const header =  {
-        'Content-Type': 'application/json',
-        'Authorization': process.env.REACT_APP_SECRET_KEY
-      };
-      const data ={
-        email: username,
-        password: password
-      };
-      const response = await axios.post(apiUrl, data, { headers: header });
-
-      if (response.status === 200) {
-        localStorage.setItem('token', response.data);  
-        await authenticate();     
-          setRedirect(true);
-       
-      } else {
-        handleClick();
-        setOpenMessage(response.data);
-      }
+      const respose = await fetch(process.env.NEXT_PUBLIC_API_URL+'/login',{
+        method : 'POST',
+        body : JSON.stringify({useState:username,password:password}),
+        headers :{
+          'Content-Type' : 'application/json'
+        }
+      })
+      if (respose.ok) throw new Error('Invaild Credentials')
+      console.log('Login successful')
     } catch (error) {
-      console.error(error);
-      handleClick();
+      console.error(error)
     }
   };
 
-//   if (redirect) {
-    
-//     return <Redirect to='/'/>;
-//   }
 
-  const action = (
-    <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
-      <CloseIcon fontSize="small" />
-    </IconButton>
-  );
+
+
 
   return (
     <Container fluid>
-      <Snackbar
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        action={action}
-      >
-        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-          {openMessage}
-        </Alert>
-      </Snackbar>
-      <div
-        className="d-flex justify-content-center align-items-center authentication"
-        style={{ height: "100vh" }}
-      >
+
+      <div className="d-flex justify-content-center flex-column align-items-center authentication" style={{ height: "100vh" }}>
+        <Link href={'/dashboard'} style={{ width: '21%', marginBottom: '10px' }}><Image src={brandImage} priority={true} alt='bramg img' height={80} /><span className={`${playball.className} text-dark website-name`}>Sweet delight</span></Link>
         <div className="authentication_border">
           <Form>
             <h5>Login</h5>
