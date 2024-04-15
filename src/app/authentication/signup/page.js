@@ -1,104 +1,98 @@
 "use client"
 import React, { useContext, useState } from "react";
-import Form from "react-bootstrap/Form";
-import Container from "react-bootstrap/Container";
-import Button from "react-bootstrap/Button";
-import axios from "axios";
-// import { AuthContext } from "./auth";
-// import {Redirect} from "react-router-dom"
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
+import * as yup from 'yup'
+import { useFormik } from "formik";
+import { Row,Form,Container,Button } from "react-bootstrap";
+import { useRouter } from "next/navigation";
 
+const validationSechma = yup.object({
+  name : yup.string().required('Name is required'),
+  email : yup.string().email().required('Email is Required'),
+  DOB : yup.date().required('DOB is required').max(new Date(),'Date of birth cannot be in the future'),
+  password: yup.string().min(6,'password should be atleast 6 characters').max(16,'password should equal or less than 16 character').required('Password is required').matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/, 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'),
+  confirmPassword: yup.string().required('Confirm Password is required').oneOf([yup.ref('password'), null], 'Passwords must match')
+})
 
-function Login() {
-//  const {authenticate} = useContext(AuthContext)
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [redirect, setRedirect] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [openMessage, setOpenMessage] = useState("");
+const Signup = () => {
+  const router = useRouter()
 
-  const handleClick = () => {
-    setOpen(true);
-  };
-
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpen(false);
-  };
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (values) => {
     try {
-      const apiUrl = process.env.REACT_APP_URL + 'api/login';
-      const header =  {
-        'Content-Type': 'application/json',
-        'Authorization': process.env.REACT_APP_SECRET_KEY
-      };
-      const data ={
-        email: username,
-        password: password
-      };
-      const response = await axios.post(apiUrl, data, { headers: header });
-
-      if (response.status === 200) {
-        localStorage.setItem('token', response.data);  
-        await authenticate();     
-          setRedirect(true);
-       
-      } else {
-        handleClick();
-        setOpenMessage(response.data);
-      }
+      const response = await fetch(process.env.NEXT_PUBLIC_APP_URL + 'register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+  
+      if (!response.ok)  throw new Error(`HTTP error! Status: ${response.status}`);
+      
+      router.push('/authentication/login');
     } catch (error) {
-      console.error(error);
-      handleClick();
+      console.error('Error:', error);
     }
   };
+  
 
-//   if (redirect) {
-    
-//     return <Redirect to='/'/>;
-//   }
-
-  const action = (
-    <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
-      <CloseIcon fontSize="small" />
-    </IconButton>
-  );
+const formik = useFormik({
+  initialValues : {
+    name : '',
+    email : '',
+    DOB : '',
+    password : '',
+    confirmPassword : '',
+    role : 'user'
+  },validationSchema : validationSechma,
+  onSubmit : (values) =>{
+    handleSubmit(values)
+  }
+})
 
   return (
-    <Container fluid>
-      <Snackbar
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        action={action}
-      >
-        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-          {openMessage}
-        </Alert>
-      </Snackbar>
-      <div
-        className="d-flex justify-content-center align-items-center authentication"
-        style={{ height: "100vh" }}
-      >
+    <Container fluid>     
+      <div className="d-flex my-5 justify-content-center align-items-center authentication">
         <div className="authentication_border">
-          <Form>
-            <h5>Login</h5>
-            <Form.Group className="mb-3" controlId="formGroupEmail">
-              <Form.Label>Email address</Form.Label>
-              <Form.Control type="email" placeholder="Enter email" onChange={(e) => setUsername(e.target.value)} />
+          <Form onSubmit={formik.handleSubmit}>
+            <h5>Signup</h5>
+            <Row className="g-2">
+            <Form.Group className="" controlId="formGroupName">
+              <Form.Label>Name</Form.Label>
+              <Form.Control type="text" name="name" placeholder="Enter Name" onChange={formik.handleChange} value={formik.values.name} />
+              {formik.touched.name && formik.errors.name ? (
+                  <div className="text-danger">{formik.errors.name}</div>
+                ) : (null)}
             </Form.Group>
-            <Form.Group className="mb-3" controlId="formGroupPassword">
+            <Form.Group className="">
+              <Form.Label>Email</Form.Label>
+              <Form.Control type="text" name="email" placeholder="email" onChange={formik.handleChange} value={formik.values.email} />
+              {formik.touched.email && formik.errors.email ? (
+                  <div className="text-danger">{formik.errors.email}</div>
+                ) : (null)}
+            </Form.Group>
+            </Row>
+            <Form.Group className="">
+              <Form.Label>Date of Birth</Form.Label>
+              <Form.Control type="date" name="DOB" placeholder="DOB" onChange={formik.handleChange} value={formik.values.DOB}/>
+              {formik.touched.DOB && formik.errors.DOB ? (
+                  <div className="text-danger">{formik.errors.DOB}</div>
+                ) : (null)}
+            </Form.Group>
+            <Form.Group className="" >
               <Form.Label>Password</Form.Label>
-              <Form.Control type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
-              <Button className="mt-2" type="submit" onClick={handleLogin}>Submit</Button>
+              <Form.Control type="password" name="password" placeholder="Password" onChange={formik.handleChange} value={formik.values.password} />
+              {formik.touched.password && formik.errors.password ? (
+                  <div className="text-danger">{formik.errors.password}</div>
+                ) : (null)}
             </Form.Group>
+            <Form.Group className="">
+              <Form.Label>Confirm Password</Form.Label>
+              <Form.Control type="password" name="confirmPassword" placeholder=" confirm Password" onChange={formik.handleChange} value={formik.values.confirmPassword} />
+              {formik.touched.confirmPassword && formik.errors.confirmPassword ? (
+                  <div className="text-danger">{formik.errors.confirmPassword}</div>
+                ) : (null)}
+            </Form.Group>
+              <Button className="mt-2" type="submit">Submit</Button>
           </Form>
         </div>
       </div>
@@ -106,4 +100,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Signup;

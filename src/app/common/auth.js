@@ -11,6 +11,7 @@ export const AuthProvider = ({children})=>{
     const [address ,setadress] = useState(null)
     const [iserror ,setError] = useState(null)
     const [nightmode,setNightmode] = useState(false)
+    const [loginData,setLoginData] = useState({})
 
 const exportData = {
     isopen,setIsopen,
@@ -19,7 +20,8 @@ const exportData = {
     discount,setDiscount,
     address,setadress,
     iserror,setError,
-    nightmode,setNightmode
+    nightmode,setNightmode,
+    loginData,setLoginData,
 }
 
     return(
