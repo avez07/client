@@ -1,5 +1,7 @@
 'use client'
-import React,{createContext,useContext,useState} from 'react'
+import React,{createContext,useState} from 'react'
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/router';
 
 export const AuthContext = createContext();
 
@@ -11,7 +13,9 @@ export const AuthProvider = ({children})=>{
     const [address ,setadress] = useState(null)
     const [iserror ,setError] = useState(null)
     const [nightmode,setNightmode] = useState(false)
-    const [loginData,setLoginData] = useState({})
+    const [loginData,setLoginData] = useState(null)
+ 
+   
 
 const exportData = {
     isopen,setIsopen,
@@ -23,6 +27,9 @@ const exportData = {
     nightmode,setNightmode,
     loginData,setLoginData,
 }
+
+if (loginData) Object.freeze(loginData)
+
 
     return(
         <AuthContext.Provider value={exportData}>

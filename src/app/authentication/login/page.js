@@ -1,5 +1,6 @@
 "use client"
 import React, { useContext, useState } from "react";
+import Cookies from "js-cookie";
 import { AuthContext } from "@/app/common/auth";
 import { Form, Container, Button } from "react-bootstrap";
 import { Playball } from "next/font/google"
@@ -14,12 +15,13 @@ const playball = Playball({ weight: '400', style: 'normal', subsets: ['latin'], 
 
 const validationScehma = yup.object({
   email: yup.string().email().required('email is required'),
-  password: yup.string().required('password is required')
+  password: yup.string().required('password is required').matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/,'password should have atleast one uppercase ,one lowercase , one numeric value and one special characters')
 })
 
 const Login = () => {
   const router = useRouter()
   const {setLoginData} = useContext(AuthContext)
+  const [apiError, setApiError] = useState('')
 
   const handleSubmit = async (values) => {
     try {
@@ -28,17 +30,23 @@ const Login = () => {
         body: JSON.stringify(values),
         headers: {
           'Content-Type': 'application/json',
+
         }
-      })
-      if (!response.ok)  throw new Error(`HTTP error! Status: ${response.status}`);
-      setLoginData(response)
-      router.push('/dashboard')
+      })     
+      if (response.ok){
+        const data = await response.json()
+        setLoginData(data.data);
+        Cookies.set('token', data.token, new Date(Date.now() + 86400000))
+        router.push('/')
+      }else{
+        const error = await response.json()
+        setApiError(error.message)
+      }
 
     } catch (error) {
      console.error(error)
     }
   }
-
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -46,6 +54,7 @@ const Login = () => {
     }, validationSchema: validationScehma,
     onSubmit: (values) => {
       handleSubmit(values)
+      console.log('sumbit');
     }
   })
 
@@ -57,6 +66,7 @@ const Login = () => {
         <div className="authentication_border">
           <Form onSubmit={formik.handleSubmit}>
             <h5>Login</h5>
+            {apiError ? (<div className="text-danger fw-semibold my-2">{apiError}</div>):null}
             <Form.Group className="mb-3" controlId="formGroupEmail">
               <Form.Label>Email address</Form.Label>
               <Form.Control type="email" name="email" placeholder="Enter email" onChange={formik.handleChange} value={formik.values.email} />
