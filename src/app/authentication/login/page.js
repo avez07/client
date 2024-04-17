@@ -1,5 +1,5 @@
 "use client"
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { AuthContext } from "@/app/common/auth";
 import { Form, Container, Button } from "react-bootstrap";
@@ -20,8 +20,9 @@ const validationScehma = yup.object({
 
 const Login = () => {
   const router = useRouter()
-  const {setLoginData} = useContext(AuthContext)
+  const {setLoginData,loginData} = useContext(AuthContext)
   const [apiError, setApiError] = useState('')
+  const [active, setActive] = useState(false)
 
   const handleSubmit = async (values) => {
     try {
@@ -35,9 +36,10 @@ const Login = () => {
       })     
       if (response.ok){
         const data = await response.json()
-        setLoginData(data.data);
-        Cookies.set('token', data.token, new Date(Date.now() + 86400000))
-        router.push('/')
+         setLoginData(data.data);
+        setActive(true)
+        console.log(loginData)
+         Cookies.set('token', data.token, new Date(Date.now() + 86400000))
       }else{
         const error = await response.json()
         setApiError(error.message)
@@ -57,6 +59,12 @@ const Login = () => {
       console.log('sumbit');
     }
   })
+  useEffect(()=>{
+    console.log(loginData)
+    if (active) {      
+      router.push('/')
+    }
+  },[active])
 
   return (
     <Container fluid>
