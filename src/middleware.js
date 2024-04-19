@@ -1,4 +1,3 @@
-'use server'
 import { cookies, headers } from "next/headers"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -18,7 +17,8 @@ const SetUserRole = async (token) => {
 export const middleware = async (request) => {  
     const token = request.cookies.get('token');
     let user = await request.cookies.get('loginData')
-//   console.log(user)
+    const pathname = request.nextUrl.pathname
+    if (pathname == '/' && !token) return NextResponse.redirect(new URL('/dashboard', request.url))
     if (!token) return NextResponse.redirect(new URL('/authentication/login', request.url))
     if (token && !user) {
         const data = await SetUserRole(token.value)
@@ -29,10 +29,11 @@ export const middleware = async (request) => {
 // console.log(user)
     if (token && user) {
         const redirect = user.role == 'admin' ? '/admin' : user.role == 'vender' ? '/vender' : '/dashboard'
-        if (request.nextUrl.pathname == '/') return NextResponse.redirect(new URL(redirect, request.url))
-        if (request.nextUrl.pathname.startsWith('/admin') && user.role == 'admin') return NextResponse.next()
-        if (request.nextUrl.pathname.startsWith('/vender') && user.role == 'vender') return NextResponse.next()
-        if (request.nextUrl.pathname.startsWith('/dashboard') && user.role == 'user') return NextResponse.next()
+        if (pathname == '/') return NextResponse.redirect(new URL(redirect, request.url))
+        if (pathname != '/vender/setting'&& request.nextUrl.pathname.startsWith('/vender') && (!user.active)) return NextResponse.redirect(new URL(redirect+'/setting',request.url))
+        if (pathname.startsWith('/admin') && user.role == 'admin') return NextResponse.next()
+        if (pathname.startsWith('/vender') && user.role == 'vender') return NextResponse.next()
+        if (pathname.startsWith('/dashboard') && user.role == 'user') return NextResponse.next()
         return NextResponse.redirect(new URL(redirect, request.url))
     }
 }

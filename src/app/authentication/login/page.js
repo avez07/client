@@ -10,6 +10,7 @@ import Image from 'next/image';
 import { useFormik } from "formik";
 import * as yup from 'yup'
 import { useRouter } from "next/navigation";
+import { GetData } from "@/app/common/serverFunctions";
 
 const playball = Playball({ weight: '400', style: 'normal', subsets: ['latin'], display: 'swap', })
 
@@ -56,7 +57,6 @@ const Login = () => {
     }, validationSchema: validationScehma,
     onSubmit: (values) => {
       handleSubmit(values)
-      console.log('sumbit');
     }
   })
   useEffect(()=>{
