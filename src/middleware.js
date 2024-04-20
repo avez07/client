@@ -26,7 +26,6 @@ export const middleware = async (request) => {
         await request.cookies.set('loginData', JSON.stringify(data))
     user = await JSON.parse(request.cookies.get('loginData').value)
 }
-// console.log(user)
     if (token && user) {
         const redirect = user.role == 'admin' ? '/admin' : user.role == 'vender' ? '/vender' : '/dashboard'
         if (pathname == '/') return NextResponse.redirect(new URL(redirect, request.url))
