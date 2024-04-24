@@ -6,7 +6,7 @@ import ProgressBar from "react-bootstrap/ProgressBar";
 import Image from "next/image";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-// import { AuthContext } from "../authentication/auth";
+import { AuthContext } from "../common/auth";
 import default_img from "/public/assets/Default_pfp.svg.png";
 import Piechart from "/public/pie-chart/home-pie";
 import BarChart from "/public/pie-chart/bar-chart";
@@ -15,10 +15,10 @@ import { FaGlobeAmericas, FaShoppingCart } from "react-icons/fa";
 import { MdOtherHouses } from "react-icons/md";
 
 function AdminHome() {
-//   const { name } = useContext(AuthContext);
+  const { loginData } = useContext(AuthContext);
 //   const name_array = name.split(" ");
 //   const NewName = name_array[0];
-const NewName = 'avez';
+const NewName = loginData ? loginData.name.split(' ')[0]:'';
 
   return (
     <>

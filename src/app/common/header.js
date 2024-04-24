@@ -58,11 +58,11 @@ const  Header = () => {
             overlay={
               <Popover className='dashboard-head-popover'>
                 <Popover.Body className='dashboard-header-poper-body'>
-                  {!loginData?(<Link href={'/authentication/login'}> <RiLoginCircleFill className='me-2 fs-6' />Login</Link>):null}
-                  {loginData?(<Link href={'/authentication/signup'}><FaCartPlus className='me-2 fs-6' />My Order</Link>):null}
-                  {loginData?(<Link href={'/authentication/signup'}><FaUser className='me-2 fs-6' />Account Info</Link>):null}
-                  <Link href={'/authentication/signup'}><FaGears className='me-2 fs-5' />Services</Link>
-                  <Link href={'/authentication/signup'}><FaPhoneVolume className='me-2 fs-6' />Contact Us</Link>
+                  {!loginData?(<Link href={'auth/login'}> <RiLoginCircleFill className='me-2 fs-6' />Login</Link>):null}
+                  {loginData?(<Link href={'auth/signup'}><FaCartPlus className='me-2 fs-6' />My Order</Link>):null}
+                  {loginData?(<Link href={'auth/signup'}><FaUser className='me-2 fs-6' />Account Info</Link>):null}
+                  <Link href={'auth/signup'}><FaGears className='me-2 fs-5' />Services</Link>
+                  <Link href={'auth/signup'}><FaPhoneVolume className='me-2 fs-6' />Contact Us</Link>
                   {loginData?(<Link href={'#'} onClick={(e)=>handleLogout()}><FaPhoneVolume className='me-2 fs-6' />Logout</Link>):null}
 
                 </Popover.Body>

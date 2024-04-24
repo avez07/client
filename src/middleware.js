@@ -19,7 +19,7 @@ export const middleware = async (request) => {
     let user = await request.cookies.get('loginData')
     const pathname = request.nextUrl.pathname
     if (pathname == '/' && !token) return NextResponse.redirect(new URL('/dashboard', request.url))
-    if (!token) return NextResponse.redirect(new URL('/authentication/login', request.url))
+    if (!token) return NextResponse.redirect(new URL('/auth/login', request.url))
     if (token && !user) {
         const data = await SetUserRole(token.value)
         if (!data) return NextResponse.redirect(new URL('/dashboard', request.url))

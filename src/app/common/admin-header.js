@@ -1,5 +1,5 @@
 "use client"
-import React,{useEffect,useState} from "react";
+import React,{useContext, useEffect,useState} from "react";
 import {Container,Nav,Navbar,Form,NavDropdown,Row,Col} from "react-bootstrap";
 import default_img from "/public/assets/Default_pfp.svg.png";
 import { PiDotsNineBold } from "react-icons/pi";
@@ -8,15 +8,17 @@ import { FaRegBell } from "react-icons/fa";
 import { BiSolidMessageSquareDetail} from "react-icons/bi";
 import { IoLanguageSharp } from "react-icons/io5";
 import Image from "next/image";
+import { AuthContext } from "./auth";
 
-function AdminNav({ toggleSidebar,toggleNightMode,isNightMode }) {
-  const [name, setName] = useState('');
+const  AdminNav = ({ toggleSidebar,toggleNightMode,isNightMode }) =>{
+  const {loginData} = useContext(AuthContext)
   const [currentDate, setCurrentDate] = useState('');
+  const  capitalizeEveryWord = (str) => {
+    return str.replace(/\b\w/g, (char) => char.toUpperCase());
+  }
 
   useEffect(() => {
-    const newName = 'ansari avez';
     const newDate = new Date().toLocaleDateString();
-    setName(newName);
     setCurrentDate(newDate);
   }, []);
 
@@ -26,7 +28,6 @@ function AdminNav({ toggleSidebar,toggleNightMode,isNightMode }) {
         <div className="d-block me-3 toggle" onClick={toggleSidebar}>
           <PiDotsNineBold />
         </div>
-
         <Nav className="me-auto">
           <Form>
             <Row>
@@ -59,7 +60,7 @@ function AdminNav({ toggleSidebar,toggleNightMode,isNightMode }) {
           <span style={{cursor:'pointer',margin:'4px'}}>{isNightMode?<FaRegBell/>:<BsBellFill/>}</span>
           <span style={{cursor:'pointer',margin:'4px'}}><BiSolidMessageSquareDetail/></span>
           <div className="divider"></div>
-          <div className="d-flex align-items-center"><Image src={default_img} height={26} alt="user-img"/><div className="m-0"><div className="text-capitalize ms-2 fw-semibold" style={{fontSize:'13px'}}>{name}</div><div style={{fontSize:'9px',textAlign:'center'}}>{currentDate}</div></div></div>
+          <div className="d-flex align-items-center"><Image src={default_img} height={26} alt="user-img"/><div className="m-0"><div className="text-capitalize ms-2 fw-semibold" style={{fontSize:'13px'}}>{capitalizeEveryWord(loginData?loginData.name:'Guest')}</div><div style={{fontSize:'9px',textAlign:'center'}}>{currentDate}</div></div></div>
 
 
         </Nav>

@@ -7,6 +7,7 @@ import { FaHome, FaBoxOpen, FaCartPlus, FaUserFriends, FaStar, FaAngleRight } fr
 import { RiFilePaper2Fill, RiLogoutBoxFill } from "react-icons/ri";
 import logo from "/public/assets/wesite-logo.png";
 import { FaGear, FaTruckMoving } from "react-icons/fa6";
+import Cookies from "js-cookie";
 
 
 const playball = Playball({ weight:'400', style: 'normal',subsets: ['latin'],display: 'swap',})
@@ -16,7 +17,11 @@ const Sidebar = ({ isOpen, isNightMode }) => {
   const [subActive,setSubActive] = useState(1);
 
   
-
+  const handleLogout=()=>{
+    handleactive(7)
+    Cookies.remove('token')
+  
+  }
   const handleSubactive = (value) => {
     setSubActive((prevSubActive) => (prevSubActive === value ? prevSubActive : value));
 
@@ -69,7 +74,7 @@ const Sidebar = ({ isOpen, isNightMode }) => {
               <Link href="/vender/setting" onClick={()=>handleactive(6)}><span className="menu-items"><FaGear /></span>settings</Link>
             </li>
             <li className={`${active == 7? 'active': ''}`} >
-              <Link href="/" onClick={()=>handleactive(7)}><span className="menu-items"><RiLogoutBoxFill /></span>Logout</Link>
+              <Link href="auth/login" onClick={()=>handleLogout()}><span className="menu-items"><RiLogoutBoxFill /></span>Logout</Link>
             </li>
           </ul>
         </div>
