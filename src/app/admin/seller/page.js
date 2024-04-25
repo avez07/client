@@ -1,10 +1,6 @@
 "use client"
 import React, { useEffect, useState } from 'react';
-import {
-    MaterialReactTable,
-    createMRTColumnHelper,
-    useMaterialReactTable,
-} from 'material-react-table';
+import { MaterialReactTable, createMRTColumnHelper, useMaterialReactTable, } from 'material-react-table';
 import { mkConfig, generateCsv, download } from 'export-to-csv';
 import { Box, Button } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
@@ -13,6 +9,9 @@ import autoTable from 'jspdf-autotable';
 import { } from '/public/data.js';
 import { useMemo } from 'react';
 import Cookies from 'js-cookie';
+import { FaThumbsDown, FaThumbsUp } from 'react-icons/fa';
+import { BsThreeDotsVertical } from 'react-icons/bs';
+import { Dropdown } from 'react-bootstrap';
 const columnHelper = createMRTColumnHelper();
 
 
@@ -23,8 +22,9 @@ const handleExportRows = (rows) => {
 };
 
 const Seller = () => {
-    const [data,setData] = useState([])
-    const [active ,setActive] = useState(true)
+    const [data, setData] = useState([])
+    const [active, setActive] = useState(true)
+    const [actions, setActions] = useState(false)
     const columns = useMemo(() => [
         columnHelper.accessor('name', {
             header: 'Name',
@@ -37,20 +37,49 @@ const Seller = () => {
         columnHelper.accessor('DOB', {
             header: 'Date of Birth',
             size: 120,
-        }),
-        columnHelper.accessor('active', {
-            header: 'active',
-            size: 120,
-        }),
-        columnHelper.accessor('suspended', {
-            header: 'suspended',
-            size: 120,
+
         }),
         columnHelper.accessor('createdAt', {
             header: 'createdAt',
             size: 120,
+
         }),
-       
+        columnHelper.accessor('active', {
+            header: 'active',
+            size: 120,
+            Cell: ({ cell }) => {
+                if (!cell.getValue()) return <FaThumbsDown className='fs-5 text-danger' />
+                return <FaThumbsUp className='fs-5 text-success' />
+            }
+
+        }),
+        columnHelper.accessor('suspended', {
+            header: 'suspended',
+            size: 120,
+            Cell: ({ cell }) => {
+                if (!cell.getValue()) return <FaThumbsDown className='fs-5 text-danger' />
+                return <FaThumbsUp className='fs-5 text-success' />
+            }
+        }),
+        // columnHelper.display({
+        //     header: 'Actions',
+        //     size: 120,
+        //     Cell: ({ cell }) => {
+        //         return (
+        //             <Dropdown>
+        //                 <Dropdown.Toggle className='border-0' style={{ background: 'transparent' }}>
+        //                     <BsThreeDotsVertical className='text-center text-dark' style={{ cursor: 'pointer' }} />
+        //                 </Dropdown.Toggle>
+        //                 <Dropdown.Menu show={true}>
+        //                     <Dropdown.Item href="#">Menu Item</Dropdown.Item>
+        //                     <Dropdown.Item href="#">Menu Item</Dropdown.Item>
+        //                     <Dropdown.Item href="#">Menu Item</Dropdown.Item>
+        //                 </Dropdown.Menu>
+        //             </Dropdown>
+        //         )
+        //     }
+        // })
+
 
     ])
     const fetchSellerData = async () => {
@@ -63,7 +92,7 @@ const Seller = () => {
                     'authorization': 'Bearer ' + token
                 }
             })
-            if(respose.ok) setData(await (await respose.json()).data)
+            if (respose.ok) setData(await (await respose.json()).data)
         } catch (error) {
             console.log('erro While fetch the data', error)
         }
@@ -84,11 +113,16 @@ const Seller = () => {
         columns,
         data,
         enableRowSelection: true,
-        enableColumnOrdering: true,
+        enableColumnOrdering: false,
+        enableColumnActions: false,
         enableStickyHeader: true,
+        enableHiding: false,
         columnFilterDisplayMode: 'popover',
         paginationDisplayMode: 'pages',
         positionToolbarAlertBanner: 'bottom',
+        renderRowActionMenuItems:({closemenu})=>{
+            <Button>button</Button>
+        },
         renderTopToolbarCustomActions: ({ table }) => (
             <Box
                 sx={{
@@ -123,13 +157,13 @@ const Seller = () => {
             </Box>
         ),
     });
-    useEffect(()=>{
+    useEffect(() => {
         if (active) {
-            
+
             fetchSellerData()
             setActive(false)
         }
-    },[data])
+    }, [data])
 
     return (
         <>
