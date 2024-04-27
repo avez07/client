@@ -39,5 +39,5 @@ export const PostFetchAPI = async(url,body,authorization)=>{
     console.log(body);
     console.log(url);
 
-    return await response.json();
+     if (response) return await response.json();
 }
