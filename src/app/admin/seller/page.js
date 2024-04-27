@@ -66,7 +66,8 @@ const Seller = () => {
    
      const handleSellerActive = async (id) => {
         const token = Cookies.get('token')
-     await PostFetchAPI('sellerActive',{id:id},token)
+        const body = await JSON.stringify({id:id})
+     await PostFetchAPI('sellerActive',body,token)
       setActive(true)
     }
     const handleExportRowsPDF = (rows) => {

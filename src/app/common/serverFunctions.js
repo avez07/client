@@ -28,12 +28,16 @@ export const GetFetchAPI = async(url,authorization)=>{
 export const PostFetchAPI = async(url,body,authorization)=>{
     const response = await fetch(process.env.API_URL+url,{
         method:'POST',
-        body: JSON.stringify(body),
+        body: body,
         headers:{
             'Content-Type': 'application/json',
             'authorization': 'Bearer ' + authorization
         }
         
     })
+    console.log(authorization);
+    console.log(body);
+    console.log(url);
+
     return await response.json();
 }
