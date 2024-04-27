@@ -13,6 +13,7 @@ import Cookies from 'js-cookie';
 import { FaThumbsDown, FaThumbsUp } from 'react-icons/fa';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { Dropdown } from 'react-bootstrap';
+import { GetFetchAPI, PostFetchAPI } from '@/app/common/serverFunctions';
 const columnHelper = createMRTColumnHelper();
 
 
@@ -28,7 +29,14 @@ const Seller = () => {
 
     useEffect(() => {
         if (active) {
-            fetchSellerData()
+            // fetchSellerData()
+            const sellerData = async()=>{
+            const token = Cookies.get('token')
+                const res = await GetFetchAPI('seller',token)
+                console.log(res.data)
+              if(res.status == 200)  setData(res.data)
+            }
+            sellerData();
             setActive(false)
         }
     }, [data,active])
@@ -55,36 +63,11 @@ const Seller = () => {
             }
         }),
     ])
-    const fetchSellerData = async () => {
-        try {
-            const token = Cookies.get('token')
-            const respose = await fetch(process.env.NEXT_PUBLIC_APP_URL + 'seller', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'authorization': 'Bearer ' + token
-                }
-            })
-            if (respose.ok) setData(await (await respose.json()).data)
-        } catch (error) {
-            console.log('erro While fetch the data', error)
-        }
-    }
+   
      const handleSellerActive = async (id) => {
-        try {
-            const token = Cookies.get('token')
-            const respose = await fetch(process.env.NEXT_PUBLIC_APP_URL + 'sellerActive', {
-                method: 'POST',
-                body : JSON.stringify({id:id}),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'authorization': 'Bearer ' + token
-                }
-            })
-            if (respose.ok) setActive(true)
-        } catch (error) {
-            console.log('erro While fetch the data', error)
-        }
+        const token = Cookies.get('token')
+     await PostFetchAPI('sellerActive',{id:id},token)
+      setActive(true)
     }
     const handleExportRowsPDF = (rows) => {
         const doc = new jsPDF();

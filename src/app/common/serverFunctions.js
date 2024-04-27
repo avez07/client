@@ -13,3 +13,27 @@ export const GetData = async (token)=>{
     return res
     
 }
+export const GetFetchAPI = async(url,authorization)=>{
+    const response = await fetch(process.env.API_URL+url,{
+        method:'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'authorization': 'Bearer ' + authorization
+        }
+        
+    })
+    return await response.json();
+}
+
+export const PostFetchAPI = async(url,body,authorization)=>{
+    const response = await fetch(process.env.API_URL+url,{
+        method:'POST',
+        body: JSON.stringify(body),
+        headers:{
+            'Content-Type': 'application/json',
+            'authorization': 'Bearer ' + authorization
+        }
+        
+    })
+    return await response.json();
+}
