@@ -7,13 +7,12 @@ import { AccountCircle, Send } from '@mui/icons-material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { jsPDF } from 'jspdf'; //or use your library of choice here
 import autoTable from 'jspdf-autotable';
-import { } from '/public/data.js';
 import { useMemo } from 'react';
 import Cookies from 'js-cookie';
 import { FaThumbsDown, FaThumbsUp } from 'react-icons/fa';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { Dropdown } from 'react-bootstrap';
-import { GetFetchAPI, PostFetchAPI } from '@/app/common/serverFunctions';
+import { GetFetchAPI, sellerActive } from '@/app/common/serverFunctions';
 const columnHelper = createMRTColumnHelper();
 
 
@@ -67,7 +66,7 @@ const Seller = () => {
      const handleSellerActive = async (id) => {
         const token = Cookies.get('token')
         const body = await JSON.stringify({id:id})
-     await PostFetchAPI('sellerActive',body,token)
+     await sellerActive('sellerActive',body,token)
       setActive(true)
     }
     const handleExportRowsPDF = (rows) => {

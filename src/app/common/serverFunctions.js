@@ -25,7 +25,7 @@ export const GetFetchAPI = async(url,authorization)=>{
     return await response.json();
 }
 
-export const PostFetchAPI = async(url,body,authorization)=>{
+export const sellerActive = async(url,body,authorization)=>{
     const response = await fetch(process.env.API_URL+url,{
         method:'POST',
         body: body,
@@ -38,6 +38,5 @@ export const PostFetchAPI = async(url,body,authorization)=>{
     console.log(authorization);
     console.log(body);
     console.log(url);
-     if (await response.json()) return 'sucess'
-     return await response.json()
+     return 'suceess'
 }
