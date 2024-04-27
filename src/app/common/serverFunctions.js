@@ -39,5 +39,5 @@ export const PostFetchAPI = async(url,body,authorization)=>{
     console.log(body);
     console.log(url);
 
-     if (response) return await response.json();
+     return "sussess";
 }
