@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { MaterialReactTable, createMRTColumnHelper, useMaterialReactTable, } from 'material-react-table';
 import { mkConfig, generateCsv, download } from 'export-to-csv';
 import { Box, Button, MenuItem, ListItemIcon } from '@mui/material';
@@ -7,12 +7,11 @@ import { AccountCircle, Send } from '@mui/icons-material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { jsPDF } from 'jspdf'; //or use your library of choice here
 import autoTable from 'jspdf-autotable';
-import { useMemo } from 'react';
 import Cookies from 'js-cookie';
 import { FaThumbsDown, FaThumbsUp } from 'react-icons/fa';
-import { BsThreeDotsVertical } from 'react-icons/bs';
-import { Dropdown } from 'react-bootstrap';
 import { GetFetchAPI, sellerActive } from '@/app/common/serverFunctions';
+import { Email_Modal } from '@/app/common/swal'
+import { useRouter } from 'next/navigation';
 const columnHelper = createMRTColumnHelper();
 
 
@@ -25,20 +24,23 @@ const handleExportRows = (rows) => {
 const Seller = () => {
     const [data, setData] = useState([])
     const [active, setActive] = useState(true)
+    const [modalShow,setModalShow] = useState(false)
+    const [email , setEmail]  = useState()
+    const router = useRouter()
+
 
     useEffect(() => {
         if (active) {
-            // fetchSellerData()
-            const sellerData = async()=>{
-            const token = Cookies.get('token')
-                const res = await GetFetchAPI('seller',token)
+            const sellerData = async () => {
+                const token = Cookies.get('token')
+                const res = await GetFetchAPI('seller', token)
                 console.log(res.data)
-              if(res.status == 200)  setData(res.data)
+                if (res.status == 200) setData(res.data)
             }
             sellerData();
             setActive(false)
         }
-    }, [data,active])
+    }, [data, active])
     const columns = useMemo(() => [
         columnHelper.accessor('name', { header: 'Name', size: 40, }),
         columnHelper.accessor('email', { header: 'Email', size: 40, }),
@@ -47,9 +49,9 @@ const Seller = () => {
         columnHelper.accessor('active', {
             header: 'active',
             size: 120,
-            Cell: ({ cell,row }) => {
-                if (!cell.getValue()) return   <FaThumbsDown onClick={()=>handleSellerActive(row.original.loginId)} className='fs-5 text-danger' style={{ fill: 'red'  ,cursor:'pointer'}} />
-                return <FaThumbsUp  onClick={()=>handleSellerActive(row.original.loginId)} className='fs-5 text-success' style={{ fill: 'green',  cursor:'pointer'}} />
+            Cell: ({ cell, row }) => {
+                if (!cell.getValue()) return <FaThumbsDown onClick={() => handleSellerActive(row.original.loginId)} className='fs-5 text-danger' style={{ fill: 'red', cursor: 'pointer' }} />
+                return <FaThumbsUp onClick={() => handleSellerActive(row.original.loginId)} className='fs-5 text-success' style={{ fill: 'green', cursor: 'pointer' }} />
             }
 
         }),
@@ -57,17 +59,17 @@ const Seller = () => {
             header: 'suspended',
             size: 120,
             Cell: ({ cell }) => {
-                if (!cell.getValue()) return <FaThumbsDown  className='fs-5 text-danger' style={{ fill: 'red' , cursor:'pointer'}} />
-                return <FaThumbsUp  className='fs-5 text-success' style={{ fill: 'green', cursor:'pointer' }} />
+                if (!cell.getValue()) return <FaThumbsDown className='fs-5 text-success' style={{ fill: 'green', cursor: 'pointer' }} />
+                return <FaThumbsUp className='fs-5 text-danger' style={{ fill: 'red', cursor: 'pointer' }} />
             }
         }),
     ])
-   
-     const handleSellerActive = async (id) => {
+
+    const handleSellerActive = async (id) => {
         const token = Cookies.get('token')
-        const body = await JSON.stringify({id:id})
-     await sellerActive('sellerActive',body,token)
-      setActive(true)
+        const body = await JSON.stringify({ id: id })
+        await sellerActive('sellerActive', body, token)
+        setActive(true)
     }
     const handleExportRowsPDF = (rows) => {
         const doc = new jsPDF();
@@ -98,12 +100,13 @@ const Seller = () => {
         muiPaginationProps: {
             rowsPerPageOptions: [10, 25, 50, 1000]
         },
-        renderRowActionMenuItems: ({ closeMenu }) => [
-            <MenuItem key={0} onClick={() => { closeMenu(); }} sx={{ m: 0 }}>
+        renderRowActionMenuItems: ({ closeMenu, row }) => [
+            <MenuItem key={0} onClick={() => { router.push('/admin/seller/' + row.original.loginId); closeMenu() }} sx={{ m: 0 }}>
                 <ListItemIcon><AccountCircle /></ListItemIcon>
                 View Profile
             </MenuItem>,
-            <MenuItem key={1} onClick={() => { closeMenu(); }} sx={{ m: 0 }}>
+            <MenuItem key={1} onClick={() => {  setModalShow(true); setEmail(row.original.email);closeMenu(); }} sx={{ m: 0 }}>
+               
                 <ListItemIcon><Send /></ListItemIcon>
                 Send Email
             </MenuItem>,
@@ -115,12 +118,14 @@ const Seller = () => {
             </Box>
         ),
     });
-   
+
 
     return (
         <>
             <div>
                 <MaterialReactTable table={table} />
+                <Email_Modal show={modalShow} email={email}
+                    onHide={() => setModalShow(false)} />
             </div>
         </>
 

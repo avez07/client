@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 import 'sweetalert2/src/sweetalert2.scss';
 import Cookies from 'js-cookie';
 import { GetData } from './serverFunctions';
-import SwalMessage from './swal';
+import {SwalMessage} from './swal';
 import { useRouter, usePathname } from 'next/navigation';
 
 export const AuthContext = createContext();
