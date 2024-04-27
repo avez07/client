@@ -38,6 +38,6 @@ export const PostFetchAPI = async(url,body,authorization)=>{
     console.log(authorization);
     console.log(body);
     console.log(url);
-
-     return "sussess";
+     if (await response.json()) return 'sucess'
+     return await response.json()
 }
