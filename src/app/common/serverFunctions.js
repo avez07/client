@@ -35,8 +35,6 @@ export const sellerActive = async(url,body,authorization)=>{
         }
         
     })
-    console.log(authorization);
-    console.log(body);
-    console.log(url);
-     return 'suceess'
+  
+    if(response.ok) return 'suceess'
 }

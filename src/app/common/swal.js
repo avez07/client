@@ -1,10 +1,13 @@
 'use client'
 import Swal from 'sweetalert2';
-import { Modal, Button, Form } from 'react-bootstrap'
+import { Modal, Button, Form} from 'react-bootstrap'
 import { BsExclamationTriangle } from "react-icons/bs";
-import { TextField } from '@mui/material';
+import { Slide, Snackbar, TextField ,Alert} from '@mui/material';
 import { useRouter } from 'next/navigation';
-import { ClipLoader } from 'react-spinners';
+import { PulseLoader } from 'react-spinners';
+import { useRef, useState } from 'react';
+import { sellerActive } from './serverFunctions';
+import Cookies from 'js-cookie';
 
 export const SwalMessage = (props) => {
   const router = useRouter()
@@ -40,13 +43,47 @@ export const SwalMessage = (props) => {
 }
 
 export const Email_Modal = (props) => {
-  const handleSubmit = (e)=>{
+  const [loading,setLoading] = useState(false)
+  const [open,setOpen] = useState(false)
+
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false)
+  }
+
+
+  const handleSubmit = async (e)=>{
+    setLoading(true)
+    const token = Cookies.get('token')
     e.preventDefault()
-    console.log(e.target.value)
+    const formdata = new FormData(e.target)
+    const formValues = Object.fromEntries(formdata)
+    const body = {
+      email : props.email,
+      ...formValues
+    }
+    const res = await sellerActive('emailSender',JSON.stringify(body),token)
+     setLoading(false);
+     props.onHide()
+     setOpen(true)
   }
 
   return (
-    <Modal
+    <>
+    <Snackbar open={open} onClose={handleClose} autoHideDuration={6000}  anchorOrigin={{vertical:'top',horizontal:'right'}}>
+    <Alert
+    onClose={handleClose}
+    severity="success"
+    variant="filled"
+    sx={{ width: '100%' }}
+  >
+    Email Sended!
+  </Alert>
+    </Snackbar>
+        <Modal
       {...props}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
@@ -57,13 +94,13 @@ export const Email_Modal = (props) => {
         New Message
         </Modal.Title>
       </Modal.Header>
-      <Form onSubmit={(e)=>handleSubmit(e)}>
+      <form  onSubmit={(e)=>handleSubmit(e)}>
       <Modal.Body className='p-0'>
        <div className='py-2 px-3 d-flex align-items-center' style={{borderBottom:'1px dashed #ccc',background:props.email?'#e9ecef':'currentcolor'}}><span>TO</span>
        <Form.Control
        type='email'
-       readOnly
        required
+       name='email'
        disabled={props.email}
        value={props.email}
        className='ms-2 border-0'
@@ -74,6 +111,7 @@ export const Email_Modal = (props) => {
        <Form.Control
        type='text'
        required
+       name='subject'
        placeholder='Subject'
        className='ps-0 border-0'
        style={{boxShadow:'none'}}
@@ -83,6 +121,7 @@ export const Email_Modal = (props) => {
        <Form.Control
        as='textarea'
        required
+       name='text'
        placeholder='Type your Message'
        className='ps-0 border-0'
        style={{boxShadow:'none',height:'200px',resize:'none'}}
@@ -90,10 +129,11 @@ export const Email_Modal = (props) => {
        </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button  style={{background:'#362465',border:'none'}}onClick={props.onHide}>Send</Button>
+        <Button type='submit' disabled={loading}  style={{background:'#362465',border:'none'}}>{loading ? <PulseLoader size={5} loading={loading} color='#fff'/>:'Send'}</Button>
       </Modal.Footer>
-      </Form>
+      </form>
     </Modal>
+    </>
   );
 }
 
