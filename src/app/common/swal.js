@@ -4,6 +4,7 @@ import { Modal, Button, Form } from 'react-bootstrap'
 import { BsExclamationTriangle } from "react-icons/bs";
 import { TextField } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import { ClipLoader } from 'react-spinners';
 
 export const SwalMessage = (props) => {
   const router = useRouter()
@@ -43,6 +44,7 @@ export const Email_Modal = (props) => {
     e.preventDefault()
     console.log(e.target.value)
   }
+
   return (
     <Modal
       {...props}
@@ -60,6 +62,8 @@ export const Email_Modal = (props) => {
        <div className='py-2 px-3 d-flex align-items-center' style={{borderBottom:'1px dashed #ccc',background:props.email?'#e9ecef':'currentcolor'}}><span>TO</span>
        <Form.Control
        type='email'
+       readOnly
+       required
        disabled={props.email}
        value={props.email}
        className='ms-2 border-0'
@@ -69,6 +73,7 @@ export const Email_Modal = (props) => {
        <div className='py-2 px-3'style={{borderBottom:'1px dashed #ccc'}}>
        <Form.Control
        type='text'
+       required
        placeholder='Subject'
        className='ps-0 border-0'
        style={{boxShadow:'none'}}
@@ -77,6 +82,7 @@ export const Email_Modal = (props) => {
        <div className='my-2 px-3'>
        <Form.Control
        as='textarea'
+       required
        placeholder='Type your Message'
        className='ps-0 border-0'
        style={{boxShadow:'none',height:'200px',resize:'none'}}
