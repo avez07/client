@@ -6,13 +6,13 @@ import { Slide, Snackbar, TextField ,Alert} from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { PulseLoader } from 'react-spinners';
 import { useRef, useState } from 'react';
-import { sellerActive } from './serverFunctions';
+import { UnRetuenFunc } from './serverFunctions';
 import Cookies from 'js-cookie';
 
 export const SwalMessage = (props) => {
   const router = useRouter()
   const handleLoginAgain = () => {
-    router.push('/authentication/login');
+    router.push('/auth/login');
     props.onHide(); // Call onHide to hide the modal
   };
   const message = props.message == 'invalid token' ? 'invalid Session' : props.message == 'jwt expired' ? 'Session Expired' : props.message
@@ -65,7 +65,7 @@ export const Email_Modal = (props) => {
       email : props.email,
       ...formValues
     }
-    const res = await sellerActive('emailSender',JSON.stringify(body),token)
+    const res = await UnRetuenFunc('emailSender',JSON.stringify(body),token)
      setLoading(false);
      props.onHide()
      setOpen(true)

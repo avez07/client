@@ -25,7 +25,7 @@ export const GetFetchAPI = async(url,authorization)=>{
     return await response.json();
 }
 
-export const sellerActive = async(url,body,authorization)=>{
+export const UnRetuenFunc = async(url,body,authorization)=>{
     const response = await fetch(process.env.API_URL+url,{
         method:'POST',
         body: body,
@@ -35,6 +35,18 @@ export const sellerActive = async(url,body,authorization)=>{
         }
         
     })
-  
     if(response.ok) return 'suceess'
+}
+export const PostApi = async(url,body,authorization)=>{
+    const response = await fetch(process.env.API_URL+url,{
+        method:'POST',
+        body: body,
+        headers:{
+            'Content-Type': 'application/json',
+            'authorization': 'Bearer ' + authorization
+        }
+        
+    })
+    if(response.ok) return await response.json()
+    
 }

@@ -15,19 +15,19 @@ const SetUserRole = async (token) => {
 }
 
 export const middleware = async (request) => {  
-    const token = request.cookies.get('token');
+    const token = await request.cookies.get('token');
     let user = await request.cookies.get('loginData')
     const pathname = request.nextUrl.pathname
     if (pathname == '/' && !token) return NextResponse.redirect(new URL('/dashboard', request.url))
     if (!token) return NextResponse.redirect(new URL('/auth/login', request.url))
     if (token && !user) {
         const data = await SetUserRole(token.value)
-        if (!data) return NextResponse.redirect(new URL('/dashboard', request.url))
+        if (!data)  return NextResponse.redirect(new URL('/dashboard', request.url))
         await request.cookies.set('loginData', JSON.stringify(data))
     user = await JSON.parse(request.cookies.get('loginData').value)
 }
     if (token && user) {
-        const redirect = user.role == 'admin' ? '/admin' : user.role == 'vender' ? '/vender' : '/dashboard'
+        const redirect = user.role == 'admin' ? '/admin' : user.role == 'vender' ? '/vender' : '/dashboard1'
         if (pathname == '/') return NextResponse.redirect(new URL(redirect, request.url))
         if (pathname != '/vender/setting'&& request.nextUrl.pathname.startsWith('/vender') && (!user.active)) return NextResponse.redirect(new URL(redirect+'/setting',request.url))
         if (pathname.startsWith('/admin') && user.role == 'admin') return NextResponse.next()

@@ -37,10 +37,9 @@ const Login = () => {
       })     
       if (response.ok){
         const data = await response.json()
-         setLoginData(data.data);
+        //  setLoginData(data.data);
+        await Cookies.set('token', data.token, new Date(Date.now() + 86400000))
         setActive(true)
-        console.log(loginData)
-         Cookies.set('token', data.token, new Date(Date.now() + 86400000))
       }else{
         const error = await response.json()
         setApiError(error.message)

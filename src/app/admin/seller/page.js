@@ -9,7 +9,7 @@ import { jsPDF } from 'jspdf'; //or use your library of choice here
 import autoTable from 'jspdf-autotable';
 import Cookies from 'js-cookie';
 import { FaThumbsDown, FaThumbsUp } from 'react-icons/fa';
-import { GetFetchAPI, sellerActive } from '@/app/common/serverFunctions';
+import { GetFetchAPI, UnRetuenFunc } from '@/app/common/serverFunctions';
 import { Email_Modal } from '@/app/common/swal'
 import { useRouter } from 'next/navigation';
 const columnHelper = createMRTColumnHelper();
@@ -34,7 +34,6 @@ const Seller = () => {
             const sellerData = async () => {
                 const token = Cookies.get('token')
                 const res = await GetFetchAPI('seller', token)
-                console.log(res.data)
                 if (res.status == 200) setData(res.data)
             }
             sellerData();
@@ -50,25 +49,26 @@ const Seller = () => {
             header: 'active',
             size: 120,
             Cell: ({ cell, row }) => {
-                if (!cell.getValue()) return <FaThumbsDown onClick={() => handleSellerActive(row.original.loginId)} className='fs-5 text-danger' style={{ fill: 'red', cursor: 'pointer' }} />
-                return <FaThumbsUp onClick={() => handleSellerActive(row.original.loginId)} className='fs-5 text-success' style={{ fill: 'green', cursor: 'pointer' }} />
+                if (!cell.getValue()) return <FaThumbsDown onClick={() => handleSellerActive(row.original.loginId,'accActive')} className='fs-5 text-danger' style={{ fill: 'red', cursor: 'pointer' }} />
+                return <FaThumbsUp onClick={() => handleSellerActive(row.original.loginId,'accActive')} className='fs-5 text-success' style={{ fill: 'green', cursor: 'pointer' }} />
             }
 
         }),
         columnHelper.accessor('suspended', {
             header: 'suspended',
             size: 120,
-            Cell: ({ cell }) => {
-                if (!cell.getValue()) return <FaThumbsDown className='fs-5 text-success' style={{ fill: 'green', cursor: 'pointer' }} />
-                return <FaThumbsUp className='fs-5 text-danger' style={{ fill: 'red', cursor: 'pointer' }} />
+            Cell: ({ cell,row }) => {
+                if (!cell.getValue()) return <FaThumbsDown onClick={() => handleSellerActive(row.original.loginId,'accsuspend')} className='fs-5 text-success' style={{ fill: 'green', cursor: 'pointer' }} />
+                return <FaThumbsUp className='fs-5 text-danger' onClick={() => handleSellerActive(row.original.loginId,'accsuspend')} style={{ fill: 'red', cursor: 'pointer' }} />
             }
         }),
     ])
 
-    const handleSellerActive = async (id) => {
+    const handleSellerActive = async (id,state) => {
         const token = Cookies.get('token')
+        const url = state;
         const body = await JSON.stringify({ id: id })
-        await sellerActive('sellerActive', body, token)
+        await UnRetuenFunc(url, body, token)
         setActive(true)
     }
     const handleExportRowsPDF = (rows) => {

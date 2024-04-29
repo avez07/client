@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CiDiscount1 } from "react-icons/ci";
 import { HiOutlineShare } from "react-icons/hi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -17,16 +17,17 @@ import {
 import { mkConfig, generateCsv, download } from 'export-to-csv';
 import { Box } from '@mui/material';
 import Button2 from '@mui/material/Button';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { jsPDF } from 'jspdf'; //or use your library of choice here
 import autoTable from 'jspdf-autotable';
 import { columns, data } from '/public/data.js';
-import { FaClockRotateLeft } from 'react-icons/fa6';
-import { FaClock, FaUser } from 'react-icons/fa';
-import { RiCheckDoubleLine } from 'react-icons/ri';
-import { HiMiniReceiptRefund } from 'react-icons/hi2';
-import { MdDangerous } from 'react-icons/md';
-// console.log(columns)
+import { GetFetchAPI, PostApi } from "@/app/common/serverFunctions";
+import Cookies from "js-cookie";
+
+
+
+const  capitalizeEveryWord = (str) => {
+    return str.replace(/\b\w/g, (char) => char.toUpperCase());
+  }
 const handleExportRows = (rows) => {
     const rowData = rows.map((row) => row.original);
     const csvConfig = { header: ['name', 'age', 'country'] };
@@ -48,11 +49,26 @@ const handleExportRowsPDF = (rows) => {
 
 
 
-const OrderDetails = ({ params }) => {
+const SellerDetail = ({ params }) => {
 
     const [active, setActive] = useState(1);
+    const [data, setData] = useState([])
     const [showPass, setShowPass] = useState(false)
+    const [flag, setFlag] = useState(true)
 
+    useEffect(() => {
+        const fetchUserdata = async () => {
+            const token = Cookies.get('token')
+            const body = JSON.stringify({ id: params.sellerID })
+            const res = await PostApi('sellerDetail', body, token)
+            setData(res.data)
+            setFlag(false)
+            let text = "Hello World!";
+            if (data.name) data.name.toUpperCase();
+
+        }
+        if (flag) fetchUserdata()
+    }, [data, flag])
     const table = useMaterialReactTable({
         columns,
         data,
@@ -63,56 +79,25 @@ const OrderDetails = ({ params }) => {
         paginationDisplayMode: 'pages',
         positionToolbarAlertBanner: 'bottom',
         renderTopToolbarCustomActions: ({ table }) => (
-            <Box
-                sx={{
-                    display: 'flex',
-                    gap: '16px',
-                    padding: '8px',
-                    flexWrap: 'wrap',
-                    color: 'red'
-                }}
-            >
-
-                <Button2
-                    disabled={
-                        !table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()
-                    }
-                    //only export selected rows
-                    onClick={() => handleExportRowsPDF(table.getSelectedRowModel().rows)}
-                >
-                    Export  PDF
-                </Button2>
-                <Button2
-                    disabled={
-                        !table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()
-                    }
-                    //only export selected rows
-                    onClick={() => handleExportRows(table.getSelectedRowModel().rows)}
-                >
-                    Export EXCEL
-                </Button2>
-                <Button2
-                    disabled={
-                        !table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()
-                    }
-                    //only export selected rows
-                    onClick={() => handleExportRows(table.getSelectedRowModel().rows.name)}
-                >
-                    PayAll
-                </Button2>
+            <Box sx={{ display: 'flex', gap: '16px', padding: '8px', flexWrap: 'wrap', color: 'red' }}>
+                <Button2 disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRowsPDF(table.getSelectedRowModel().rows)}>Export  PDF</Button2>
+                <Button2 disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRows(table.getSelectedRowModel().rows)}>Export EXCEL</Button2>
+                <Button2 disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRows(table.getSelectedRowModel().rows.name)}>PayAll</Button2>
             </Box>
         ),
     });
 
+
+
     return (
         <>
-            <h3 className="mb-4">Seller Details #{params.sellerID}</h3>
+            <h3 className="mb-4">Seller Id #{params.sellerID}</h3>
             <div className="d-flex justify-content-between" style={{ width: '99%' }}>
                 <div className="orderDetails" style={{ width: '33%' }}>
                     <Row xs={1} md={1} className="g-4">
                         <Col key={1}>
                             <Card>
-                                <Card.Title style={{ fontSize: '16px' }} className="pt-3 px-3 fw-bold text-muted">Customer Detail</Card.Title>
+                                <Card.Title style={{ fontSize: '16px' }} className="pt-3 px-3 fw-bold text-muted">Seller Detail</Card.Title>
                                 <Card.Body>
                                     <div className="d-flex flex-column justify-content-center align-items-center pb-3">
                                         <Image
@@ -121,7 +106,7 @@ const OrderDetails = ({ params }) => {
                                             height={90}
                                             alt="customer img"
                                         />
-                                        <div className="d-flex flex-column ms-3"><span className="fw-semibold" style={{ fontSize: "23px" }}>Jhon Tuttle</span><span style={{ fontSize: '13px' }}>Customer ID: #47389</span></div>
+                                        <div className="d-flex flex-column ms-3 text-center"><span className="fw-semibold" style={{ fontSize: "23px" }}>{data.name ? capitalizeEveryWord(data.name):''}</span><span style={{ fontSize: '13px' }}>Customer ID: #{data._id}</span></div>
                                     </div>
                                     <div className="d-flex align-items-center justify-content-between pb-3 order-info" style={{ borderBottom: '2px dashed #ddd' }}>
                                         <span className="order-cart"><BsCart3 /></span><span className="fw-semibold ms-2 text-muted"> 12 Orders</span>
@@ -130,9 +115,9 @@ const OrderDetails = ({ params }) => {
                                     <div className="pt-3">
                                         <div className="text-capitalize mb-2 fw-semibold">Details</div>
                                         <div className="text-capitalize">
-                                            <div className="d-flex mt-2"><span style={{ width: '30%' }}>UserName </span> <span className="text-lowercase">: Jhon Tuttle</span></div>
-                                            <div className="d-flex mt-2"><span style={{ width: '30%' }}>Billing email </span> <span className="text-lowercase">: testemail@gmail.com</span></div>
-                                            <div className="d-flex mt-2"><span style={{ width: '30%' }}>status :</span> <span className="this-week seller-status">Active</span></div>
+                                            <div className="d-flex mt-2"><span style={{ width: '30%' }}>UserName </span> <span className="text-lowercase">: {data.name}</span></div>
+                                            <div className="d-flex mt-2"><span style={{ width: '30%' }}>Billing email </span> <span className="text-lowercase">: {data.email}</span></div>
+                                            <div className="d-flex mt-2"><span style={{ width: '30%' }}>status :</span> {data.suspended ? (<span className="this-week" style={{background:'#fbcfcf',color:'#cd5a40'}}>Suspended</span>) : !data.active ? (<span className="this-week" style={{background:'#fbcfcf', color: '#cd5a40'}}>NotActive</span>) : (<span className="this-week seller-status">Active</span>)}</div>
                                             <div className="d-flex mt-2"><span style={{ width: '30%' }}>contact</span> <span>: 999999999</span></div>
                                             <div className="d-flex mt-2"><span style={{ width: '30%' }}>Country</span> <span>: INDIA</span></div>
                                         </div>
@@ -297,4 +282,4 @@ const OrderDetails = ({ params }) => {
         </>
     )
 }
-export default OrderDetails;
+export default SellerDetail;
