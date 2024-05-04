@@ -1,9 +1,10 @@
 'use client'
-import React, { useState, useContext, useMemo } from "react";
+import React, { useState, useContext, useMemo, useEffect } from "react";
 import { AuthContext } from "@/app/common/auth";
 import { Button, Form, Modal as BootstrapModal } from "react-bootstrap";
 import { MaterialReactTable, createMRTColumnHelper, useMaterialReactTable, } from 'material-react-table';
 import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
+import { IoMdCloseCircleOutline } from "react-icons/io"
 import dynamic from 'next/dynamic';
 const Select = dynamic(() => import('react-select'), { ssr: false })
 
@@ -18,7 +19,7 @@ const Modal = (props) => {
         <BootstrapModal.Title>Add {props.refferences}</BootstrapModal.Title>
       </BootstrapModal.Header>
       <BootstrapModal.Body>
-        <Form.Control type="text" name="addFeild" value={props.refferences} />
+        <Form.Control type="text" name="addFeild" defaultValue={props.refferences} />
       </BootstrapModal.Body>
       <BootstrapModal.Footer>
         <Button variant="secondary" onClick={props.onHide}>
@@ -33,52 +34,79 @@ const Modal = (props) => {
 }
 
 const AddDetailsModal = (props) => {
+  const [details,setDeails] = useState('')
+  const [detailsNamed,setDetailsNamed] = useState([])
+  const [KeyChanges,setKeyChange] = useState('')
+  const [key ,setKey] = useState(1)
+
+
+  const handleChange = (e)=>{
+   setKeyChange(false)
+   setTimeout(()=>{
+      setDeails(e.target.value)
+    },250)
+  }
+  const handleAddArray = async ()=>{
+    if(detailsNamed.includes(details)) setKeyChange(true)
+    if(!detailsNamed.includes(details)) {
+      const newstr =  details.replace(/\b\w/g, (char) => char.toUpperCase())
+      detailsNamed.push(newstr)
+    }
+   setDeails()
+  }
+  const handledeleteArray = (index)=>{
+    detailsNamed.splice(index,1)
+    setKey((prevalue)=>prevalue + 1)
+  }
+  const handleSave = async ()=>{
+    const categoryData = localStorage.getItem('categoryDetails')
+    if (!categoryData) await localStorage.setItem('categoryDetails',JSON.stringify(detailsNamed))
+    if (categoryData) {
+      const data = JSON.parse(categoryData)
+      const joinedArray = Array.from(new Set(data.concat(detailsNamed)))
+     await localStorage.setItem('categoryDetails',JSON.stringify(joinedArray))
+    setKey((prevalue)=>prevalue + 1)
+      setDetailsNamed([])
+      
+    }
+  }
+  return(
   <BootstrapModal show={props.show} onHide={props.onHide} centered>
     <BootstrapModal.Header closeButton>
-      <BootstrapModal.Title>Modal </BootstrapModal.Title>
+      <BootstrapModal.Title>Details</BootstrapModal.Title>
     </BootstrapModal.Header>
     <BootstrapModal.Body>
-      <Form.Control type="text" name="adddetails" value={props.refferences} />
-      <div>
-        <Form.Select aria-label="details">
-          <option value='2'>2</option>
-          <option value='4'>4</option>
-          <option value='6'>6</option>
-          <option value='8'>8</option>
-          <option value='10'>10</option>
-          <option value='12'>12</option>
-        </Form.Select>
-        <Form.Select aria-label="Default select example">
-          <option>Open this select menu</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
-        </Form.Select>
+      <div className="d-flex" key={key}>{detailsNamed.map((items,index)=>(<div className="detailspan me-2" key={index}>{items}<IoMdCloseCircleOutline className="ms-1" onClick={(e)=>handledeleteArray(index)} style={{cursor:'pointer'}}/></div>))}</div>
+      <div className="d-flex justify-content-between align-items-baseline">
+      <Form.Control type="text" onChange={(e)=>handleChange(e)} key={detailsNamed.length}   className="my-2 me-1"  name="adddetails" defaultValue={details||''} />
+      <Button className="ms-1" onClick={()=>handleAddArray()} style={{ background: '#362465', border: 'none' }}>Add</Button>
       </div>
+      {KeyChanges&&(<div className="text-danger">Name Allredy Present</div>)}
+      
     </BootstrapModal.Body>
     <BootstrapModal.Footer>
       <Button variant="secondary" onClick={props.onHide}>
         Close
       </Button>
-      <Button style={{ background: '#362465', border: 'none' }}>
+      <Button style={{ background: '#362465', border: 'none' }} onClick={()=>{ handleSave(); props.onHide(); }}>
         Save
       </Button>
     </BootstrapModal.Footer>
   </BootstrapModal>
+  )
 }
 
 const ProductCategory = () => {
   const { nightmode } = useContext(AuthContext);
   const [showModal, setShowModal] = useState(false);
   const [showDetailModal, setDetailModal] = useState(false)
+  const [documentRender, setDocumentRender] = useState(false)
   const [refferences, setRefferences] = useState();
   const [GenderCategory, SetGenderCategory] = useState(['Men', 'Female', 'Kids'])
   const [data, setDetails] = useState([
     { name: 'price', size: '12', type: 'type', options: 'options', Isimportant: 'isImportant', tableContent: 'true' },
     { name: 'price', size: '12', type: 'type', options: 'options', Isimportant: 'isImportant', tableContent: 'true' },
     { name: 'price', size: '12', type: 'type', options: 'options', Isimportant: 'isImportant', tableContent: 'true' }
-
-
   ])
 
   const customStyle = {
@@ -136,6 +164,9 @@ const ProductCategory = () => {
       </>
     )
   });
+  useEffect(() => {
+    setDocumentRender(true)
+  }, []);
 
   return (
     <>
@@ -143,45 +174,56 @@ const ProductCategory = () => {
       <div>
         <Form.Label>Gender Category</Form.Label>
         <div className="d-flex justify-content-between my-3">
-          <Select
-            name="ProductCategory"
-            menuPortalTarget={document ? document.body : ''}
-            menuPosition="fixed"
-            menuPlacement="bottom"
-            className="categoryName"
-            styles={{ ...customStyle, width: '100%' }}
-            options={GenderCategory.map(item => ({ value: item, label: item }))}
-          />
+          {documentRender && (
+            <Select
+              name="ProductCategory"
+              menuPortalTarget={document.body}
+              menuPosition="fixed"
+              menuPlacement="bottom"
+              className="categoryName"
+              styles={{ ...customStyle, width: '100%' }}
+              options={GenderCategory.map(item => ({ value: item, label: item }))}
+            />
+
+          )}
+
           <Button type="button" className="border-0" onClick={() => { setShowModal(true), setRefferences('genderCategories') }} style={{ background: '#362465', width: '25%' }}><FaPlus /> Add Gender Category</Button>
         </div>
         <Form.Label>Category</Form.Label>
         <div className="d-flex justify-content-between my-3">
-          <Select
-            name="ProductCategory"
-            menuPortalTarget={document ? document.body : ''}
-            menuPosition="fixed"
-            menuPlacement="bottom"
-            className="categoryName"
-            styles={{ ...customStyle, width: '100%' }}
-            options={GenderCategory.map(item => ({ value: item, label: item }))}
-          />
+          {documentRender && (
+            <Select
+              name="ProductCategory"
+              menuPortalTarget={document ? document.body : ''}
+              menuPosition="fixed"
+              menuPlacement="bottom"
+              className="categoryName"
+              styles={{ ...customStyle, width: '100%' }}
+              options={GenderCategory.map(item => ({ value: item, label: item }))}
+            />
+          )}
+
           <Button type="button" className="border-0" onClick={() => { setShowModal(true), setRefferences('genderCategories') }} style={{ background: '#362465', width: '25%' }}><FaPlus /> Add  Sub Category</Button>
         </div>
         <Form.Label>SubCategories</Form.Label>
         <div className="d-flex justify-content-between my-3">
-          <Select
-            name="ProductCategory"
-            menuPortalTarget={document ? document.body : ''}
-            menuPosition="fixed"
-            menuPlacement="bottom"
-            className="categoryName"
-            styles={{ ...customStyle, width: '100%' }}
-            options={GenderCategory.map(item => ({ value: item, label: item }))}
-          />
-          <Button type="button" className="border-0" onClick={() => { setShowModal(true), setRefferences('genderCategories') }} style={{ background: '#362465', width: '25%' }}><FaPlus /> Add  Category</Button>
+          {documentRender && (
+            <Select
+              name="ProductCategory"
+              menuPortalTarget={document.body}
+              menuPosition="fixed"
+              menuPlacement="bottom"
+              className="categoryName"
+              styles={{ ...customStyle, width: '100%' }}
+              options={GenderCategory.map(item => ({ value: item, label: item }))}
+            />
+          )}
+
+          <Button type="button" className="border-0" onClick={() => { setDetailModal(true), setRefferences('genderCategories') }} style={{ background: '#362465', width: '25%' }}><FaPlus /> Add  Category</Button>
         </div>
       </div>
       <Modal show={showModal} refferences={refferences} onHide={() => setShowModal(false)} />
+      <AddDetailsModal show={showDetailModal} refferences={refferences} onHide={() => setDetailModal(false)} />
 
       <div className="w-100 d-flex flex-column border rounded-2 border-1 p-3 w-100" style={{ borderColor: 'red' }}>
         <div><Button type="button" className="border-0 mb-3" onClick={() => setDetailModal(true)} style={{ background: '#362465', float: 'right' }}><FaPlus /> Add  More details</Button></div>
@@ -189,7 +231,6 @@ const ProductCategory = () => {
           <MaterialReactTable table={table} />
         </div>
       </div>
-      <AddDetailsModal show={showDetailModal} refferences={refferences} onHide={() => setDetailModal(false)} />
     </>
   );
 }

@@ -754,4 +754,11 @@ position: absolute;
 right: 25%;
 width: 50% !important;
 }
+/* productdetails  */
+.detailspan{
+  background-color: #dcf6e8;
+  color: #40cd7f;
+  padding: 2px 7px;
+  border-radius: 20px;
+}
 
