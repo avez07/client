@@ -43,46 +43,10 @@ const PendingOrders = () => {
     paginationDisplayMode: 'pages',
     positionToolbarAlertBanner: 'bottom',
     renderTopToolbarCustomActions: ({ table }) => (
-      <Box
-        sx={{
-          display: 'flex',
-          gap: '16px',
-          padding: '8px',
-          flexWrap: 'wrap',
-          color: 'red'
-        }}
-      >
-        
-        <Button
-          disabled={
-            !table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()
-          }
-          //only export selected rows
-          onClick={() => handleExportRowsPDF(table.getSelectedRowModel().rows)}
-          startIcon={<FileDownloadIcon />}
-        >
-          Export  PDF
-        </Button>
-        <Button
-          disabled={
-            !table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()
-          }
-          //only export selected rows
-          onClick={() => handleExportRows(table.getSelectedRowModel().rows)}
-          startIcon={<FileDownloadIcon />}
-        >
-          Export EXCEL
-        </Button>
-        <Button
-          disabled={
-            !table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()
-          }
-          //only export selected rows
-          onClick={() => handleExportRows(table.getSelectedRowModel().rows)}
-          startIcon={<FaSquareCheck />}
-        >
-          Approve
-        </Button>
+      <Box sx={{display: 'flex',gap: '16px',padding: '8px',flexWrap: 'wrap',color: 'red'}}>        
+        <Button disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}onClick={() => handleExportRowsPDF(table.getSelectedRowModel().rows)}startIcon={<FileDownloadIcon />}>Export  PDF</Button>
+        <Button disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}onClick={() => handleExportRows(table.getSelectedRowModel().rows)}startIcon={<FileDownloadIcon />}>Export EXCEL</Button>
+          <Button disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}onClick={() => handleExportRows(table.getSelectedRowModel().rows)}startIcon={<FaSquareCheck />}>Approve</Button>
       </Box>
     ),
   });

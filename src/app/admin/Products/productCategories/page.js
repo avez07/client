@@ -1,6 +1,9 @@
 'use client'
 import React, { useState, useContext, useMemo, useEffect } from "react";
 import { AuthContext } from "@/app/common/auth";
+import { Box, Button as MaterialButton } from '@mui/material';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import { FaSquareCheck } from 'react-icons/fa6';
 import { Button, Form, Modal as BootstrapModal } from "react-bootstrap";
 import { MaterialReactTable, createMRTColumnHelper, useMaterialReactTable, } from 'material-react-table';
 import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
@@ -34,65 +37,62 @@ const Modal = (props) => {
 }
 
 const AddDetailsModal = (props) => {
-  const [details,setDeails] = useState('')
-  const [detailsNamed,setDetailsNamed] = useState([])
-  const [KeyChanges,setKeyChange] = useState('')
-  const [key ,setKey] = useState(1)
+  const [details, setDeails] = useState('')
+  const [detailsNamed, setDetailsNamed] = useState([])
+  const [KeyChanges, setKeyChange] = useState('')
+  const [key, setKey] = useState(1)
 
 
-  const handleChange = (e)=>{
-   setKeyChange(false)
-   setTimeout(()=>{
+  const handleChange = (e) => {
+    setKeyChange(false)
+    setTimeout(() => {
       setDeails(e.target.value)
-    },250)
+    }, 250)
   }
-  const handleAddArray = async ()=>{
-    if(detailsNamed.includes(details)) setKeyChange(true)
-    if(!detailsNamed.includes(details)) {
-      const newstr =  details.replace(/\b\w/g, (char) => char.toUpperCase())
+  const handleAddArray = async () => {
+    if (detailsNamed.includes(details)) setKeyChange(true)
+    if (!detailsNamed.includes(details)) {
+      const newstr = details.replace(/\b\w/g, (char) => char.toUpperCase()).replace(/[^\w\s]/g, '')
       detailsNamed.push(newstr)
     }
-   setDeails()
+    setDeails()
   }
-  const handledeleteArray = (index)=>{
-    detailsNamed.splice(index,1)
-    setKey((prevalue)=>prevalue + 1)
+  const handledeleteArray = (index) => {
+    detailsNamed.splice(index, 1)
+    setKey((prevalue) => prevalue + 1)
   }
-  const handleSave = async ()=>{
+  const handleSave = async () => {
     const categoryData = localStorage.getItem('categoryDetails')
-    if (!categoryData) await localStorage.setItem('categoryDetails',JSON.stringify(detailsNamed))
+    const d1 = detailsNamed.map((items) => { return { name: items, size: '12', type: 'Input', options: 'options', Isimportant: 'isImportant', tableContent: 'true' } })
+    if (!categoryData) await localStorage.setItem('categoryDetails', JSON.stringify(d1))
     if (categoryData) {
       const data = JSON.parse(categoryData)
       const joinedArray = Array.from(new Set(data.concat(detailsNamed)))
-     await localStorage.setItem('categoryDetails',JSON.stringify(joinedArray))
-    setKey((prevalue)=>prevalue + 1)
+      await localStorage.setItem('categoryDetails', JSON.stringify(joinedArray))
+      setKey((prevalue) => prevalue + 1)
       setDetailsNamed([])
-      
+
     }
   }
-  return(
-  <BootstrapModal show={props.show} onHide={props.onHide} centered>
-    <BootstrapModal.Header closeButton>
-      <BootstrapModal.Title>Details</BootstrapModal.Title>
-    </BootstrapModal.Header>
-    <BootstrapModal.Body>
-      <div className="d-flex" key={key}>{detailsNamed.map((items,index)=>(<div className="detailspan me-2" key={index}>{items}<IoMdCloseCircleOutline className="ms-1" onClick={(e)=>handledeleteArray(index)} style={{cursor:'pointer'}}/></div>))}</div>
-      <div className="d-flex justify-content-between align-items-baseline">
-      <Form.Control type="text" onChange={(e)=>handleChange(e)} key={detailsNamed.length}   className="my-2 me-1"  name="adddetails" defaultValue={details||''} />
-      <Button className="ms-1" onClick={()=>handleAddArray()} style={{ background: '#362465', border: 'none' }}>Add</Button>
-      </div>
-      {KeyChanges&&(<div className="text-danger">Name Allredy Present</div>)}
-      
-    </BootstrapModal.Body>
-    <BootstrapModal.Footer>
-      <Button variant="secondary" onClick={props.onHide}>
-        Close
-      </Button>
-      <Button style={{ background: '#362465', border: 'none' }} onClick={()=>{ handleSave(); props.onHide(); }}>
-        Save
-      </Button>
-    </BootstrapModal.Footer>
-  </BootstrapModal>
+  return (
+    <BootstrapModal show={props.show} onHide={props.onHide} centered>
+      <BootstrapModal.Header closeButton>
+        <BootstrapModal.Title>Details</BootstrapModal.Title>
+      </BootstrapModal.Header>
+      <BootstrapModal.Body>
+        <div className="d-flex flex-wrap" key={key}>{detailsNamed.map((items, index) => (<div className="detailspan me-2 my-1" key={index}>{items}<IoMdCloseCircleOutline className="ms-1" onClick={(e) => handledeleteArray(index)} style={{ cursor: 'pointer' }} /></div>))}</div>
+        <div className="d-flex justify-content-between align-items-baseline">
+          <Form.Control type="text" onChange={(e) => handleChange(e)} key={detailsNamed.length} className="my-2 me-1" name="adddetails" defaultValue={details || ''} />
+          <Button className="ms-1" onClick={() => handleAddArray()} style={{ background: '#362465', border: 'none' }}>Add</Button>
+        </div>
+        {KeyChanges && (<div className="text-danger">Name Allredy Present</div>)}
+
+      </BootstrapModal.Body>
+      <BootstrapModal.Footer>
+        <Button variant="secondary" onClick={props.onHide}>Close</Button>
+        <Button style={{ background: '#362465', border: 'none' }} onClick={() => { handleSave(); props.onHide(); }}>Save</Button>
+      </BootstrapModal.Footer>
+    </BootstrapModal>
   )
 }
 
@@ -103,11 +103,7 @@ const ProductCategory = () => {
   const [documentRender, setDocumentRender] = useState(false)
   const [refferences, setRefferences] = useState();
   const [GenderCategory, SetGenderCategory] = useState(['Men', 'Female', 'Kids'])
-  const [data, setDetails] = useState([
-    { name: 'price', size: '12', type: 'type', options: 'options', Isimportant: 'isImportant', tableContent: 'true' },
-    { name: 'price', size: '12', type: 'type', options: 'options', Isimportant: 'isImportant', tableContent: 'true' },
-    { name: 'price', size: '12', type: 'type', options: 'options', Isimportant: 'isImportant', tableContent: 'true' }
-  ])
+  const [data, setDetails] = useState([])
 
   const customStyle = {
     control: (style) => ({ ...style, background: nightmode ? '#0c1220' : null, border: nightmode ? 'currentColor' : '' }),
@@ -135,7 +131,7 @@ const ProductCategory = () => {
   }
   const columnHelper = createMRTColumnHelper()
   const columns = useMemo(() => [
-    columnHelper.accessor('name', { header: 'name', size: 120 }),
+    columnHelper.accessor('name', { header: 'name', size: 120, }),
     columnHelper.accessor('size', { header: 'size', size: 120 }),
     columnHelper.accessor('type', { header: 'type', size: 120 }),
     columnHelper.accessor('options', { header: 'options', size: 120 }),
@@ -149,7 +145,8 @@ const ProductCategory = () => {
     data,
     enableStickyHeader: true,
     enableRowActions: true,
-    enableColumnPinning: true,
+    enableSelectAll: true,
+    enableRowSelection: true,
     enableColumnOrdering: false,
     enableColumnActions: false,
     enableHiding: false,
@@ -157,16 +154,27 @@ const ProductCategory = () => {
     paginationDisplayMode: 'pages',
     positionToolbarAlertBanner: 'bottom',
     positionActionsColumn: 'last',
+    renderTopToolbarCustomActions: ({ table }) => (
+      <Box sx={{ display: 'flex', gap: '16px', padding: '8px', flexWrap: 'wrap', color: 'red' }}>
+        <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRowsPDF(table.getSelectedRowModel().rows)} startIcon={<FileDownloadIcon />}>Export  PDF</MaterialButton>
+        <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRows(table.getSelectedRowModel().rows)} startIcon={<FileDownloadIcon />}>Export EXCEL</MaterialButton>
+        <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRows(table.getSelectedRowModel().rows)} startIcon={<FaSquareCheck />}>Approve</MaterialButton>
+      </Box>
+    ),
     renderRowActions: ({ row }) => (
       <>
-        <FaEdit className="text-success fs-5 mx-1" style={{ cursor: 'pointer' }} />
         <FaTrash className="text-danger fs-5 mx-1" style={{ cursor: 'pointer' }} />
       </>
     )
   });
   useEffect(() => {
+    const categoryData = JSON.parse(localStorage.getItem('categoryDetails'))
+    const d1 = categoryData ? categoryData.map((items) => {
+      return { name: items.name, size: items.size, type: items.type, options: items.options, Isimportant: items.Isimportant, tableContent: items.tableContent }
+    }) : []
+    setDetails(d1)
     setDocumentRender(true)
-  }, []);
+  }, [showDetailModal]);
 
   return (
     <>
