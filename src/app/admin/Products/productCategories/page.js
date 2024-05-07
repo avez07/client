@@ -132,10 +132,20 @@ const ProductCategory = () => {
   const columnHelper = createMRTColumnHelper()
   const columns = useMemo(() => [
     columnHelper.accessor('name', { header: 'name', size: 120, }),
-    columnHelper.accessor('size', { header: 'size', size: 120 }),
-    columnHelper.accessor('type', { header: 'type', size: 120 }),
-    columnHelper.accessor('options', { header: 'options', size: 120 }),
-    columnHelper.accessor('Isimportant', { header: 'Isimportant', size: 120 }),
+    columnHelper.accessor('size', { header: 'size', size: 120,
+      editVariant:'select',
+      editSelectOptions: ['12','10','8','6','4','2']
+     }),
+    columnHelper.accessor('type', { header: 'type', size: 120,
+      editVariant:'select',
+      editSelectOptions : ['Input','DropDwon']
+     }),
+    columnHelper.accessor('options', { header: 'options', size: 120,
+      enableEditing : false
+     }),
+    columnHelper.accessor('Isimportant', { header: 'Isimportant', size: 120,
+      muiTableBody : ({})
+     }),
     columnHelper.accessor('tableContent', { header: 'tableContent', size: 120 })
 
   ])
@@ -143,6 +153,11 @@ const ProductCategory = () => {
   const table = useMaterialReactTable({
     columns,
     data,
+    enableEditing:true,
+    editDisplayMode:'row',
+    onEditingRowSave : ({values,table}) =>{
+      table.setEditingRow(null)
+    },
     enableStickyHeader: true,
     enableRowActions: true,
     enableSelectAll: true,
@@ -161,11 +176,13 @@ const ProductCategory = () => {
         <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRows(table.getSelectedRowModel().rows)} startIcon={<FaSquareCheck />}>Approve</MaterialButton>
       </Box>
     ),
-    renderRowActions: ({ row }) => (
+    renderRowActions: ({ row,table }) => (
       <>
+      
+        <FaEdit className="text-success fs-5 mx-1" onClick={()=>table.setEditingRow(row)} style={{ cursor: 'pointer' }} />
         <FaTrash className="text-danger fs-5 mx-1" style={{ cursor: 'pointer' }} />
       </>
-    )
+    ),
   });
   useEffect(() => {
     const categoryData = JSON.parse(localStorage.getItem('categoryDetails'))
