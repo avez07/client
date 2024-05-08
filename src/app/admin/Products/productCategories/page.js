@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useContext, useMemo, useEffect } from "react";
 import { AuthContext } from "@/app/common/auth";
-import { Box, Button as MaterialButton } from '@mui/material';
+import { Box, Button as MaterialButton, Checkbox } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { FaSquareCheck } from 'react-icons/fa6';
 import { Button, Form, Modal as BootstrapModal } from "react-bootstrap";
@@ -45,17 +45,16 @@ const AddDetailsModal = (props) => {
 
   const handleChange = (e) => {
     setKeyChange(false)
-    setTimeout(() => {
-      setDeails(e.target.value)
-    }, 250)
+    setDeails(e.target.value)
   }
-  const handleAddArray = async () => {
-    if (detailsNamed.includes(details)) setKeyChange(true)
+  const handleAddArray = async (event) => {
+    event.preventDefault();
+    if (detailsNamed.map((items) => items.toLowerCase()).includes(details.toLowerCase())) { setKeyChange(true); return false }
     if (!detailsNamed.includes(details)) {
       const newstr = details.replace(/\b\w/g, (char) => char.toUpperCase()).replace(/[^\w\s]/g, '')
       detailsNamed.push(newstr)
     }
-    setDeails()
+    setDeails("")
   }
   const handledeleteArray = (index) => {
     detailsNamed.splice(index, 1)
@@ -63,16 +62,16 @@ const AddDetailsModal = (props) => {
   }
   const handleSave = async () => {
     const categoryData = localStorage.getItem('categoryDetails')
-    const d1 = detailsNamed.map((items) => { return { name: items, size: '12', type: 'Input', options: 'options', Isimportant: 'isImportant', tableContent: 'true' } })
+    const d1 = await detailsNamed.map((items) => { return { name: items, size: '12', type: 'Input', options: 'options', Isimportant: false, tableContent: false } })
     if (!categoryData) await localStorage.setItem('categoryDetails', JSON.stringify(d1))
     if (categoryData) {
       const data = JSON.parse(categoryData)
-      const joinedArray = Array.from(new Set(data.concat(detailsNamed)))
+      const filteredD1 = d1.filter(itemD1 => !data.some(itemData => itemData.name === itemD1.name));
+      const joinedArray = await Array.from(new Set(data.concat(filteredD1)))
       await localStorage.setItem('categoryDetails', JSON.stringify(joinedArray))
-      setKey((prevalue) => prevalue + 1)
-      setDetailsNamed([])
-
     }
+    setDetailsNamed([])
+    setKey((prevalue) => prevalue + 1)
   }
   return (
     <BootstrapModal show={props.show} onHide={props.onHide} centered>
@@ -81,10 +80,12 @@ const AddDetailsModal = (props) => {
       </BootstrapModal.Header>
       <BootstrapModal.Body>
         <div className="d-flex flex-wrap" key={key}>{detailsNamed.map((items, index) => (<div className="detailspan me-2 my-1" key={index}>{items}<IoMdCloseCircleOutline className="ms-1" onClick={(e) => handledeleteArray(index)} style={{ cursor: 'pointer' }} /></div>))}</div>
-        <div className="d-flex justify-content-between align-items-baseline">
-          <Form.Control type="text" onChange={(e) => handleChange(e)} key={detailsNamed.length} className="my-2 me-1" name="adddetails" defaultValue={details || ''} />
-          <Button className="ms-1" onClick={() => handleAddArray()} style={{ background: '#362465', border: 'none' }}>Add</Button>
-        </div>
+        <form>
+          <div className="d-flex justify-content-between align-items-baseline">
+            <Form.Control type="text" autoFocus onChange={(e) => handleChange(e)} key={detailsNamed.length} className="my-2 me-1" name="adddetails" defaultValue={details || ''} />
+            <Button className="ms-1" type="submit" onClick={(e) => handleAddArray(e)} style={{ background: '#362465', border: 'none' }}>Add</Button>
+          </div>
+        </form>
         {KeyChanges && (<div className="text-danger">Name Allredy Present</div>)}
 
       </BootstrapModal.Body>
@@ -104,7 +105,24 @@ const ProductCategory = () => {
   const [refferences, setRefferences] = useState();
   const [GenderCategory, SetGenderCategory] = useState(['Men', 'Female', 'Kids'])
   const [data, setDetails] = useState([])
+  const [key, Setkey] = useState(1)
 
+  useEffect(() => {
+    const localStorageData = localStorage.getItem('categoryDetails')
+    const categoryData = JSON.parse(localStorageData)
+    const d1 = categoryData ? categoryData.map((items) => {
+      return { name: items.name, size: items.size, type: items.type, options: items.options, Isimportant: items.Isimportant, tableContent: items.tableContent }
+    }) : []
+    if (categoryData) {
+      setDetails(d1)
+    } else {
+      const filteredD1 = d1.filter(itemD1 => !data.some(itemData => itemData.name === itemD1.name));
+      setDetails((prevData) => [...prevData, ...filteredD1]);
+      Setkey((previw)=> previw +1)
+    }
+    setDocumentRender(true)
+    console.log(localStorageData)
+  }, [showDetailModal]);
   const customStyle = {
     control: (style) => ({ ...style, background: nightmode ? '#0c1220' : null, border: nightmode ? 'currentColor' : '' }),
     input: (style) => ({ ...style, color: nightmode ? '#fff' : '' }),
@@ -132,30 +150,38 @@ const ProductCategory = () => {
   const columnHelper = createMRTColumnHelper()
   const columns = useMemo(() => [
     columnHelper.accessor('name', { header: 'name', size: 120, }),
-    columnHelper.accessor('size', { header: 'size', size: 120,
-      editVariant:'select',
-      editSelectOptions: ['12','10','8','6','4','2']
-     }),
-    columnHelper.accessor('type', { header: 'type', size: 120,
-      editVariant:'select',
-      editSelectOptions : ['Input','DropDwon']
-     }),
-    columnHelper.accessor('options', { header: 'options', size: 120,
-      enableEditing : false
-     }),
-    columnHelper.accessor('Isimportant', { header: 'Isimportant', size: 120,
-      muiTableBody : ({})
-     }),
-    columnHelper.accessor('tableContent', { header: 'tableContent', size: 120 })
+    columnHelper.accessor('size', {
+      header: 'size', size: 120,
+      editVariant: 'select',
+      editSelectOptions: ['12', '10', '8', '6', '4', '2']
+    }),
+    columnHelper.accessor('type', {
+      header: 'type', size: 120,
+      editVariant: 'select',
+      editSelectOptions: ['Input', 'DropDwon']
+    }),
+    columnHelper.accessor('options', { header: 'options', size: 120, enableEditing: false }),
+    columnHelper.accessor('Isimportant', {
+      header: 'Isimportant', size: 120, enableEditing: false,
+      Cell: ({ row }) => {
+        return <Checkbox defaultChecked={row.original.Isimportant} sx={{ '& .MuiSvgIcon-root': { fontSize: 25, textAlign: 'center' } }} />
+      }
+    }),
+    columnHelper.accessor('tableContent', {
+      header: 'tableContent', size: 120, enableEditing: false,
+      Cell: ({ row }) => {
+        return <Checkbox defaultChecked={row.original.Isimportant} sx={{ '& .MuiSvgIcon-root': { fontSize: 25, textAlign: 'center' } }} />
+      }
+    })
 
   ])
 
   const table = useMaterialReactTable({
     columns,
     data,
-    enableEditing:true,
-    editDisplayMode:'row',
-    onEditingRowSave : ({values,table}) =>{
+    enableEditing: true,
+    editDisplayMode: 'row',
+    onEditingRowSave: ({ values, table }) => {
       table.setEditingRow(null)
     },
     enableStickyHeader: true,
@@ -165,6 +191,8 @@ const ProductCategory = () => {
     enableColumnOrdering: false,
     enableColumnActions: false,
     enableHiding: false,
+    enableSorting: false,
+    enableFilters: false,
     columnFilterDisplayMode: 'popover',
     paginationDisplayMode: 'pages',
     positionToolbarAlertBanner: 'bottom',
@@ -176,23 +204,15 @@ const ProductCategory = () => {
         <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRows(table.getSelectedRowModel().rows)} startIcon={<FaSquareCheck />}>Approve</MaterialButton>
       </Box>
     ),
-    renderRowActions: ({ row,table }) => (
+    renderRowActions: ({ row, table }) => (
       <>
-      
-        <FaEdit className="text-success fs-5 mx-1" onClick={()=>table.setEditingRow(row)} style={{ cursor: 'pointer' }} />
+
+        <FaEdit className="text-success fs-5 mx-1" onClick={() => table.setEditingRow(row)} style={{ cursor: 'pointer' }} />
         <FaTrash className="text-danger fs-5 mx-1" style={{ cursor: 'pointer' }} />
       </>
     ),
   });
-  useEffect(() => {
-    const categoryData = JSON.parse(localStorage.getItem('categoryDetails'))
-    const d1 = categoryData ? categoryData.map((items) => {
-      return { name: items.name, size: items.size, type: items.type, options: items.options, Isimportant: items.Isimportant, tableContent: items.tableContent }
-    }) : []
-    setDetails(d1)
-    setDocumentRender(true)
-  }, [showDetailModal]);
-
+ 
   return (
     <>
 
@@ -248,12 +268,12 @@ const ProductCategory = () => {
         </div>
       </div>
       <Modal show={showModal} refferences={refferences} onHide={() => setShowModal(false)} />
-      <AddDetailsModal show={showDetailModal} refferences={refferences} onHide={() => setDetailModal(false)} />
 
       <div className="w-100 d-flex flex-column border rounded-2 border-1 p-3 w-100" style={{ borderColor: 'red' }}>
         <div><Button type="button" className="border-0 mb-3" onClick={() => setDetailModal(true)} style={{ background: '#362465', float: 'right' }}><FaPlus /> Add  More details</Button></div>
+        <AddDetailsModal show={showDetailModal} refferences={refferences} onHide={() => setDetailModal(false)} />
         <div>
-          <MaterialReactTable table={table} />
+          <MaterialReactTable key={key}  table={table} />
         </div>
       </div>
     </>
