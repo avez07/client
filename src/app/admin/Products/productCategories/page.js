@@ -105,24 +105,28 @@ const ProductCategory = () => {
   const [refferences, setRefferences] = useState();
   const [GenderCategory, SetGenderCategory] = useState(['Men', 'Female', 'Kids'])
   const [data, setDetails] = useState([])
-  const [key, Setkey] = useState(1)
+  const [key, Setkey] = useState(false)
 
   useEffect(() => {
-    const localStorageData = localStorage.getItem('categoryDetails')
-    const categoryData = JSON.parse(localStorageData)
-    const d1 = categoryData ? categoryData.map((items) => {
-      return { name: items.name, size: items.size, type: items.type, options: items.options, Isimportant: items.Isimportant, tableContent: items.tableContent }
-    }) : []
-    if (categoryData) {
-      setDetails(d1)
-    } else {
-      const filteredD1 = d1.filter(itemD1 => !data.some(itemData => itemData.name === itemD1.name));
-      setDetails((prevData) => [...prevData, ...filteredD1]);
-      Setkey((previw)=> previw +1)
-    }
+    setTimeout(() => {
+      fetchData();
+    }, 0);
     setDocumentRender(true)
-    console.log(localStorageData)
   }, [showDetailModal]);
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = '';
+      const confirmationMessage = 'Are you sure you want to leave this page?';
+      event.returnValue = confirmationMessage;
+      return confirmationMessage;
+    }
+    window.addEventListener('beforeunload',handleBeforeUnload)
+return()=>{
+  window.removeEventListener('beforeunload',handleBeforeUnload)
+}
+  }, [])
+
   const customStyle = {
     control: (style) => ({ ...style, background: nightmode ? '#0c1220' : null, border: nightmode ? 'currentColor' : '' }),
     input: (style) => ({ ...style, color: nightmode ? '#fff' : '' }),
@@ -147,6 +151,19 @@ const ProductCategory = () => {
       };
     }
   }
+  const fetchData = async () => {
+    const localStorageData = localStorage.getItem('categoryDetails')
+    const categoryData = JSON.parse(localStorageData)
+    const d1 = categoryData ? categoryData.map((items) => {
+      return { name: items.name, size: items.size, type: items.type, options: items.options, Isimportant: items.Isimportant, tableContent: items.tableContent }
+    }) : []
+    if (categoryData) {
+      setDetails(d1)
+    } else {
+      const filteredD1 = d1.filter(itemD1 => !data.some(itemData => itemData.name === itemD1.name));
+      setDetails((prevData) => [...prevData, ...filteredD1]);
+    }
+  }
   const columnHelper = createMRTColumnHelper()
   const columns = useMemo(() => [
     columnHelper.accessor('name', { header: 'name', size: 120, }),
@@ -164,25 +181,47 @@ const ProductCategory = () => {
     columnHelper.accessor('Isimportant', {
       header: 'Isimportant', size: 120, enableEditing: false,
       Cell: ({ row }) => {
-        return <Checkbox defaultChecked={row.original.Isimportant} sx={{ '& .MuiSvgIcon-root': { fontSize: 25, textAlign: 'center' } }} />
+        const handleImportant = (id) => {
+          data[id].Isimportant = !data[id].Isimportant
+          row.original.Isimportant = data[id].Isimportant
+          Setkey((preKey) => preKey + 1)
+        }
+        return <Checkbox defaultChecked={row.original.Isimportant} onClick={() => handleImportant(row.id)} sx={{ '& .MuiSvgIcon-root': { fontSize: 25, textAlign: 'center' } }} />
       }
     }),
     columnHelper.accessor('tableContent', {
       header: 'tableContent', size: 120, enableEditing: false,
       Cell: ({ row }) => {
-        return <Checkbox defaultChecked={row.original.Isimportant} sx={{ '& .MuiSvgIcon-root': { fontSize: 25, textAlign: 'center' } }} />
+        const handleTableContent = (id) => {
+          data[id].tableContent = !data[id].tableContent
+          row.original.tableContent = data[id].tableContent
+          Setkey((preKey) => preKey + 1)
+        }
+        return <Checkbox defaultChecked={row.original.tableContent} onClick={() => handleTableContent(row.id)} sx={{ '& .MuiSvgIcon-root': { fontSize: 25, textAlign: 'center' } }} />
       }
     })
 
   ])
+  const handleDeleteRow = (id) => {
+    const newData = [...data]
+    newData.splice(id, 1)
+    setDetails([...newData])
+    Setkey((pre) => pre + 1)
+    console.log(data)
+  }
 
   const table = useMaterialReactTable({
     columns,
     data,
     enableEditing: true,
     editDisplayMode: 'row',
-    onEditingRowSave: ({ values, table }) => {
-      table.setEditingRow(null)
+    onEditingRowSave: ({ row, values, table }) => {
+      const isNameExists = data.findIndex(item => item.name.toLowerCase() == values.name.toLowerCase());
+      if (isNameExists !== -1 && isNameExists != row.id) return alert('category Already Exist')
+      const newData = [...data];
+      newData.splice(row.id, 1, values);
+      setDetails(newData);
+      table.setEditingRow(null);
     },
     enableStickyHeader: true,
     enableRowActions: true,
@@ -193,10 +232,20 @@ const ProductCategory = () => {
     enableHiding: false,
     enableSorting: false,
     enableFilters: false,
+    enableRowOrdering: true,
     columnFilterDisplayMode: 'popover',
     paginationDisplayMode: 'pages',
     positionToolbarAlertBanner: 'bottom',
     positionActionsColumn: 'last',
+    muiRowDragHandleProps: ({ table }) => ({
+      onDragEnd: () => {
+        const { draggingRow, hoveredRow } = table.getState()
+        if (hoveredRow && draggingRow) {
+          data.splice(hoveredRow.index, 0, data.splice(draggingRow.index, 1)[0])
+          setDetails([...data])
+        }
+      }
+    }),
     renderTopToolbarCustomActions: ({ table }) => (
       <Box sx={{ display: 'flex', gap: '16px', padding: '8px', flexWrap: 'wrap', color: 'red' }}>
         <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRowsPDF(table.getSelectedRowModel().rows)} startIcon={<FileDownloadIcon />}>Export  PDF</MaterialButton>
@@ -208,11 +257,11 @@ const ProductCategory = () => {
       <>
 
         <FaEdit className="text-success fs-5 mx-1" onClick={() => table.setEditingRow(row)} style={{ cursor: 'pointer' }} />
-        <FaTrash className="text-danger fs-5 mx-1" style={{ cursor: 'pointer' }} />
+        <FaTrash className="text-danger fs-5 mx-1" onClick={() => handleDeleteRow(row.id)} style={{ cursor: 'pointer' }} />
       </>
     ),
   });
- 
+
   return (
     <>
 
@@ -273,7 +322,7 @@ const ProductCategory = () => {
         <div><Button type="button" className="border-0 mb-3" onClick={() => setDetailModal(true)} style={{ background: '#362465', float: 'right' }}><FaPlus /> Add  More details</Button></div>
         <AddDetailsModal show={showDetailModal} refferences={refferences} onHide={() => setDetailModal(false)} />
         <div>
-          <MaterialReactTable key={key}  table={table} />
+          <MaterialReactTable key={key} table={table} />
         </div>
       </div>
     </>
