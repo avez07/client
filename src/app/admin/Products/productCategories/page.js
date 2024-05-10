@@ -16,19 +16,26 @@ const Select = dynamic(() => import('react-select'), { ssr: false })
 
 
 const Modal = (props) => {
+  const [name, setName] = useState('')
+  const handleSubmit = async () => {
+    await sessionStorage.setItem(props.refferences, name)
+    setName('')
+    
+  }
   return (
     <BootstrapModal show={props.show} onHide={props.onHide} centered>
       <BootstrapModal.Header closeButton>
         <BootstrapModal.Title>Add {props.refferences}</BootstrapModal.Title>
       </BootstrapModal.Header>
       <BootstrapModal.Body>
-        <Form.Control type="text" name="addFeild" defaultValue={props.refferences} />
+        {name}
+        <Form.Control type="text" name="addFeild" onChange={(e) => setName(e.target.value)} />
       </BootstrapModal.Body>
       <BootstrapModal.Footer>
         <Button variant="secondary" onClick={props.onHide}>
           Close
         </Button>
-        <Button style={{ background: '#362465', border: 'none' }}>
+        <Button onClick={() => { handleSubmit(); props.onHide();}} style={{ background: '#362465', border: 'none' }}>
           Save
         </Button>
       </BootstrapModal.Footer>
@@ -103,7 +110,12 @@ const ProductCategory = () => {
   const [showDetailModal, setDetailModal] = useState(false)
   const [documentRender, setDocumentRender] = useState(false)
   const [refferences, setRefferences] = useState();
-  const [GenderCategory, SetGenderCategory] = useState(['Men', 'Female', 'Kids'])
+  const [CategoryAray, SetCategoryArray] = useState(['Men', 'Female', 'Kids'])
+  const [subCategoriesArray, SetSubCategoriesArray] = useState([])
+  const [productsArray, SetProductsArray] = useState([])
+  const [Category, SetCategory] = useState('')
+  const [subCategories, SetSubCategories] = useState('')
+  const [products, SetProducts] = useState('')
   const [data, setDetails] = useState([])
   const [key, Setkey] = useState(false)
 
@@ -121,11 +133,22 @@ const ProductCategory = () => {
       event.returnValue = confirmationMessage;
       return confirmationMessage;
     }
-    window.addEventListener('beforeunload',handleBeforeUnload)
-return()=>{
-  window.removeEventListener('beforeunload',handleBeforeUnload)
-}
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
   }, [])
+
+  useEffect(() => {
+    setTimeout(() => {
+      const data = sessionStorage.getItem(refferences)
+      if (data && refferences == 'Categories') !CategoryAray.some(item => item.toLowerCase() === data.toLowerCase()) ? SetCategoryArray((prew) => [...prew, data]) : null
+      if (data && refferences == 'SubCategores') !subCategoriesArray.some(item => item.toLowerCase() === data.toLowerCase()) ? SetSubCategoriesArray((prew) => [...prew, data]) : null
+      if (data && refferences == 'Products') !productsArray.some(item => item.toLowerCase() === data.toLowerCase()) ? SetProductsArray((prew) => [data]) : null
+    }, 0);
+
+
+  }, [showModal])
 
   const customStyle = {
     control: (style) => ({ ...style, background: nightmode ? '#0c1220' : null, border: nightmode ? 'currentColor' : '' }),
@@ -262,11 +285,12 @@ return()=>{
     ),
   });
 
+
   return (
     <>
 
       <div>
-        <Form.Label>Gender Category</Form.Label>
+        <Form.Label> Category</Form.Label>
         <div className="d-flex justify-content-between my-3">
           {documentRender && (
             <Select
@@ -275,31 +299,35 @@ return()=>{
               menuPosition="fixed"
               menuPlacement="bottom"
               className="categoryName"
+              value={{ value: Category, label: Category }}
+              onChange={(e) => SetCategory(e.value)}
               styles={{ ...customStyle, width: '100%' }}
-              options={GenderCategory.map(item => ({ value: item, label: item }))}
+              options={CategoryAray.map(item => ({ value: item, label: item }))}
             />
 
           )}
 
-          <Button type="button" className="border-0" onClick={() => { setShowModal(true), setRefferences('genderCategories') }} style={{ background: '#362465', width: '25%' }}><FaPlus /> Add Gender Category</Button>
+          <Button type="button" className="border-0" onClick={() => { setShowModal(true), setRefferences('Categories') }} style={{ background: '#362465', width: '25%' }}><FaPlus /> Add Gender Category</Button>
         </div>
-        <Form.Label>Category</Form.Label>
+        <Form.Label>Sub Category</Form.Label>
         <div className="d-flex justify-content-between my-3">
           {documentRender && (
             <Select
-              name="ProductCategory"
+              name="sub categories"
               menuPortalTarget={document ? document.body : ''}
               menuPosition="fixed"
               menuPlacement="bottom"
               className="categoryName"
+              value={{value:subCategories,label:subCategories}}
+              onChange={(e) => SetSubCategories(e.value)}
               styles={{ ...customStyle, width: '100%' }}
-              options={GenderCategory.map(item => ({ value: item, label: item }))}
+              options={subCategoriesArray.map(item => ({ value: item, label: item }))}
             />
           )}
 
-          <Button type="button" className="border-0" onClick={() => { setShowModal(true), setRefferences('genderCategories') }} style={{ background: '#362465', width: '25%' }}><FaPlus /> Add  Sub Category</Button>
+          <Button type="button" className="border-0" onClick={() => { setShowModal(true), setRefferences('SubCategores') }} style={{ background: '#362465', width: '25%' }}><FaPlus /> Add  Sub Category</Button>
         </div>
-        <Form.Label>SubCategories</Form.Label>
+        <Form.Label>Products</Form.Label>
         <div className="d-flex justify-content-between my-3">
           {documentRender && (
             <Select
@@ -308,12 +336,14 @@ return()=>{
               menuPosition="fixed"
               menuPlacement="bottom"
               className="categoryName"
+              value={{value:products,label:products}}
+              onChange={(e) => SetProducts(e.value)}
               styles={{ ...customStyle, width: '100%' }}
-              options={GenderCategory.map(item => ({ value: item, label: item }))}
+              options={productsArray.map(item => ({ value: item, label: item }))}
             />
           )}
 
-          <Button type="button" className="border-0" onClick={() => { setDetailModal(true), setRefferences('genderCategories') }} style={{ background: '#362465', width: '25%' }}><FaPlus /> Add  Category</Button>
+          <Button type="button" className="border-0" onClick={() => { setShowModal(true), setRefferences('Products') }} style={{ background: '#362465', width: '25%' }}><FaPlus /> Add  Category</Button>
         </div>
       </div>
       <Modal show={showModal} refferences={refferences} onHide={() => setShowModal(false)} />
