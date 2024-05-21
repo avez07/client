@@ -20,7 +20,7 @@ const Modal = (props) => {
   const handleSubmit = async () => {
     await sessionStorage.setItem(props.refferences, name)
     setName('')
-    
+
   }
   return (
     <BootstrapModal show={props.show} onHide={props.onHide} centered>
@@ -35,7 +35,7 @@ const Modal = (props) => {
         <Button variant="secondary" onClick={props.onHide}>
           Close
         </Button>
-        <Button onClick={() => { handleSubmit(); props.onHide();}} style={{ background: '#362465', border: 'none' }}>
+        <Button onClick={() => { handleSubmit(); props.onHide(); }} style={{ background: '#362465', border: 'none' }}>
           Save
         </Button>
       </BootstrapModal.Footer>
@@ -68,14 +68,20 @@ const AddDetailsModal = (props) => {
     setKey((prevalue) => prevalue + 1)
   }
   const handleSave = async () => {
+    const DataRef = props.dataRef;
     const categoryData = localStorage.getItem('categoryDetails')
-    const d1 = await detailsNamed.map((items) => { return { name: items, size: '12', type: 'Input', options: 'options', Isimportant: false, tableContent: false } })
-    if (!categoryData) await localStorage.setItem('categoryDetails', JSON.stringify(d1))
+    const d1 = await detailsNamed.map((items) => { return { name: items, size: '12', type: 'Input', options: 'options', Isimportant: false } })
+    if (!categoryData) await localStorage.setItem('categoryDetails', JSON.stringify({ [DataRef]: d1 }))
     if (categoryData) {
       const data = JSON.parse(categoryData)
-      const filteredD1 = d1.filter(itemD1 => !data.some(itemData => itemData.name === itemD1.name));
-      const joinedArray = await Array.from(new Set(data.concat(filteredD1)))
-      await localStorage.setItem('categoryDetails', JSON.stringify(joinedArray))
+      if (!data[DataRef]) {
+        data[DataRef] = d1
+      } else {
+        const filteredD1 = d1.filter(itemD1 => !data[DataRef].some(itemData => itemData.name === itemD1.name));
+        data[DataRef] = await Array.from(new Set([...data[DataRef], ...filteredD1]))
+      }
+
+      await localStorage.setItem('categoryDetails', JSON.stringify(data))
     }
     setDetailsNamed([])
     setKey((prevalue) => prevalue + 1)
@@ -110,6 +116,7 @@ const ProductCategory = () => {
   const [showDetailModal, setDetailModal] = useState(false)
   const [documentRender, setDocumentRender] = useState(false)
   const [refferences, setRefferences] = useState();
+  const [dataRef, setDataRef] = useState();
   const [CategoryAray, SetCategoryArray] = useState(['Men', 'Female', 'Kids'])
   const [subCategoriesArray, SetSubCategoriesArray] = useState([])
   const [productsArray, SetProductsArray] = useState([])
@@ -177,15 +184,14 @@ const ProductCategory = () => {
   const fetchData = async () => {
     const localStorageData = localStorage.getItem('categoryDetails')
     const categoryData = JSON.parse(localStorageData)
-    const d1 = categoryData ? categoryData.map((items) => {
-      return { name: items.name, size: items.size, type: items.type, options: items.options, Isimportant: items.Isimportant, tableContent: items.tableContent }
-    }) : []
-    if (categoryData) {
-      setDetails(d1)
-    } else {
-      const filteredD1 = d1.filter(itemD1 => !data.some(itemData => itemData.name === itemD1.name));
-      setDetails((prevData) => [...prevData, ...filteredD1]);
-    }
+    setDetails(categoryData)
+  }
+  const handleDeleteRow = (id,ref) => {
+    const newData = [...data]
+    newData.splice(id, 1)
+    setDetails([...newData])
+    Setkey((pre) => pre + 1)
+    localStorage.setItem('categoryDetails',JSON.stringify(newData))
   }
   const columnHelper = createMRTColumnHelper()
   const columns = useMemo(() => [
@@ -212,30 +218,170 @@ const ProductCategory = () => {
         return <Checkbox defaultChecked={row.original.Isimportant} onClick={() => handleImportant(row.id)} sx={{ '& .MuiSvgIcon-root': { fontSize: 25, textAlign: 'center' } }} />
       }
     }),
-    columnHelper.accessor('tableContent', {
-      header: 'tableContent', size: 120, enableEditing: false,
-      Cell: ({ row }) => {
-        const handleTableContent = (id) => {
-          data[id].tableContent = !data[id].tableContent
-          row.original.tableContent = data[id].tableContent
-          Setkey((preKey) => preKey + 1)
-        }
-        return <Checkbox defaultChecked={row.original.tableContent} onClick={() => handleTableContent(row.id)} sx={{ '& .MuiSvgIcon-root': { fontSize: 25, textAlign: 'center' } }} />
-      }
-    })
+
 
   ])
-  const handleDeleteRow = (id) => {
-    const newData = [...data]
-    newData.splice(id, 1)
-    setDetails([...newData])
-    Setkey((pre) => pre + 1)
-    console.log(data)
-  }
+  const VirualInfoColoums = useMemo(() => [
+    columnHelper.accessor('name', { header: 'name', size: 120, }),
+    columnHelper.accessor('size', {
+      header: 'size', size: 120,
+      editVariant: 'select',
+      editSelectOptions: ['12', '10', '8', '6', '4', '2']
+    }),
+    columnHelper.accessor('type', {
+      header: 'type', size: 120,
+      editVariant: 'select',
+      editSelectOptions: ['Input', 'DropDwon']
+    }),
+    columnHelper.accessor('options', { header: 'options', size: 120, enableEditing: false }),
+    columnHelper.accessor('Isimportant', {
+      header: 'Isimportant', size: 120, enableEditing: false,
+      Cell: ({ row }) => {
+        const handleImportant = (id) => {
+          data[id].Isimportant = !data[id].Isimportant
+          row.original.Isimportant = data[id].Isimportant
+          Setkey((preKey) => preKey + 1)
+        }
+        return <Checkbox defaultChecked={row.original.Isimportant} onClick={() => handleImportant(row.id)} sx={{ '& .MuiSvgIcon-root': { fontSize: 25, textAlign: 'center' } }} />
+      }
+    }),
 
-  const table = useMaterialReactTable({
-    columns,
-    data,
+
+  ])
+  const VariantDataColoums = useMemo(() => [
+    columnHelper.accessor('name', { header: 'name', size: 120, }),
+    columnHelper.accessor('size', {
+      header: 'size', size: 120,
+      editVariant: 'select',
+      editSelectOptions: ['12', '10', '8', '6', '4', '2']
+    }),
+    columnHelper.accessor('type', {
+      header: 'type', size: 120,
+      editVariant: 'select',
+      editSelectOptions: ['Input', 'DropDwon']
+    }),
+    columnHelper.accessor('options', { header: 'options', size: 120, enableEditing: false }),
+    columnHelper.accessor('Isimportant', {
+      header: 'Isimportant', size: 120, enableEditing: false,
+      Cell: ({ row }) => {
+        const handleImportant = (id) => {
+          data[id].Isimportant = !data[id].Isimportant
+          row.original.Isimportant = data[id].Isimportant
+          Setkey((preKey) => preKey + 1)
+        }
+        return <Checkbox defaultChecked={row.original.Isimportant} onClick={() => handleImportant(row.id)} sx={{ '& .MuiSvgIcon-root': { fontSize: 25, textAlign: 'center' } }} />
+      }
+    }),
+
+
+  ])
+  const VirualInfo = useMaterialReactTable({
+    columns: columns,
+    data: data.virtualInfo || [],
+    enableEditing: true,
+    editDisplayMode: 'row',
+    onEditingRowSave: ({ row, values, table }) => {
+      const isNameExists = data.findIndex(item => item.name.toLowerCase() == values.name.toLowerCase());
+      if (isNameExists !== -1 && isNameExists != row.id) return alert('category Already Exist')
+      const newData = [...data];
+      newData.splice(row.id, 1, values);
+      setDetails(newData);
+      table.setEditingRow(null);
+    },
+    enableStickyHeader: true,
+    enableRowActions: true,
+    enableSelectAll: true,
+    enableRowSelection: true,
+    enableColumnOrdering: false,
+    enableColumnActions: false,
+    enableHiding: false,
+    enableSorting: false,
+    enableFilters: false,
+    enableRowOrdering: true,
+    columnFilterDisplayMode: 'popover',
+    paginationDisplayMode: 'pages',
+    positionToolbarAlertBanner: 'bottom',
+    positionActionsColumn: 'last',
+    muiRowDragHandleProps: ({ table }) => ({
+      onDragEnd: () => {
+        const { draggingRow, hoveredRow } = table.getState()
+        if (hoveredRow && draggingRow) {
+          data.splice(hoveredRow.index, 0, data.splice(draggingRow.index, 1)[0])
+          setDetails([...data])
+        }
+      }
+    }),
+    renderTopToolbarCustomActions: ({ table }) => (
+      <Box sx={{ display: 'flex', gap: '16px', padding: '8px', flexWrap: 'wrap', color: 'red' }}>
+        <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRowsPDF(table.getSelectedRowModel().rows)} startIcon={<FileDownloadIcon />}>Export  PDF</MaterialButton>
+        <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRows(table.getSelectedRowModel().rows)} startIcon={<FileDownloadIcon />}>Export EXCEL</MaterialButton>
+        <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRows(table.getSelectedRowModel().rows)} startIcon={<FaSquareCheck />}>Approve</MaterialButton>
+      </Box>
+    ),
+    renderRowActions: ({ row, table }) => (
+      <>
+
+        <FaEdit className="text-success fs-5 mx-1" onClick={() => table.setEditingRow(row)} style={{ cursor: 'pointer' }} />
+        <FaTrash className="text-danger fs-5 mx-1" onClick={() => handleDeleteRow(row.id)} style={{ cursor: 'pointer' }} />
+      </>
+    ),
+  });
+ 
+  const VariantData = useMaterialReactTable({
+    columns:columns,
+    data: data.VariantData || [],
+    enableEditing: true,
+    editDisplayMode: 'row',
+    onEditingRowSave: ({ row, values, table }) => {
+      const isNameExists = data.findIndex(item => item.name.toLowerCase() == values.name.toLowerCase());
+      if (isNameExists !== -1 && isNameExists != row.id) return alert('category Already Exist')
+      const newData = [...data];
+      newData.splice(row.id, 1, values);
+      setDetails(newData);
+      table.setEditingRow(null);
+    },
+    enableStickyHeader: true,
+    enableRowActions: true,
+    enableSelectAll: true,
+    enableRowSelection: true,
+    enableColumnOrdering: false,
+    enableColumnActions: false,
+    enableHiding: false,
+    enableSorting: false,
+    enableFilters: false,
+    enableRowOrdering: true,
+    columnFilterDisplayMode: 'popover',
+    paginationDisplayMode: 'pages',
+    positionToolbarAlertBanner: 'bottom',
+    positionActionsColumn: 'last',
+    muiRowDragHandleProps: ({ table }) => ({
+      onDragEnd: () => {
+        const { draggingRow, hoveredRow } = table.getState()
+        if (hoveredRow && draggingRow) {
+          data.splice(hoveredRow.index, 0, data.splice(draggingRow.index, 1)[0])
+          setDetails([...data])
+        }
+      }
+    }),
+    renderTopToolbarCustomActions: ({ table }) => (
+      <Box sx={{ display: 'flex', gap: '16px', padding: '8px', flexWrap: 'wrap', color: 'red' }}>
+        <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRowsPDF(table.getSelectedRowModel().rows)} startIcon={<FileDownloadIcon />}>Export  PDF</MaterialButton>
+        <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRows(table.getSelectedRowModel().rows)} startIcon={<FileDownloadIcon />}>Export EXCEL</MaterialButton>
+        <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRows(table.getSelectedRowModel().rows)} startIcon={<FaSquareCheck />}>Approve</MaterialButton>
+      </Box>
+    ),
+    renderRowActions: ({ row, table }) => (
+      <>
+
+        <FaEdit className="text-success fs-5 mx-1" onClick={() => table.setEditingRow(row)} style={{ cursor: 'pointer' }} />
+        <FaTrash className="text-danger fs-5 mx-1" onClick={() => handleDeleteRow(row.id)} style={{ cursor: 'pointer' }} />
+      </>
+    ),
+  });
+
+  const MoreInfo = useMaterialReactTable({
+    columns:columns,
+    data: data.MoreInfo || [],
     enableEditing: true,
     editDisplayMode: 'row',
     onEditingRowSave: ({ row, values, table }) => {
@@ -318,7 +464,7 @@ const ProductCategory = () => {
               menuPosition="fixed"
               menuPlacement="bottom"
               className="categoryName"
-              value={{value:subCategories,label:subCategories}}
+              value={{ value: subCategories, label: subCategories }}
               onChange={(e) => SetSubCategories(e.value)}
               styles={{ ...customStyle, width: '100%' }}
               options={subCategoriesArray.map(item => ({ value: item, label: item }))}
@@ -336,7 +482,7 @@ const ProductCategory = () => {
               menuPosition="fixed"
               menuPlacement="bottom"
               className="categoryName"
-              value={{value:products,label:products}}
+              value={{ value: products, label: products }}
               onChange={(e) => SetProducts(e.value)}
               styles={{ ...customStyle, width: '100%' }}
               options={productsArray.map(item => ({ value: item, label: item }))}
@@ -347,14 +493,25 @@ const ProductCategory = () => {
         </div>
       </div>
       <Modal show={showModal} refferences={refferences} onHide={() => setShowModal(false)} />
-
-      <div className="w-100 d-flex flex-column border rounded-2 border-1 p-3 w-100" style={{ borderColor: 'red' }}>
-        <div><Button type="button" className="border-0 mb-3" onClick={() => setDetailModal(true)} style={{ background: '#362465', float: 'right' }}><FaPlus /> Add  More details</Button></div>
-        <AddDetailsModal show={showDetailModal} refferences={refferences} onHide={() => setDetailModal(false)} />
-        <div>
-          <MaterialReactTable key={key} table={table} />
+      <div className="w-100 d-flex my-3 flex-column border rounded-2 border-1 p-3 w-100" style={{ borderColor: 'red' }}>
+        <div><span className="fw-semibold">Variant Tab</span><Button type="button" className="border-0 mb-3" onClick={() => { setDetailModal(true); setDataRef('VariantData') }} style={{ background: '#362465', float: 'right' }}><FaPlus /> Add  More Info </Button></div>
+        <div className={data.length == 0 ? 'd-none' : ''}>
+          <MaterialReactTable key={key}  table={VariantData} />
         </div>
       </div>
+      <div className="w-100 d-flex my-3 flex-column border rounded-2 border-1 p-3 w-100" style={{ borderColor: 'red' }}>
+        <div><span className="fw-semibold">Vitual Info</span><Button type="button" className="border-0 mb-3" onClick={() => { setDetailModal(true); setDataRef('virtualInfo') }} style={{ background: '#362465', float: 'right' }}><FaPlus /> Add  Vitual Info</Button></div>
+        <div className={data.length == 0 ? 'd-none' : ''}>
+          <MaterialReactTable key={key} table={VirualInfo} />
+        </div>
+      </div>
+      <div className="w-100 d-flex my-3 flex-column border rounded-2 border-1 p-3 w-100" style={{ borderColor: 'red' }}>
+        <div><span className="fw-semibold">More Info Tab</span><Button type="button" className="border-0 mb-3" onClick={() => { setDetailModal(true); setDataRef('MoreInfo') }} style={{ background: '#362465', float: 'right' }}><FaPlus /> Add  More Info </Button></div>
+        <div className={data.length == 0 ? 'd-none' : ''}>
+          <MaterialReactTable key={key}  table={MoreInfo} />
+        </div>
+      </div>
+      <AddDetailsModal show={showDetailModal} dataRef={dataRef} onHide={() => setDetailModal(false)} />
     </>
   );
 }
