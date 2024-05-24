@@ -95,7 +95,7 @@ const AddDetailsModal = (props) => {
         <div className="d-flex flex-wrap" key={key}>{detailsNamed.map((items, index) => (<div className="detailspan me-2 my-1" key={index}>{items}<IoMdCloseCircleOutline className="ms-1" onClick={(e) => handledeleteArray(index)} style={{ cursor: 'pointer' }} /></div>))}</div>
         <form>
           <div className="d-flex justify-content-between align-items-baseline">
-            <Form.Control type="text" autoFocus onChange={(e) => handleChange(e)} key={detailsNamed.length} className="my-2 me-1" name="adddetails" defaultValue={details || ''} />
+            <Form.Control type="text" id="adddetails" autoFocus onChange={(e) => handleChange(e)} key={detailsNamed.length} className="my-2 me-1" name="adddetails" defaultValue={details || ''} />
             <Button className="ms-1" type="submit" onClick={(e) => handleAddArray(e)} style={{ background: '#362465', border: 'none' }}>Add</Button>
           </div>
         </form>
@@ -125,6 +125,8 @@ const ProductCategory = () => {
   const [products, SetProducts] = useState('')
   const [data, setDetails] = useState([])
   const [key, Setkey] = useState(false)
+  console.log(data);
+
 
   useEffect(() => {
     setTimeout(() => {
@@ -186,33 +188,39 @@ const ProductCategory = () => {
     const categoryData = JSON.parse(localStorageData)
     setDetails(categoryData)
   }
-  const handleDeleteRow = (id,ref) => {
-    const newData = [...data]
-    newData.splice(id, 1)
-    setDetails([...newData])
+  const handleDeleteRow = (id, ref) => {
+    const newData = { ...data }
+    const keyCopy = [...newData[ref]]
+    keyCopy.splice(id, 1)
+    newData[ref] = keyCopy
+    setDetails(newData)
     Setkey((pre) => pre + 1)
-    localStorage.setItem('categoryDetails',JSON.stringify(newData))
+    localStorage.setItem('categoryDetails', JSON.stringify(newData))
   }
   const columnHelper = createMRTColumnHelper()
   const columns = useMemo(() => [
-    columnHelper.accessor('name', { header: 'name', size: 120, }),
+    columnHelper.accessor('name', { header: 'Name', size: 120, }),
     columnHelper.accessor('size', {
-      header: 'size', size: 120,
+      header: 'Size', size: 120,
       editVariant: 'select',
       editSelectOptions: ['12', '10', '8', '6', '4', '2']
     }),
     columnHelper.accessor('type', {
-      header: 'type', size: 120,
+      header: 'Type', size: 120,
       editVariant: 'select',
       editSelectOptions: ['Input', 'DropDwon']
     }),
-    columnHelper.accessor('options', { header: 'options', size: 120, enableEditing: false }),
+    columnHelper.accessor('options', { header: 'Options', size: 120, enableEditing: false,
+      Cell : ({row})=>{
+        return row.original.type == 'DropDwon' ? row.original.options :''
+      }
+     }),
     columnHelper.accessor('Isimportant', {
       header: 'Isimportant', size: 120, enableEditing: false,
       Cell: ({ row }) => {
         const handleImportant = (id) => {
-          data[id].Isimportant = !data[id].Isimportant
-          row.original.Isimportant = data[id].Isimportant
+          data.MoreInfo[id].Isimportant = !data.MoreInfo[id].Isimportant
+          row.original.Isimportant = data.MoreInfo[id].Isimportant
           Setkey((preKey) => preKey + 1)
         }
         return <Checkbox defaultChecked={row.original.Isimportant} onClick={() => handleImportant(row.id)} sx={{ '& .MuiSvgIcon-root': { fontSize: 25, textAlign: 'center' } }} />
@@ -222,24 +230,28 @@ const ProductCategory = () => {
 
   ])
   const VirualInfoColoums = useMemo(() => [
-    columnHelper.accessor('name', { header: 'name', size: 120, }),
+    columnHelper.accessor('name', { header: 'Name', size: 120, }),
     columnHelper.accessor('size', {
-      header: 'size', size: 120,
+      header: 'Size', size: 120,
       editVariant: 'select',
       editSelectOptions: ['12', '10', '8', '6', '4', '2']
     }),
     columnHelper.accessor('type', {
-      header: 'type', size: 120,
+      header: 'Type', size: 120,
       editVariant: 'select',
       editSelectOptions: ['Input', 'DropDwon']
     }),
-    columnHelper.accessor('options', { header: 'options', size: 120, enableEditing: false }),
+    columnHelper.accessor('options', { header: 'Options', size: 120, enableEditing: false,
+      Cell : ({row})=>{
+        return row.original.type == 'DropDwon' ? row.original.options :''
+      }
+     }),
     columnHelper.accessor('Isimportant', {
       header: 'Isimportant', size: 120, enableEditing: false,
       Cell: ({ row }) => {
         const handleImportant = (id) => {
-          data[id].Isimportant = !data[id].Isimportant
-          row.original.Isimportant = data[id].Isimportant
+          data.virtualInfo[id].Isimportant = !data.virtualInfo[id].Isimportant
+          row.original.Isimportant = data.virtualInfo[id].Isimportant
           Setkey((preKey) => preKey + 1)
         }
         return <Checkbox defaultChecked={row.original.Isimportant} onClick={() => handleImportant(row.id)} sx={{ '& .MuiSvgIcon-root': { fontSize: 25, textAlign: 'center' } }} />
@@ -249,24 +261,28 @@ const ProductCategory = () => {
 
   ])
   const VariantDataColoums = useMemo(() => [
-    columnHelper.accessor('name', { header: 'name', size: 120, }),
+    columnHelper.accessor('name', { header: 'Name', size: 120, }),
     columnHelper.accessor('size', {
-      header: 'size', size: 120,
+      header: 'Size', size: 120,
       editVariant: 'select',
       editSelectOptions: ['12', '10', '8', '6', '4', '2']
     }),
     columnHelper.accessor('type', {
-      header: 'type', size: 120,
+      header: 'Type', size: 120,
       editVariant: 'select',
       editSelectOptions: ['Input', 'DropDwon']
     }),
-    columnHelper.accessor('options', { header: 'options', size: 120, enableEditing: false }),
+    columnHelper.accessor('options', { header: 'Options', size: 120, enableEditing: false,
+      Cell : ({row})=>{
+        return row.original.type == 'DropDwon' ? row.original.options :''
+      }
+     }),
     columnHelper.accessor('Isimportant', {
       header: 'Isimportant', size: 120, enableEditing: false,
       Cell: ({ row }) => {
         const handleImportant = (id) => {
-          data[id].Isimportant = !data[id].Isimportant
-          row.original.Isimportant = data[id].Isimportant
+          data.VariantData[id].Isimportant = !data.VariantData[id].Isimportant
+          row.original.Isimportant = data.VariantData[id].Isimportant
           Setkey((preKey) => preKey + 1)
         }
         return <Checkbox defaultChecked={row.original.Isimportant} onClick={() => handleImportant(row.id)} sx={{ '& .MuiSvgIcon-root': { fontSize: 25, textAlign: 'center' } }} />
@@ -276,19 +292,22 @@ const ProductCategory = () => {
 
   ])
   const VirualInfo = useMaterialReactTable({
-    columns: columns,
-    data: data.virtualInfo || [],
+    columns: VirualInfoColoums || [],
+    data: data?.virtualInfo || [],
     enableEditing: true,
     editDisplayMode: 'row',
     onEditingRowSave: ({ row, values, table }) => {
-      const isNameExists = data.findIndex(item => item.name.toLowerCase() == values.name.toLowerCase());
+      const newData = { ...data }
+      const virtualInfoCopy = [...newData.virtualInfo]
+      const isNameExists = virtualInfoCopy.findIndex(item => item.name.toLowerCase() == values.name.toLowerCase());
       if (isNameExists !== -1 && isNameExists != row.id) return alert('category Already Exist')
-      const newData = [...data];
-      newData.splice(row.id, 1, values);
+      virtualInfoCopy.splice(row.id, 1, values);
+      newData.virtualInfo = virtualInfoCopy
       setDetails(newData);
       table.setEditingRow(null);
     },
     enableStickyHeader: true,
+    enableDensityToggle:false,
     enableRowActions: true,
     enableSelectAll: true,
     enableRowSelection: true,
@@ -306,41 +325,41 @@ const ProductCategory = () => {
       onDragEnd: () => {
         const { draggingRow, hoveredRow } = table.getState()
         if (hoveredRow && draggingRow) {
-          data.splice(hoveredRow.index, 0, data.splice(draggingRow.index, 1)[0])
-          setDetails([...data])
+          const newData = { ...data }
+          const virtualInfoCopy = [...newData.virtualInfo]
+          virtualInfoCopy.splice(hoveredRow.index, 0, virtualInfoCopy.splice(draggingRow.index, 1)[0])
+          newData.virtualInfo = virtualInfoCopy;
+          setDetails(newData)
         }
       }
     }),
-    renderTopToolbarCustomActions: ({ table }) => (
-      <Box sx={{ display: 'flex', gap: '16px', padding: '8px', flexWrap: 'wrap', color: 'red' }}>
-        <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRowsPDF(table.getSelectedRowModel().rows)} startIcon={<FileDownloadIcon />}>Export  PDF</MaterialButton>
-        <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRows(table.getSelectedRowModel().rows)} startIcon={<FileDownloadIcon />}>Export EXCEL</MaterialButton>
-        <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRows(table.getSelectedRowModel().rows)} startIcon={<FaSquareCheck />}>Approve</MaterialButton>
-      </Box>
-    ),
+   
     renderRowActions: ({ row, table }) => (
       <>
 
         <FaEdit className="text-success fs-5 mx-1" onClick={() => table.setEditingRow(row)} style={{ cursor: 'pointer' }} />
-        <FaTrash className="text-danger fs-5 mx-1" onClick={() => handleDeleteRow(row.id)} style={{ cursor: 'pointer' }} />
+        <FaTrash className="text-danger fs-5 mx-1" onClick={() => handleDeleteRow(row.id, 'virtualInfo')} style={{ cursor: 'pointer' }} />
       </>
     ),
   });
- 
+
   const VariantData = useMaterialReactTable({
-    columns:columns,
-    data: data.VariantData || [],
+    columns: VariantDataColoums || [],
+    data: data?.VariantData || [],
     enableEditing: true,
     editDisplayMode: 'row',
     onEditingRowSave: ({ row, values, table }) => {
-      const isNameExists = data.findIndex(item => item.name.toLowerCase() == values.name.toLowerCase());
+      const newData = { ...data }
+      const VariantDataCopy = [...newData.VariantData]
+      const isNameExists = VariantDataCopy.findIndex(item => item.name.toLowerCase() == values.name.toLowerCase());
       if (isNameExists !== -1 && isNameExists != row.id) return alert('category Already Exist')
-      const newData = [...data];
-      newData.splice(row.id, 1, values);
+      VariantDataCopy.splice(row.id, 1, values);
+      newData.VariantData = VariantDataCopy
       setDetails(newData);
       table.setEditingRow(null);
     },
     enableStickyHeader: true,
+    enableDensityToggle:false,
     enableRowActions: true,
     enableSelectAll: true,
     enableRowSelection: true,
@@ -358,41 +377,40 @@ const ProductCategory = () => {
       onDragEnd: () => {
         const { draggingRow, hoveredRow } = table.getState()
         if (hoveredRow && draggingRow) {
-          data.splice(hoveredRow.index, 0, data.splice(draggingRow.index, 1)[0])
-          setDetails([...data])
+          const newData = { ...data }
+          const VariantDataCopy = [...newData.VariantData]
+          VariantDataCopy.splice(hoveredRow.index, 0, VariantDataCopy.splice(draggingRow.index, 1)[0])
+          newData.VariantData = VariantDataCopy;
+          setDetails(newData)
         }
       }
     }),
-    renderTopToolbarCustomActions: ({ table }) => (
-      <Box sx={{ display: 'flex', gap: '16px', padding: '8px', flexWrap: 'wrap', color: 'red' }}>
-        <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRowsPDF(table.getSelectedRowModel().rows)} startIcon={<FileDownloadIcon />}>Export  PDF</MaterialButton>
-        <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRows(table.getSelectedRowModel().rows)} startIcon={<FileDownloadIcon />}>Export EXCEL</MaterialButton>
-        <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRows(table.getSelectedRowModel().rows)} startIcon={<FaSquareCheck />}>Approve</MaterialButton>
-      </Box>
-    ),
+   
     renderRowActions: ({ row, table }) => (
       <>
-
         <FaEdit className="text-success fs-5 mx-1" onClick={() => table.setEditingRow(row)} style={{ cursor: 'pointer' }} />
-        <FaTrash className="text-danger fs-5 mx-1" onClick={() => handleDeleteRow(row.id)} style={{ cursor: 'pointer' }} />
+        <FaTrash className="text-danger fs-5 mx-1" onClick={() => handleDeleteRow(row.id,'VariantData')} style={{ cursor: 'pointer' }} />
       </>
     ),
   });
 
   const MoreInfo = useMaterialReactTable({
-    columns:columns,
-    data: data.MoreInfo || [],
+    columns: columns,
+    data: data?.MoreInfo || [],
     enableEditing: true,
     editDisplayMode: 'row',
     onEditingRowSave: ({ row, values, table }) => {
-      const isNameExists = data.findIndex(item => item.name.toLowerCase() == values.name.toLowerCase());
+      const newData = { ...data }
+      const MoreInfoCopy = [...newData.MoreInfo]
+      const isNameExists = MoreInfoCopy.findIndex(item => item.name.toLowerCase() == values.name.toLowerCase());
       if (isNameExists !== -1 && isNameExists != row.id) return alert('category Already Exist')
-      const newData = [...data];
-      newData.splice(row.id, 1, values);
+      MoreInfoCopy.splice(row.id, 1, values);
+      newData.MoreInfo = MoreInfoCopy
       setDetails(newData);
       table.setEditingRow(null);
     },
     enableStickyHeader: true,
+    enableDensityToggle:false,
     enableRowActions: true,
     enableSelectAll: true,
     enableRowSelection: true,
@@ -410,26 +428,26 @@ const ProductCategory = () => {
       onDragEnd: () => {
         const { draggingRow, hoveredRow } = table.getState()
         if (hoveredRow && draggingRow) {
-          data.splice(hoveredRow.index, 0, data.splice(draggingRow.index, 1)[0])
-          setDetails([...data])
+          const newData = { ...data }
+          const MoreInfoCopy = [...newData.MoreInfo]
+          MoreInfoCopy.splice(hoveredRow.index, 0, MoreInfoCopy.splice(draggingRow.index, 1)[0])
+          newData.MoreInfo = MoreInfoCopy;
+          setDetails(newData)
         }
       }
     }),
-    renderTopToolbarCustomActions: ({ table }) => (
-      <Box sx={{ display: 'flex', gap: '16px', padding: '8px', flexWrap: 'wrap', color: 'red' }}>
-        <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRowsPDF(table.getSelectedRowModel().rows)} startIcon={<FileDownloadIcon />}>Export  PDF</MaterialButton>
-        <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRows(table.getSelectedRowModel().rows)} startIcon={<FileDownloadIcon />}>Export EXCEL</MaterialButton>
-        <MaterialButton disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()} onClick={() => handleExportRows(table.getSelectedRowModel().rows)} startIcon={<FaSquareCheck />}>Approve</MaterialButton>
-      </Box>
-    ),
+    
     renderRowActions: ({ row, table }) => (
       <>
 
         <FaEdit className="text-success fs-5 mx-1" onClick={() => table.setEditingRow(row)} style={{ cursor: 'pointer' }} />
-        <FaTrash className="text-danger fs-5 mx-1" onClick={() => handleDeleteRow(row.id)} style={{ cursor: 'pointer' }} />
+        <FaTrash className="text-danger fs-5 mx-1" onClick={() => handleDeleteRow(row.id, 'MoreInfo')} style={{ cursor: 'pointer' }} />
       </>
     ),
   });
+
+
+
 
 
   return (
@@ -495,20 +513,20 @@ const ProductCategory = () => {
       <Modal show={showModal} refferences={refferences} onHide={() => setShowModal(false)} />
       <div className="w-100 d-flex my-3 flex-column border rounded-2 border-1 p-3 w-100" style={{ borderColor: 'red' }}>
         <div><span className="fw-semibold">Variant Tab</span><Button type="button" className="border-0 mb-3" onClick={() => { setDetailModal(true); setDataRef('VariantData') }} style={{ background: '#362465', float: 'right' }}><FaPlus /> Add  More Info </Button></div>
-        <div className={data.length == 0 ? 'd-none' : ''}>
-          <MaterialReactTable key={key}  table={VariantData} />
+        <div className={data?.length == 0 ? 'd-none' : ''}>
+          <MaterialReactTable key={key} table={VariantData} />
         </div>
       </div>
       <div className="w-100 d-flex my-3 flex-column border rounded-2 border-1 p-3 w-100" style={{ borderColor: 'red' }}>
         <div><span className="fw-semibold">Vitual Info</span><Button type="button" className="border-0 mb-3" onClick={() => { setDetailModal(true); setDataRef('virtualInfo') }} style={{ background: '#362465', float: 'right' }}><FaPlus /> Add  Vitual Info</Button></div>
-        <div className={data.length == 0 ? 'd-none' : ''}>
+        <div className={data?.length == 0 ? 'd-none' : ''}>
           <MaterialReactTable key={key} table={VirualInfo} />
         </div>
       </div>
       <div className="w-100 d-flex my-3 flex-column border rounded-2 border-1 p-3 w-100" style={{ borderColor: 'red' }}>
         <div><span className="fw-semibold">More Info Tab</span><Button type="button" className="border-0 mb-3" onClick={() => { setDetailModal(true); setDataRef('MoreInfo') }} style={{ background: '#362465', float: 'right' }}><FaPlus /> Add  More Info </Button></div>
-        <div className={data.length == 0 ? 'd-none' : ''}>
-          <MaterialReactTable key={key}  table={MoreInfo} />
+        <div className={data?.length == 0 ? 'd-none' : ''}>
+          <MaterialReactTable key={key} table={MoreInfo} />
         </div>
       </div>
       <AddDetailsModal show={showDetailModal} dataRef={dataRef} onHide={() => setDetailModal(false)} />
