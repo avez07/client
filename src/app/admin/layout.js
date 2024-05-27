@@ -44,7 +44,7 @@ export default function VenderLayout({ children }) {
     <>
       <Sidebar isOpen={isSidebarOpen} isNightMode={isNightMode} />
       <Container fluid className={`p-0 ${!isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-        <div className={`box-data ${isNightMode ? 'night-mode' : ''}`} style={{ width: boxDataWidth }}>
+        <div className={`box-data ${isNightMode ? 'night-mode' : ''}`} style={{ width: boxDataWidth, ...(isNightMode ? contentNightStyle : {}) }}>
           <VenderNav toggleSidebar={toggleSidebar} toggleNightMode={NightMode} isNightMode={isNightMode} />
           <div className={`content  ${isNightMode ? 'content-night' : ''}`} style={isNightMode ? contentNightStyle : {}}>
             {children}

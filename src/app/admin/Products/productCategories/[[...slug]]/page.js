@@ -1,7 +1,8 @@
 'use client'
 import React, { useState, useContext, useMemo, useEffect } from "react";
 import { AuthContext } from "@/app/common/auth";
-import { Snackbar, Button as MaterialButton, Checkbox ,Alert} from '@mui/material';
+import { notFound, useRouter } from 'next/navigation'
+import { Snackbar, Button as MaterialButton, Checkbox, Alert } from '@mui/material';
 import { Button, Form, Modal as BootstrapModal } from "react-bootstrap";
 import { MaterialReactTable, createMRTColumnHelper, useMaterialReactTable, } from 'material-react-table';
 import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
@@ -49,31 +50,31 @@ const AddDetailsModal = (props) => {
   const [details, setDeails] = useState('')
   const [detailsNamed, setDetailsNamed] = useState([])
   const [KeyChanges, setKeyChange] = useState('')
-  const [heading , setHead] = useState('')
+  const [heading, setHead] = useState('')
   const [key, setKey] = useState(1)
 
-useEffect(()=>{
-  const DataRef = props.dataRef;
-  if (DataRef && !DataRef.includes('_')) {setDetailsNamed([]);setHead('Add '+DataRef)}
-setTimeout(() => {
-  if (DataRef && DataRef.includes('_')) {
-    const Key = DataRef.split('_')[0]
-    const row_id = DataRef.split('_')[1]
-    const data = JSON.parse(localStorage.getItem('categoryDetails'))    
-   setDetailsNamed(data[Key][row_id].options)
-   setHead('Add '+data[Key][row_id].name+' Option')
-  setKey((prevalue) => prevalue + 1)
-    return;
-  }
-  if(DataRef && DataRef == 'VariantOption'){
-    const data = JSON.parse(localStorage.getItem('categoryDetails'))
-    if (data && Object.keys(data).some(key => key === 'VariantOption')) setDetailsNamed(data.VariantOption) 
-      setHead('Add Variant Option')
-    
-    return 
-  }
-}, 0);
-},[props.show])
+  useEffect(() => {
+    const DataRef = props.dataRef;
+    if (DataRef && !DataRef.includes('_')) { setDetailsNamed([]); setHead('Add ' + DataRef) }
+    setTimeout(() => {
+      if (DataRef && DataRef.includes('_')) {
+        const Key = DataRef.split('_')[0]
+        const row_id = DataRef.split('_')[1]
+        const data = JSON.parse(localStorage.getItem('categoryDetails'))
+        setDetailsNamed(data[Key][row_id].options)
+        setHead('Add ' + data[Key][row_id].name + ' Option')
+        setKey((prevalue) => prevalue + 1)
+        return;
+      }
+      if (DataRef && DataRef == 'VariantOption') {
+        const data = JSON.parse(localStorage.getItem('categoryDetails'))
+        if (data && Object.keys(data).some(key => key === 'VariantOption')) setDetailsNamed(data.VariantOption)
+        setHead('Add Variant Option')
+
+        return
+      }
+    }, 0);
+  }, [props.show])
   const handleChange = (e) => {
     setKeyChange(false)
     setDeails(e.target.value)
@@ -98,22 +99,22 @@ setTimeout(() => {
       const row_id = DataRef.split('_')[1]
       const data = JSON.parse(localStorage.getItem('categoryDetails'))
       data[Key][row_id].options = detailsNamed
-      localStorage.setItem('categoryDetails',JSON.stringify(data))
+      localStorage.setItem('categoryDetails', JSON.stringify(data))
       setDetailsNamed([])
-    setKey((prevalue) => prevalue + 1)
+      setKey((prevalue) => prevalue + 1)
       return;
     }
     if (DataRef == 'VariantOption') {
       const data = JSON.parse(localStorage.getItem('categoryDetails'))
       if (data && data.VariantOption) {
         data.VariantOption = detailsNamed
-     localStorage.setItem('categoryDetails', JSON.stringify(data))
-      }else{
-     localStorage.setItem('categoryDetails', JSON.stringify({['VariantOption']:detailsNamed}))
-        
+        localStorage.setItem('categoryDetails', JSON.stringify(data))
+      } else {
+        localStorage.setItem('categoryDetails', JSON.stringify({ ['VariantOption']: detailsNamed }))
+
       }
-    
-     return;      
+
+      return;
     }
     const categoryData = localStorage.getItem('categoryDetails')
     const d1 = await detailsNamed.map((items) => { return { name: items, size: '12', type: 'Input', options: [], Isimportant: false } })
@@ -156,7 +157,7 @@ setTimeout(() => {
   )
 }
 
-const ProductCategory = () => {
+const ProductCategory = (props) => {
   const { nightmode } = useContext(AuthContext);
   const [showModal, setShowModal] = useState(false);
   const [showDetailModal, setDetailModal] = useState(false)
@@ -171,38 +172,78 @@ const ProductCategory = () => {
   const [products, SetProducts] = useState('')
   const [data, setDetails] = useState([])
   const [key, Setkey] = useState(1)
-  const [error,SetError] = useState(false)
-  const [open,setOpen] = useState(false);
-  const [resMessage,setResMessage] = useState({})
-  const [loading,setLoading] = useState(false)
+  const [error, SetError] = useState(false)
+  const [open, setOpen] = useState(false);
+  const [resMessage, setResMessage] = useState({})
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
+  const handleSaveCategory = async () => {
+    if (!Category || !subCategories || !products) {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return SetError(true)
+    }
+    var body;
+    var url;
+    if (props.params.slug) {
+      url = 'UpdateProductCategory';
+       body = {
+        ObjectId: props.params.slug[0],
+        Category: Category,
+        subCategories: subCategories,
+        products: products,
+        details: data
+      }
+    } else {
+      url = 'AddProductCategory';
+       body = {
+        Category: Category,
+        subCategories: subCategories,
+        products: products,
+        details: data
+      }
+    }
 
-  const handleSaveCategory = async ()=>{
-   if (!Category||!subCategories||!products){
-    window.scrollTo({top:0,behavior:'smooth'})
-    return SetError(true)
-   }
-   const body = {
-    Category :Category,
-    subCategories : subCategories,
-    products : products,
-    details : data
-   }
-   const token = Cookies.get('token');
-   setLoading(true)
-   const response = await PostApi('AddProductCategory',JSON.stringify(body),token)
-   setLoading(false)
-   setOpen(true)
-   setResMessage(response)
-   if (response.status == '200') {
-    SetCategory('')
-    SetSubCategories('')
-    SetProducts('')
-    localStorage.clear()
-    Setkey(pre=>pre+1)
-   }
-  
+    // return console.log(body)
+    const token = Cookies.get('token');
+    setLoading(true)
+    const response = await PostApi(url, JSON.stringify(body), token)
+    setLoading(false)
+    setOpen(true)
+    setResMessage(response)
+    if (response.status == '200' && !props.params.slug) {
+      SetCategory('')
+      SetSubCategories('')
+      SetProducts('')
+      localStorage.clear()
+      Setkey(pre => pre + 1)
+    }
+
   }
+  useEffect(() => {
+    if (props.params.slug) {
+      if (props.params.slug.length > 1) return notFound()
+      const body = {
+        Dataid: props.params.slug[0]
+      }
+      const token = Cookies.get('token')
+      PostApi('/GetCategory', JSON.stringify(body), token).then((response) => {
+        if(response.status != 200) return router.push('/admin/Products/productCategories')
+        const { Categories, SubCategories, Products, details } = response.data
+        localStorage.setItem('categoryDetails', JSON.stringify(response.data.details))
+        SetCategory(Categories)
+        SetSubCategories(SubCategories)
+        SetProducts(Products)
+        setDetails(details)
+      })
+    } else {
+      localStorage.clear()
+      SetCategory('')
+      SetSubCategories('')
+      SetProducts('')
+      setDetails([])
+    }
+  }, [])
 
 
   useEffect(() => {
@@ -210,7 +251,7 @@ const ProductCategory = () => {
       fetchData();
     }, 0);
     setDocumentRender(true)
-  }, [showDetailModal,key]);
+  }, [showDetailModal, key]);
   useEffect(() => {
     const handleBeforeUnload = (event) => {
       event.preventDefault();
@@ -263,14 +304,14 @@ const ProductCategory = () => {
     const categoryData = JSON.parse(localStorageData)
     setDetails(categoryData)
   }
-  const handleDeleteVariant = (index)=>{
-    const newData = {...data}
+  const handleDeleteVariant = (index) => {
+    const newData = { ...data }
     const variantCopy = [...newData.VariantOption]
-    variantCopy.splice(index,1);
+    variantCopy.splice(index, 1);
     newData.VariantOption = variantCopy
     setDetails(newData)
     console.log(data)
-    localStorage.setItem('categoryDetails',JSON.stringify(newData))
+    localStorage.setItem('categoryDetails', JSON.stringify(newData))
   }
   const handleDeleteRow = (id, ref) => {
     const newData = { ...data }
@@ -294,11 +335,12 @@ const ProductCategory = () => {
       editVariant: 'select',
       editSelectOptions: ['Input', 'DropDwon']
     }),
-    columnHelper.accessor('options', { header: 'Options', size: 120, enableEditing: false,
-    Cell : ({row})=>{
-      return row.original.type == 'DropDwon' ? (<div onClick={()=>{setDetailModal(true),setDataRef('MoreInfo_'+row.id)}} style={{cursor:'pointer'}}>Option</div>) :''
-    }
-     }),
+    columnHelper.accessor('options', {
+      header: 'Options', size: 120, enableEditing: false,
+      Cell: ({ row }) => {
+        return row.original.type == 'DropDwon' ? (<div onClick={() => { setDetailModal(true), setDataRef('MoreInfo_' + row.id) }} style={{ cursor: 'pointer' }}>Option</div>) : ''
+      }
+    }),
     columnHelper.accessor('Isimportant', {
       header: 'Isimportant', size: 120, enableEditing: false,
       Cell: ({ row }) => {
@@ -325,11 +367,12 @@ const ProductCategory = () => {
       editVariant: 'select',
       editSelectOptions: ['Input', 'DropDwon']
     }),
-    columnHelper.accessor('options', { header: 'Options', size: 120, enableEditing: false,
-      Cell : ({row})=>{
-        return row.original.type == 'DropDwon' ? (<div onClick={()=>{setDetailModal(true),setDataRef('virtualInfo_'+row.id)}} style={{cursor:'pointer'}}>Option</div>) :''
+    columnHelper.accessor('options', {
+      header: 'Options', size: 120, enableEditing: false,
+      Cell: ({ row }) => {
+        return row.original.type == 'DropDwon' ? (<div onClick={() => { setDetailModal(true), setDataRef('virtualInfo_' + row.id) }} style={{ cursor: 'pointer' }}>Option</div>) : ''
       }
-     }),
+    }),
     columnHelper.accessor('Isimportant', {
       header: 'Isimportant', size: 120, enableEditing: false,
       Cell: ({ row }) => {
@@ -356,11 +399,12 @@ const ProductCategory = () => {
       editVariant: 'select',
       editSelectOptions: ['Input', 'DropDwon']
     }),
-    columnHelper.accessor('options', { header: 'Options', size: 120, enableEditing: false,
-    Cell : ({row})=>{
-      return row.original.type == 'DropDwon' ? (<div onClick={()=>{setDetailModal(true),setDataRef('VariantData_'+row.id)}} style={{cursor:'pointer'}}>Option</div>) :''
-    }
-     }),
+    columnHelper.accessor('options', {
+      header: 'Options', size: 120, enableEditing: false,
+      Cell: ({ row }) => {
+        return row.original.type == 'DropDwon' ? (<div onClick={() => { setDetailModal(true), setDataRef('VariantData_' + row.id) }} style={{ cursor: 'pointer' }}>Option</div>) : ''
+      }
+    }),
     columnHelper.accessor('Isimportant', {
       header: 'Isimportant', size: 120, enableEditing: false,
       Cell: ({ row }) => {
@@ -388,11 +432,11 @@ const ProductCategory = () => {
       virtualInfoCopy.splice(row.id, 1, values);
       newData.virtualInfo = virtualInfoCopy
       setDetails(newData);
-    localStorage.setItem('categoryDetails', JSON.stringify(newData))
+      localStorage.setItem('categoryDetails', JSON.stringify(newData))
       table.setEditingRow(null);
     },
     enableStickyHeader: true,
-    enableDensityToggle:false,
+    enableDensityToggle: false,
     enableRowActions: true,
     enableSelectAll: true,
     enableRowSelection: true,
@@ -415,11 +459,11 @@ const ProductCategory = () => {
           virtualInfoCopy.splice(hoveredRow.index, 0, virtualInfoCopy.splice(draggingRow.index, 1)[0])
           newData.virtualInfo = virtualInfoCopy;
           setDetails(newData)
-    localStorage.setItem('categoryDetails', JSON.stringify(newData))
+          localStorage.setItem('categoryDetails', JSON.stringify(newData))
         }
       }
     }),
-   
+
     renderRowActions: ({ row, table }) => (
       <>
 
@@ -442,11 +486,11 @@ const ProductCategory = () => {
       VariantDataCopy.splice(row.id, 1, values);
       newData.VariantData = VariantDataCopy
       setDetails(newData);
-    localStorage.setItem('categoryDetails', JSON.stringify(newData))
+      localStorage.setItem('categoryDetails', JSON.stringify(newData))
       table.setEditingRow(null);
     },
     enableStickyHeader: true,
-    enableDensityToggle:false,
+    enableDensityToggle: false,
     enableRowActions: true,
     enableSelectAll: true,
     enableRowSelection: true,
@@ -469,16 +513,16 @@ const ProductCategory = () => {
           VariantDataCopy.splice(hoveredRow.index, 0, VariantDataCopy.splice(draggingRow.index, 1)[0])
           newData.VariantData = VariantDataCopy;
           setDetails(newData)
-    localStorage.setItem('categoryDetails', JSON.stringify(newData))
+          localStorage.setItem('categoryDetails', JSON.stringify(newData))
 
         }
       }
     }),
-   
+
     renderRowActions: ({ row, table }) => (
       <>
         <FaEdit className="text-success fs-5 mx-1" onClick={() => table.setEditingRow(row)} style={{ cursor: 'pointer' }} />
-        <FaTrash className="text-danger fs-5 mx-1" onClick={() => handleDeleteRow(row.id,'VariantData')} style={{ cursor: 'pointer' }} />
+        <FaTrash className="text-danger fs-5 mx-1" onClick={() => handleDeleteRow(row.id, 'VariantData')} style={{ cursor: 'pointer' }} />
       </>
     ),
   });
@@ -496,12 +540,12 @@ const ProductCategory = () => {
       MoreInfoCopy.splice(row.id, 1, values);
       newData.MoreInfo = MoreInfoCopy
       setDetails(newData);
-    localStorage.setItem('categoryDetails', JSON.stringify(newData))
+      localStorage.setItem('categoryDetails', JSON.stringify(newData))
 
       table.setEditingRow(null);
     },
     enableStickyHeader: true,
-    enableDensityToggle:false,
+    enableDensityToggle: false,
     enableRowActions: true,
     enableSelectAll: true,
     enableRowSelection: true,
@@ -524,11 +568,11 @@ const ProductCategory = () => {
           MoreInfoCopy.splice(hoveredRow.index, 0, MoreInfoCopy.splice(draggingRow.index, 1)[0])
           newData.MoreInfo = MoreInfoCopy;
           setDetails(newData)
-    localStorage.setItem('categoryDetails', JSON.stringify(newData))
+          localStorage.setItem('categoryDetails', JSON.stringify(newData))
         }
       }
     }),
-    
+
     renderRowActions: ({ row, table }) => (
       <>
 
@@ -547,14 +591,14 @@ const ProductCategory = () => {
 
   return (
     <>
- <Snackbar open={open} onClose={handleClose} autoHideDuration={6000} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+      <Snackbar open={open} onClose={handleClose} autoHideDuration={6000} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
         <Alert
           onClose={handleClose}
-          severity={resMessage.status == '200'? "success":'warning'}
+          severity={resMessage.status == '200' ? "success" : 'warning'}
           variant="filled"
           sx={{ width: '100%' }}
         >
-         {resMessage.message}
+          {resMessage.message}
         </Alert>
       </Snackbar>
       <div>
@@ -575,7 +619,7 @@ const ProductCategory = () => {
           )}
           <Button type="button" className="border-0" onClick={() => { setShowModal(true), setRefferences('Categories') }} style={{ background: '#362465', width: '25%' }}><FaPlus /> Add Gender Category</Button>
         </div>
-        {!Category && error ? (<div className="text-danger mb-2 fw-semibold">Category feild is Important!</div>):null}
+        {!Category && error ? (<div className="text-danger mb-2 fw-semibold">Category feild is Important!</div>) : null}
         <Form.Label className="fw-semibold">Sub Category</Form.Label>
         <div className="d-flex justify-content-between my-3">
           {documentRender && (
@@ -594,7 +638,7 @@ const ProductCategory = () => {
 
           <Button type="button" className="border-0" onClick={() => { setShowModal(true), setRefferences('SubCategores') }} style={{ background: '#362465', width: '25%' }}><FaPlus /> Add  Sub Category</Button>
         </div>
-        {!subCategories && error ? (<div className="text-danger mb-2 fw-semibold"> SubCategory feild is Important!</div>):null}
+        {!subCategories && error ? (<div className="text-danger mb-2 fw-semibold"> SubCategory feild is Important!</div>) : null}
 
         <Form.Label className="fw-semibold">Products</Form.Label>
         <div className="d-flex justify-content-between my-3">
@@ -614,35 +658,42 @@ const ProductCategory = () => {
 
           <Button type="button" className="border-0" onClick={() => { setShowModal(true), setRefferences('Products') }} style={{ background: '#362465', width: '25%' }}><FaPlus /> Add  Product</Button>
         </div>
-        {!products && error ? (<div className="text-danger mb-2 fw-semibold">Product feild is Important!</div>):null}
+        {!products && error ? (<div className="text-danger mb-2 fw-semibold">Product feild is Important!</div>) : null}
 
       </div>
       <Modal show={showModal} refferences={refferences} onHide={() => setShowModal(false)} />
-      <div className="w-100 d-flex my-3 flex-column border rounded-2 border-1 p-3 w-100" style={{ borderColor: 'red' }}>
+      <div className={`w-100 d-flex my-3 flex-column ${!nightmode?"border":""} rounded-2 border-1 p-3 w-100`} style={{ borderColor: 'red' }}>
         <div><span className="fw-semibold">Variant Option</span><Button type="button" className="border-0 mb-3" onClick={() => { setDetailModal(true); setDataRef('VariantOption') }} style={{ background: '#362465', float: 'right' }}><FaPlus /> Add  Variant Category </Button></div>
-        <div className="d-flex flex-wrap">{data?.VariantOption ? data.VariantOption.map((items,index)=>(<div key={index} className="border border-2 mx-2 px-2 py-1 rounded-4">{items}<IoMdCloseCircleOutline className="ms-1" onClick={(e) => handleDeleteVariant(index)} style={{ cursor: 'pointer' }} /></div>)): null}</div>
-       
+        <div className="d-flex flex-wrap">{data?.VariantOption ? data.VariantOption.map((items, index) => (<div key={index} className="border border-2 mx-2 px-2 py-1 rounded-4">{items}<IoMdCloseCircleOutline className="ms-1" onClick={(e) => handleDeleteVariant(index)} style={{ cursor: 'pointer' }} /></div>)) : null}</div>
+
       </div>
-      <div className="w-100 d-flex my-3 flex-column border rounded-2 border-1 p-3 w-100" style={{ borderColor: 'red' }}>
+      <div className={`w-100 d-flex my-3 flex-column ${!nightmode?"border":""} rounded-2 border-1 p-3 w-100`} style={{ borderColor: 'red' }}>
         <div><span className="fw-semibold">Variant Tab</span><Button type="button" className="border-0 mb-3" onClick={() => { setDetailModal(true); setDataRef('VariantData') }} style={{ background: '#362465', float: 'right' }}><FaPlus /> Add  Variant Info </Button></div>
-        <div className={data?.length == 0 ? 'd-none' : ''}>
+        <div className={data?.VariantData?.length == 0 ? 'd-none' : ''}>
           <MaterialReactTable key={key} table={VariantData} />
         </div>
       </div>
-      <div className="w-100 d-flex my-3 flex-column border rounded-2 border-1 p-3 w-100" style={{ borderColor: 'red' }}>
+      <div className={`w-100 d-flex my-3 flex-column ${!nightmode?"border":""} rounded-2 border-1 p-3 w-100`} style={{ borderColor: 'red' }}>
         <div><span className="fw-semibold">Vitual Info</span><Button type="button" className="border-0 mb-3" onClick={() => { setDetailModal(true); setDataRef('virtualInfo') }} style={{ background: '#362465', float: 'right' }}><FaPlus /> Add  Vitual Info</Button></div>
-        <div className={data?.length == 0 ? 'd-none' : ''}>
+        <div className={data?.VirualInfo?.length == 0 ? 'd-none' : ''}>
           <MaterialReactTable key={key} table={VirualInfo} />
         </div>
       </div>
-      <div className="w-100 d-flex my-3 flex-column border rounded-2 border-1 p-3 w-100" style={{ borderColor: 'red' }}>
+      <div className={`w-100 d-flex my-3 flex-column ${!nightmode?"border":""} rounded-2 border-1 p-3 w-100`} style={{ borderColor: 'red' }}>
         <div><span className="fw-semibold">More Info Tab</span><Button type="button" className="border-0 mb-3" onClick={() => { setDetailModal(true); setDataRef('MoreInfo') }} style={{ background: '#362465', float: 'right' }}><FaPlus /> Add  More Info </Button></div>
-        <div className={data?.length == 0 ? 'd-none' : ''}>
+        <div className={data?.MoreInfo?.length == 0 ? 'd-none' : ''}>
           <MaterialReactTable key={key} table={MoreInfo} />
         </div>
       </div>
-      <div><Button style={{background:"#362465",float:"right"}} disabled={loading} type="button" className="border-0 mb-3" onClick={()=>{handleSaveCategory()}} >{loading ? <PulseLoader size={5} loading={loading} color='#fff' /> : 'Add Category'}</Button></div>
-      
+      <div>
+        {props.params?.slug?.length == 1 ? (
+          <Button style={{ background: "#362465", float: "right" }} disabled={loading} type="button" className="border-0 mb-3" onClick={() => { handleSaveCategory() }} >{loading ? <PulseLoader size={5} loading={loading} color='#fff' /> : 'Update Category'}</Button>
+        ) : (
+          <Button style={{ background: "#362465", float: "right" }} disabled={loading} type="button" className="border-0 mb-3" onClick={() => { handleSaveCategory() }} >{loading ? <PulseLoader size={5} loading={loading} color='#fff' /> : 'Add Category'}</Button>
+        )}
+
+      </div>
+
       <AddDetailsModal show={showDetailModal} dataRef={dataRef} onHide={() => setDetailModal(false)} />
     </>
   );
