@@ -9,7 +9,7 @@ export const GetData = async (token)=>{
         }
     })).json()
     if (res.status != 200) return res
-    //   console.log(request)
+    
     return res
     
 }
@@ -47,6 +47,7 @@ export const PostApi = async(url,body,authorization)=>{
         }
         
     })
+    // console.log(response)
     
      return await response.json()
        

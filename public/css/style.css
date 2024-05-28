@@ -762,3 +762,21 @@ width: 50% !important;
   border-radius: 20px;
 }
 
+.selectCategoroy:hover{
+text-decoration: underline !important;
+}
+.delete_Buton:hover {
+  color: #ec4242 !important;
+  font-size: 28px;
+}
+.active_Buton:hover {
+  color: #26c126 !important;
+  font-size: 28px;
+}
+.approve_Buton:hover {
+  color: #2c4c95 !important;
+  font-size: 28px;
+}
+.content-night .selectCategoroy{
+  color: #ccc !important;
+}
