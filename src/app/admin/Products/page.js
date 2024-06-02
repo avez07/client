@@ -1,11 +1,13 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import { BioRhyme } from "next/font/google"
-import { Button, Form } from "react-bootstrap"
+import { Button, Col, Form, Row } from "react-bootstrap"
 import Link from "next/link"
-import { FaCheck, FaCheckSquare, FaRegSquare, FaSearch, FaSort, FaSquare, FaTimes, FaTrashAlt } from "react-icons/fa"
+import { FaCheck, FaCheckSquare, FaPlus, FaRegSquare, FaSearch, FaSort, FaSquare, FaTimes, FaTrashAlt } from "react-icons/fa"
 import { GetFetchAPI, PostApi } from "@/app/common/serverFunctions"
 import Cookies from "js-cookie"
+import { FadeLoader } from 'react-spinners';
+
 
 
 
@@ -15,7 +17,8 @@ const GetAllCategory = () => {
     const [FilteredData, setFilteredData] = useState([])
     const [searchString, setSearchString] = useState('')
     const [activeFilter, setAactiveFilter] = useState(0)
-    const [isDeleted ,setIsDeleted] = useState(false)
+    const [isDeleted, setIsDeleted] = useState(false)
+    const [isloading, setIsloading] = useState(false)
 
 
     const token = Cookies.get('token')
@@ -29,9 +32,10 @@ const GetAllCategory = () => {
             action: action,
             id: id
         }
+        setIsloading(true)
         const response = await PostApi('/CategoryAction', JSON.stringify(body), token)
         if (response.status != 200) return alert(response.message)
-            if(action == 'delete') return setIsDeleted(true)
+        if (action == 'delete') return setIsDeleted(true)
         const result = FilteredData.map(item =>
             item._id === id
                 ? {
@@ -44,6 +48,7 @@ const GetAllCategory = () => {
         )
         setFilteredData(result)
         setCategoryData(result)
+        setIsloading(false)
         return true
     }
     const handleHeighlightString = (text, search = searchString) => {
@@ -90,15 +95,17 @@ const GetAllCategory = () => {
                 aValue = 0;
                 bValue = 0
             }
-            return bValue - aValue ;
+            return bValue - aValue;
             return result
         });
 
 
     }
     useEffect(() => {
+        setIsloading(true)
         fetchCategory()
         setIsDeleted(false)
+        setIsloading(false)
     }, [isDeleted])
     useEffect(() => {
         const search = setTimeout(() => {
@@ -114,11 +121,21 @@ const GetAllCategory = () => {
     }, [searchString])
     return (
         <>
-            <div style={{ position: 'relative' }}>
-                <Form.Control type="text" onChange={(e) => setSearchString(e.target.value)} className="seacrhCategory_input rounded-5" />
-                <span className="searchCategoryIcon"><FaSearch /></span>
-            </div>
-            <div className="d-flex w-50 ms-auto justify-content-around fw-semibold">
+            <div className={`overlap ${!isloading ? 'd-none' : ''}`}><div className="fadeloader"><FadeLoader color="#ccc" /></div></div>
+            <Row md={2} className="g-2">
+                <Col>
+                    <div style={{ position: 'relative' }}>
+                        <Form.Control type="text" onChange={(e) => setSearchString(e.target.value)} className="seacrhCategory_input rounded-5" />
+                        <span className="searchCategoryIcon"><FaSearch /></span>
+                    </div>
+                </Col>
+                <Col>
+                  <Link href='/admin/Products/productCategories'><Button style={{float:'right',background:'#362465',border:'none'}}><FaPlus/> Add Category</Button></Link>
+                </Col>
+
+            </Row>
+
+            <div className="d-flex w-50 ms-auto mt-2 justify-content-around fw-semibold">
                 <p className="m-0" style={{ cursor: 'pointer' }} onClick={(e) => handleFilter(1)}>Active<FaSort className={activeFilter == 1 || activeFilter == 3 ? 'activeFilter' : 'deactiveFilter'} /></p>
                 <p className="m-0" style={{ cursor: 'pointer' }} onClick={(e) => handleFilter(2)}>Approve <FaSort className={activeFilter == 2 || activeFilter == 3 ? 'activeFilter' : 'deactiveFilter'} /></p>
                 <p className="m-0">Delete</p>
@@ -152,7 +169,7 @@ const GetAllCategory = () => {
                         </div>
                     </div>
                 ))
-            ) : null}
+            ) : (<div className="fs-5 text-muted fw-semibold my-4 mx-3">No Category Found</div>)}
         </>
     )
 }

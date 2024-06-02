@@ -31,7 +31,6 @@ const Modal = (props) => {
         <BootstrapModal.Title>Add {props.refferences}</BootstrapModal.Title>
       </BootstrapModal.Header>
       <BootstrapModal.Body>
-        {name}
         <Form.Control type="text" name="addFeild" onChange={(e) => setName(e.target.value)} />
       </BootstrapModal.Body>
       <BootstrapModal.Footer>
@@ -81,9 +80,10 @@ const AddDetailsModal = (props) => {
   }
   const handleAddArray = async (event) => {
     event.preventDefault();
+    if(details.trim() == '') return false
     if (detailsNamed.map((items) => items.toLowerCase()).includes(details.toLowerCase())) { setKeyChange(true); return false }
     if (!detailsNamed.includes(details)) {
-      const newstr = details.replace(/\b\w/g, (char) => char.toUpperCase()).replace(/[^\w\s]/g, '')
+      const newstr = details.trim().replace(/\b\w/g, (char) => char.toUpperCase()).replace(/[^\w\s]/g, '')
       detailsNamed.push(newstr)
     }
     setDeails("")

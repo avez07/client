@@ -953,7 +953,7 @@ form label {
 }
 
 .seacrhCategory_input {
-  width: 30% !important;
+  width: 50% !important;
   box-shadow: none !important;
   padding-left: 39px !important;
 }
@@ -967,3 +967,41 @@ form label {
 .activeFilter{
   cursor: pointer;
 }
+.overlap{
+  height: 100%;
+  width: 99%;
+  background: #ebebeb24;
+  position: absolute;
+}
+.fadeloader{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+.category-DropDwon,.subcategory-DropDwon,.product-DropDwon{
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  text-transform: capitalize;
+  position: absolute;
+  top: 45px;
+  padding: 10px 0px;
+  max-height: 150px;
+  width: 250px;
+  border-radius: 5px;
+  overflow-y: auto;
+  background: #fff;
+}
+.subcategory-DropDwon{
+  left: 265px;
+}
+.product-DropDwon{
+  left: 530px;
+}
+.category-DropDwon div:hover,.subcategory-DropDwon div:hover,.product-DropDwon div:hover{
+background: #f1f1f1;
+cursor: pointer;
+}
+.category-DropDwon .active,.subcategory-DropDwon .active,.product-DropDwon .active{
+  background: #362465 !important;
+  color: #f1f1f1;
+  cursor: pointer;
+  }

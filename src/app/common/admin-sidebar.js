@@ -45,7 +45,7 @@ const handleLogout=()=>{
               <Link href="/admin" onClick={()=>handleactive(1)}><span className='menu-items'><FaHome /></span>Dashboard</Link>
             </li>
             <li className={`${active == 2? 'active': ''}`}>
-              <Link href="/admin/Products/productCategories" onClick={()=>handleactive(2)} ><span className="menu-items"><FaBoxOpen /></span>Products</Link>
+              <Link href="/admin/Products" onClick={()=>handleactive(2)} ><span className="menu-items"><FaBoxOpen /></span>Products</Link>
             </li>
             <li className={`${active == 3? 'active': ''}`}>
               <Link href="/admin/seller" onClick={()=>handleactive(2)} ><span className="menu-items"><FaBoxOpen /></span>Seller</Link>

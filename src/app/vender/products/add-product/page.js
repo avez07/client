@@ -1,57 +1,37 @@
 "use client"
 import React, { useEffect, useState, useContext } from "react";
+import { FadeLoader } from 'react-spinners';
+import { Col, Row } from 'react-bootstrap'
 import { useFormik, Field } from 'formik'
 import * as yup from 'yup'
 import { AuthContext } from '@/app/common/auth'
 import dynamic from 'next/dynamic';
-import { RadioGroup, FormControlLabel, TextField, Radio, Checkbox } from '@mui/material'
-import { Form, Button, InputGroup } from "react-bootstrap";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Tooltip from "react-bootstrap/Tooltip";
-import { FaRegQuestionCircle } from "react-icons/fa";
+import { Form, Button, InputGroup, FormControl } from "react-bootstrap";
 import 'react-quill/dist/quill.snow.css';
 import BulkEdiTable from "@/app/common/table-bulkEdit";
-import { Label } from "@mui/icons-material";
+import { GetFetchAPI } from "@/app/common/serverFunctions";
+import Cookies from "js-cookie";
+import { FaRegStar } from "react-icons/fa";
 const Quill = dynamic(() => import('react-quill'), { ssr: false })
 const Select = dynamic(() => import('react-select'), { ssr: false })
 
-const mainColors = [
-  '', 'red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'brown', 'black', 'white', 'gray', 'grey',
-  'lightred', 'lightorange', 'lightyellow', 'lightgreen', 'lightblue', 'lightpurple', 'lightpink', 'lightbrown',
-  'darkred', 'darkorange', 'darkyellow', 'darkgreen', 'darkblue', 'darkpurple', 'darkpink', 'darkbrown', 'Others'
-];
-const colorOption = mainColors.map((items, index) => {
-  return { value: items, label: index === 0 ? 'Select Color' : items, Key: index }
-})
 
-const main_size = () => {
-  let sizes = Array.from({ length: 15 }, (_, index) => 16 + index * 2).map((items, index) => {
-    return { value: items, label: items, key: index };
-  });
-  sizes.unshift({ value: '', label: 'Select Size' }); // Add empty array value at index [0]
-  sizes.push({ value: 'Others', label: 'Others' }); // Add 'Others' at the end
-  return sizes;
-};
+
+
+
 
 
 const BulkEdit = () => {
   const { nightmode } = useContext(AuthContext);
-  const [sell, setSell] = useState("");
-  const [cost, setCost] = useState("");
-  const [profit, setProfit] = useState("");
-  const [margin, setMargin] = useState("");
-  const [gst, setGst] = useState(0);
-  const [Campare, setCampare] = useState("");
-  const [discount, setDiscount] = useState("");
-  const [weight, setWeight] = useState("");
-  const [shipCharge, setShipCharge] = useState(0);
-  const [VariantTure, setVariantTure] = useState(false);
-  const [variantSelect, setVariantSelect] = useState(1)
-  const [VariantColor, setVariantColor] = useState(colorOption[0]);
-  const [VariantSize, setVariantSize] = useState(main_size()[0]);
-  const [Uniquekey, setUniquekey] = useState([]);
+  const [isloading, setIsloading] = useState(false)
+  const [CategoryData, setCategoryData] = useState({})
+  const [Category, setCategory] = useState([])
+  const [CategoryFlag,setCategoryFlag] = useState(false)
 
- 
+
+
+
+
   const customStyle = {
     control: (style) => ({ ...style, background: nightmode ? '#0c1220' : null, border: 'currentColor' }),
     singleValue: (style) => ({ ...style, color: nightmode ? '#fff' : null }),
@@ -94,85 +74,87 @@ const BulkEdit = () => {
 
     ['clean']                                         // remove formatting button
   ];
-   
-  const ProductValidationSchema = yup.object({
-    productName: yup.string().required('This Feild is Required'),
-    ProductCategory: yup.string().required('This Feild is Required'),
-    ProductDiscription: yup.string().required('This Feild is Required').max(200, 'Discription Should Not Be More Than 200 Characters')
+ 
+  const handleCategoryChange = (action, data) => {
+    const newData = [...Category]
+    if (action == 'category') newData.splice(0,3,data)
+    if (action == 'subcategory') newData.splice(1,2,data)
+    if (action == 'product') newData.splice(2,1,data)
+      setCategory(newData)
+  }
+  useEffect(() => {
+    const token = Cookies.get('token')
+    const response = GetFetchAPI('getActiveProduct', token).then((response) => {
+      if (response.status == 200) {
+        const data = response.data
+        const GroupObject = data.reduce((acc, item) => {
+          if (!acc[item.Categories]) acc[item.Categories] = {};
 
-  })
-  const Formik = useFormik({
-    initialValues: {
-      productName: '',
-      ProductCategory: '',
-      ProductDiscription: '',
-    }, validationSchema: ProductValidationSchema,
-    onSubmit: (values) => {
-      console.log('form submited', values)
-    }
+          if (!acc[item.Categories][item.SubCategories]) acc[item.Categories][item.SubCategories] = [];
 
-  })
-  const handleQuillChange = (content) => {
-    Formik.setFieldValue('ProductDiscription', content); // Update Formik's state
-  };
+          acc[item.Categories][item.SubCategories].push(item.Products);
+          return acc;
+        }, {})
+        setCategoryData(GroupObject)
+      }
+    }).catch((error) => {
+      console.error(error)
+    })
+  }, [])
+ 
 
   return (
     <>
-      <Form onSubmit={Formik.handleSubmit}>
-        <Form.Group controlId="formName" className="card my-3 p-3">
-          <Form.Label className="fw-semibold">Name</Form.Label>
-          <Form.Control
-            className="add-name"
-            name="productName"
-            type="text"
-            value={Formik.values.productName}
-            onChange={Formik.handleChange}
-            onBlur={Formik.handleBlur}
-            placeholder="Enter name"
-          />
-          {Formik.touched.productName && Formik.errors.productName ? (
-            <div className="text-danger">{Formik.errors.productName}</div>
-          ) : (null)}
-        </Form.Group>
-        <Form.Group controlId="formName" className="card my-3 p-3">
-          <Form.Label className="fw-semibold">Category</Form.Label>
-          <Select
-            name="ProductCategory"
-            menuPlacement="top"
-            className="categoryName"
-            styles={{ ...customStyle, width: '100%' }}
-            onChange={(e) => Formik.setFieldValue('ProductCategory', e.value)}
-            onBlur={Formik.handleBlur}
-            options={[
-              { value: 'Kidwear', label: 'Kidwear' },
-              { value: 'bridal wear', label: 'bridal wear' },
-              { value: 'women', label: 'women' },
-              { value: 'Men', label: 'Men' }
-            ]}
-          />
-          {Formik.touched.ProductCategory && Formik.errors.ProductCategory ? (
-            <div className="text-danger">{Formik.errors.ProductCategory}</div>
-          ) : (null)}
-        </Form.Group>
+      <div className={`overlap ${!isloading ? 'd-none' : ''}`}><div className="fadeloader"><FadeLoader color="#ccc" /></div></div>
+      <div>
+        <Row md={1} className="g-3">
+          <Col md={12}>
+            <Form.Label>Items tittle<span className="text-danger">*</span></Form.Label>
+            <Form.Control type="text" className="iteim-name" name="items-name" />
+          </Col>
+          <Col md={12}>
+            <Form.Label>Search Category<span className="text-danger">*</span></Form.Label>
+            <div className="nested-Dropdwon" style={{ position: 'relative' }}>
+              <Form.Control type="text" className="Category-name" readOnly name="category-name" onClick={()=>setCategoryFlag(toggle=>!toggle)}  value={Category.join(' > ') || ''}/>
+             {CategoryFlag &&( <div className="category-DropDwon">
+                {Object.keys(CategoryData).map((category) => (
+                  <div className={`py-2 px-3 ${Category[0] == category ? 'active' : ''}`} onClick={(e) => { handleCategoryChange('category', category) }} key={category}><FaRegStar className="me-2" />{category}</div>
+                ))}
+              </div> )}
+             {CategoryFlag && Category[0] ?(
+              <div className="subcategory-DropDwon">
+                {Object.keys(CategoryData[Category[0]]).map((items) => (
+                  <div className={`py-2 px-3 ${Category[1] == items ? 'active' : ''}`} onClick={(e) => { handleCategoryChange('subcategory', items) }} key={items}>{items}</div>
+                ))}
+              </div>
+             ):null} 
+             {CategoryFlag && Category[1] ?(
+              <div className="product-DropDwon">
+                {CategoryData[Category[0]][Category[1]].map((items)=>(
+                  <div className={`py-2 px-3 ${Category[2] == items ? 'active' : ''}`} onClick={(e) => { handleCategoryChange('product', items),setTimeout(() => {setCategoryFlag(false)}, 1000); }} key={items}>{items}</div>
 
-        <Form.Group controlId="formDescription" className="card my-3 p-3">
-          <Form.Label className="fw-semibold">Description</Form.Label>
+                ))}
+              </div>
+             ):null} 
+            </div>
+          </Col>
+          <Col md={6}>
+            <Form.Label>Brand Name</Form.Label>
+            <Form.Control type="text" name="brandName" className="brandname"/>
+            <Form.Check type="checkbox" value='' className="brand-not-avail my-2" label="My Brand is a generic Brand"/>
+          </Col>
+          <Col md={6}>
+            <Form.Label>Product Id</Form.Label>
+            <Form.Control type="text" name="productId" className="productId"/>
+            <Form.Check type="checkbox" value='' className="brand-not-avail my-2" label="Product Id is Not Available"/>
+          </Col>
+          <Col md={12}>
+            <Button className="nextbutton me-4" style={{background:'#362465',border:'none',float:'right'}}>Next</Button>
+          </Col>
+        </Row>
 
-          <Quill theme="snow"
-            id="Discription"
-            modules={{
-              toolbar: toolbarOptions
-            }}
-            value={Formik.values.ProductDiscription}
-            onChange={handleQuillChange}
-            onBlur={Formik.handleBlur}
-          />
-          {Formik.touched.ProductDiscription && Formik.errors.ProductDiscription ? (
-            <div className="text-danger">{Formik.errors.ProductDiscription}</div>
-          ) : (null)}
-        </Form.Group>
-       
-      </Form>
+      </div>
+
     </>
   );
 };
