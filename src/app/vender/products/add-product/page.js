@@ -27,6 +27,10 @@ const BulkEdit = () => {
   const [CategoryData, setCategoryData] = useState({})
   const [Category, setCategory] = useState([])
   const [CategoryFlag,setCategoryFlag] = useState(false)
+  const [validation,setvalidation] = useState(false)
+  const [ProductData , setProductData] = useState({})
+  const [pageCount,setPageCount] = useState(0)
+  const [isChecked,setIschecked] = useState({Brandname:false,productId:false})
 
 
 
@@ -81,6 +85,7 @@ const BulkEdit = () => {
     if (action == 'subcategory') newData.splice(1,2,data)
     if (action == 'product') newData.splice(2,1,data)
       setCategory(newData)
+    setProductData(previous=>({...previous,['CategoryName']:newData}))
   }
   useEffect(() => {
     const token = Cookies.get('token')
@@ -101,8 +106,21 @@ const BulkEdit = () => {
       console.error(error)
     })
   }, [])
+  const handlleInputChange = async (e)=>{
+    const newData = {...ProductData}
+     setTimeout(() => {
+      
+      if(e.target.name === 'itemName') newData['itemName'] = e.target.value
+      if(e.target.name === 'brandName') newData['brandName'] =  e.target.value
+      if(e.target.name === 'brandNameCheck')  newData['brandName'] = isChecked['Brandname'] ? 'Generic' : ''
+      if(e.target.name === 'productId')  newData['productId'] =  e.target.value 
+      if(e.target.name === 'productIdCheck')  newData['productId'] = isChecked['productId'] ? 'product Id Not available' : '' 
+    }, 0);
+    console.log(newData)
+    setProductData(newData)
+  }
+console.log(ProductData)
  
-
   return (
     <>
       <div className={`overlap ${!isloading ? 'd-none' : ''}`}><div className="fadeloader"><FadeLoader color="#ccc" /></div></div>
@@ -110,12 +128,12 @@ const BulkEdit = () => {
         <Row md={1} className="g-3">
           <Col md={12}>
             <Form.Label>Items tittle<span className="text-danger">*</span></Form.Label>
-            <Form.Control type="text" className="iteim-name" name="items-name" />
+            <Form.Control type="text" className="iteim-name" name="itemsName"  onChange={(e) => setProductData(data => ({ ...data, itemName: e.target.value }))} />
           </Col>
           <Col md={12}>
             <Form.Label>Search Category<span className="text-danger">*</span></Form.Label>
             <div className="nested-Dropdwon" style={{ position: 'relative' }}>
-              <Form.Control type="text" className="Category-name" readOnly name="category-name" onClick={()=>setCategoryFlag(toggle=>!toggle)}  value={Category.join(' > ') || ''}/>
+              <Form.Control type="text" className="Category-name" onBlur={(e)=>handlleInputChange(e)} readOnly name="categoryName" onClick={()=>setCategoryFlag(toggle=>!toggle)}  value={Category.join(' > ') || ''}/>
              {CategoryFlag &&( <div className="category-DropDwon">
                 {Object.keys(CategoryData).map((category) => (
                   <div className={`py-2 px-3 ${Category[0] == category ? 'active' : ''}`} onClick={(e) => { handleCategoryChange('category', category) }} key={category}><FaRegStar className="me-2" />{category}</div>
@@ -140,16 +158,16 @@ const BulkEdit = () => {
           </Col>
           <Col md={6}>
             <Form.Label>Brand Name</Form.Label>
-            <Form.Control type="text" name="brandName" className="brandname"/>
-            <Form.Check type="checkbox" value='' className="brand-not-avail my-2" label="My Brand is a generic Brand"/>
+            <Form.Control type="text" name="brandName" defaultValue='' value={ProductData['brandName']}  onChange={(e)=>{handlleInputChange(e),setIschecked(checked=>({...checked,['Brandname']:false}))}} className="brandname"/>
+            <Form.Check type="checkbox" name="brandNameCheck"checked={isChecked['Brandname']}  className="brand-not-avail my-2" onChange={(e)=>{setIschecked(checked=>({...checked,['Brandname']:!checked['Brandname']})),handlleInputChange(e)}} label="My Brand is a generic Brand"/>
           </Col>
           <Col md={6}>
             <Form.Label>Product Id</Form.Label>
-            <Form.Control type="text" name="productId" className="productId"/>
-            <Form.Check type="checkbox" value='' className="brand-not-avail my-2" label="Product Id is Not Available"/>
+            <Form.Control type="text" name="productId"  value={isChecked.productId ? 'Notavail' : ProductData.productId}  onChange={(e)=>{handlleInputChange(e),setIschecked(checked=>({...checked,['productId']:false}))}} className="productId" />
+            <Form.Check type="checkbox" name="productIdCheck" checked={isChecked['productId']} onChange={(e)=>{setIschecked(checked=>({...checked,['productId']:!checked['productId']})),handlleInputChange(e)}} className="brand-not-avail my-2" label="Product Id is Not Available"/>
           </Col>
           <Col md={12}>
-            <Button className="nextbutton me-4" style={{background:'#362465',border:'none',float:'right'}}>Next</Button>
+            <Button className="nextbutton me-4"   style={{background:'#362465',border:'none',float:'right'}}>Next</Button>
           </Col>
         </Row>
 
