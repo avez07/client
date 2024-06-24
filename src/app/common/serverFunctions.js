@@ -47,7 +47,10 @@ export const PostApi = async(url,body,authorization)=>{
         }
         
     })
-    // console.log(response)
+    console.log(process.env.API_URL)
+    console.log(body)
+    console.log(response)
+
     
      return await response.json()
        
