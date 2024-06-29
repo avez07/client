@@ -12,7 +12,8 @@ const AddInfo = ({ params }) => {
    useEffect(() => {
       const id = params.id
       const token = Cookies.get('token')
-      PostApi('/ValidateCategoryId', JSON.stringify({ id: id }), token).then((response) => {
+   
+      PostApi('ValidateCategoryId', JSON.stringify({ id: id }), token).then((response) => {
          if (response.status == 200) return setCategoryData(response.data)
          alert(response.message)
       })
