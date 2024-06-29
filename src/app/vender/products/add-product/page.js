@@ -120,7 +120,7 @@ const router = useRouter()
     if (!ProductData['itemName'] || !ProductData['brandName'] || !ProductData['productId'] || !ProductData['CategoryName']?.length == 3) return setvalidation(true)
       setIsloading(true)
     const token = await Cookies.get('token');
-    const res = await PostApi('/getCategoryId',JSON.stringify(ProductData),token)
+    const res = await PostApi('getCategoryId',JSON.stringify(ProductData),token)
     setIsloading(false)
     if(res.status == 200) router.push('/vender/products/add-product/'+res.data._id)
       if(res.status != 200) alert(res.message)

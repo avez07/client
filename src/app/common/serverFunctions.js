@@ -47,6 +47,7 @@ export const PostApi = async(url,body,authorization)=>{
         }
         
     })
+    console.log(url)
     console.log(body)
     
      return await response.json()
