@@ -1021,4 +1021,11 @@ cursor: pointer;
     border-bottom: 0px solid #ccc !important;
     border-left: 1px solid #ccc !important;
   }
-  
+  /* variant table  */
+  .variantCategoryTable thead tr th:not(:last-child),.variantCategoryTable tbody tr td:not(:last-child){
+    border-right: 1px solid #ccc ;
+  }
+  .variantCategoryTable thead tr th{
+    padding: 15px;
+    text-align: center;
+  }
