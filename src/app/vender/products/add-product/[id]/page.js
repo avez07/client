@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import { AuthContext } from "@/app/common/auth";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { FaInfoCircle, FaPlus } from "react-icons/fa";
+import { TbCameraPlus } from "react-icons/tb";
 import dynamic from "next/dynamic";
 import { IoClose } from "react-icons/io5";
 import { IoMdCloseCircleOutline } from "react-icons/io";
@@ -23,8 +24,8 @@ const AddInfo = ({ params }) => {
    const { nightmode } = useContext(AuthContext)
    const [pointsCount, setPointsCount] = useState(1)
    const [createTableButon, setCreateTableButton] = useState(false)
-   
-   const [TableData,setTableData] = useState()
+
+   const [TableData, setTableData] = useState()
 
    const customStyle = {
       control: (style) => ({ ...style, background: nightmode ? '#0c1220' : null, border: nightmode ? 'currentColor' : '' }),
@@ -82,27 +83,27 @@ const AddInfo = ({ params }) => {
       newData.splice(index, 1)
       setVariantTab2(newData)
    }
-   const handleTabData = (e,index)=>{
-      const {name,value} = e.target
-     const newData = [...TableData]
-     newData[index][name] = value
-     setTableData(newData);
-     calculateDerivedValues(index);
+   const handleTabData = (e, index) => {
+      const { name, value } = e.target
+      const newData = [...TableData]
+      newData[index][name] = value
+      setTableData(newData);
+      calculateDerivedValues(index);
    }
    const calculateDerivedValues = (index) => {
       const item = TableData[index];
-      let { cost, price ,gst,discount} = item;
-      if (cost && price) {
-         const gstRate = parseInt(gst)/100;
-         const CalPrice = parseInt(price) - parseInt(discount)
-         const margin = (parseFloat(CalPrice) - parseFloat(cost));
-         price = CalPrice
-        const finalPrice = parseFloat(price) + (parseFloat(price) * gstRate);
-        const newData = [...TableData];
-        newData[index] = { ...item,  finalPrice ,margin,price};
-        setTableData(newData);
-      }
-    };
+      const { cost, price, gst, discount } = item;
+
+      const gstRate = parseInt(gst) / 100;
+      const CalPrice = parseInt(price) - parseInt(discount)
+      console.log(CalPrice)
+      const margin = (parseFloat(CalPrice) - parseFloat(cost)) || 0;
+      const finalPrice = parseFloat(CalPrice) + (parseFloat(CalPrice) * gstRate) || 0;
+      const newData = [...TableData];
+      newData[index] = { ...item, finalPrice, margin, price };
+      setTableData(newData);
+
+   };
    console.log(TableData)
    useEffect(() => {
       setVariantTab(variantOption.reduce((acc, item) => {
@@ -121,7 +122,7 @@ const AddInfo = ({ params }) => {
          alert(response.message)
       })
    }, [])
-   useEffect(()=>{
+   useEffect(() => {
       const initialData = VariantTab2.map(item => ({
          quantity: 0,
          cost: 0,
@@ -130,9 +131,9 @@ const AddInfo = ({ params }) => {
          gst: 12, // Assuming a fixed GST of 12%
          margin: 0, // Placeholder for margin calculation
          finalPrice: 0
-       }));
-       setTableData(initialData)
-   },[VariantTab2])
+      }));
+      setTableData(initialData)
+   }, [VariantTab2])
    // console.log(CategoryInput)
    return (
       <>
@@ -385,12 +386,12 @@ const AddInfo = ({ params }) => {
                                  <tr className="text-center" key={`row-${index}`}>
                                     <td>{items}</td>
                                     {CategoryData.details.VariantData.map((items) => (
-                                       <td key={`datas-${items.name}`}><Form.Control  type="text" /></td>
+                                       <td key={`datas-${items.name}`}><Form.Control type="text" /></td>
                                     ))}
                                     <td><Form.Control type="text" /></td>
-                                    <td><Form.Control name="cost" onChange={(e)=>handleTabData(e,index)} type="text" /></td>
-                                    <td><Form.Control name="price" onChange={(e)=>handleTabData(e,index)} type="text" /></td>
-                                    <td><Form.Control name="discount" onChange={(e)=>handleTabData(e,index)} type="text" /></td>
+                                    <td><Form.Control name="cost" onChange={(e) => handleTabData(e, index)} type="text" /></td>
+                                    <td><Form.Control name="price" onChange={(e) => handleTabData(e, index)} type="text" /></td>
+                                    <td><Form.Control name="discount" onChange={(e) => handleTabData(e, index)} type="text" /></td>
                                     <td name="gst">{TableData[index]?.gst || 0}%</td>
                                     <td name="margin">{TableData[index]?.margin || 0}</td>
                                     <td name='avesPrice'>{TableData[index]?.finalPrice || 0}</td>
@@ -402,6 +403,34 @@ const AddInfo = ({ params }) => {
                      </Col>
                   )}
                </Row>
+            </div>
+         )}
+         {pagecount == 4 && (
+            <div>
+               <Row className="g-3">
+                  <label className="fw-semibold fs-5">Main Images:</label>
+                  {Array.from({ length: 6 }, (_, index) => (
+                     <Col md={3} key={`col${index}`}>
+                        <div className="image-uploder-custom">
+                           <input type="file" name="images" className="Listing-img-uploader" />
+                           <span><TbCameraPlus /></span>
+                        </div>
+                     </Col>
+                  ))}
+               </Row>
+               {VariantTab2.map((items,index)=>(
+                  <Row className="g-3" key={`images${index}`}>
+                  <Col md={12}><label className="fw-semibold my-3 fs-5"> Variant {items} Images:</label></Col>
+                  {Array.from({ length: 4 }, (_, index) => (
+                     <Col md={3}>
+                        <div className="image-uploder-custom">
+                           <input type="file" name="images" className="Listing-img-uploader" />
+                           <span><TbCameraPlus /></span>
+                        </div>
+                     </Col>
+                  ))}
+               </Row>
+               ))}
             </div>
          )}
       </>

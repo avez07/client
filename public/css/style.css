@@ -1029,3 +1029,36 @@ cursor: pointer;
     padding: 15px;
     text-align: center;
   }
+  .Listing-img-uploader::-webkit-file-upload-button{
+    visibility: hidden;
+  }
+  .Listing-img-uploader{
+   color: #ddd;
+   height: 200px;
+   background: transparent !important;
+   position: relative;
+   width: 100%;
+   z-index: 1;
+   cursor: pointer;
+  }
+  .content-night .Listing-img-uploader{
+    color: #0c1220;
+    background: transparent !important;
+  }
+  .content-night .image-uploder-custom{
+    background: #0c1220;
+  }
+  .image-uploder-custom{
+    position: relative;
+    background: #ddd;
+  }
+  .image-uploder-custom span{
+    position: absolute;
+    top: 6%;
+    left: 25%;
+    font-size: 120px;
+    color: #ccc;
+  }
+  .content-night .image-uploder-custom span{
+    color: #1a202e;
+  }
