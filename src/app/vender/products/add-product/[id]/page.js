@@ -8,7 +8,7 @@ import { FaInfoCircle, FaPlus } from "react-icons/fa";
 import { TbCameraPlus } from "react-icons/tb";
 import dynamic from "next/dynamic";
 import { IoClose } from "react-icons/io5";
-import { IoMdCloseCircleOutline } from "react-icons/io";
+import { IoMdCloseCircle, IoMdCloseCircleOutline } from "react-icons/io";
 const Select = dynamic(() => import('react-select'), { ssr: false })
 
 
@@ -24,6 +24,7 @@ const AddInfo = ({ params }) => {
    const { nightmode } = useContext(AuthContext)
    const [pointsCount, setPointsCount] = useState(1)
    const [createTableButon, setCreateTableButton] = useState(false)
+   const [uploadImages, setUploadImages] = useState({});
 
    const [TableData, setTableData] = useState()
 
@@ -51,7 +52,6 @@ const AddInfo = ({ params }) => {
          };
       }
    }
-   console.log(VariantTab)
    const handleVariantOptionChange = (e, index) => {
       let updateVariant = [...variantOption]
       const { name, checked } = e.target
@@ -67,6 +67,7 @@ const AddInfo = ({ params }) => {
       }))
 
    }
+   console.log(CategoryInput)
    const handleVariantTab2 = (e) => {
       const data = Object.values(VariantTab)
       const key = Object.keys(VariantTab).filter((key) => !VariantTab[key])
@@ -104,7 +105,12 @@ const AddInfo = ({ params }) => {
       setTableData(newData);
 
    };
-   console.log(TableData)
+   const handleImgdeleted = (e, key, index) => {
+      const newObject = { ...uploadImages }
+      delete newObject[key][index];
+      setUploadImages(newObject);
+
+   }
    useEffect(() => {
       setVariantTab(variantOption.reduce((acc, item) => {
          acc[item] = '';
@@ -124,6 +130,7 @@ const AddInfo = ({ params }) => {
    }, [])
    useEffect(() => {
       const initialData = VariantTab2.map(item => ({
+         variant : item,
          quantity: 0,
          cost: 0,
          price: 0,
@@ -133,8 +140,9 @@ const AddInfo = ({ params }) => {
          finalPrice: 0
       }));
       setTableData(initialData)
+
    }, [VariantTab2])
-   // console.log(CategoryInput)
+   console.log(TableData)
    return (
       <>
 
@@ -183,7 +191,7 @@ const AddInfo = ({ params }) => {
                                  className="categoryName"
                                  value={{ value: CategoryInput.details?.virtualInfo[item.name] || '', label: CategoryInput.details?.virtualInfo[item.name] || '' }}
                                  onChange={(e) =>
-                                    setCategoryInput((prev) => ({
+                                    setTableData((prev) => ({
                                        ...prev,
                                        details: {
                                           ...prev.details,
@@ -386,7 +394,39 @@ const AddInfo = ({ params }) => {
                                  <tr className="text-center" key={`row-${index}`}>
                                     <td>{items}</td>
                                     {CategoryData.details.VariantData.map((items) => (
-                                       <td key={`datas-${items.name}`}><Form.Control type="text" /></td>
+                                       <td key={`datas-${items.name}`}>
+                                          {items.type == 'DropDwon' ? (
+                                             <Select
+                                                name="sub categories"
+                                                menuPortalTarget={document ? document.body : ''}
+                                                menuPosition="fixed"
+                                                menuPlacement="bottom"
+                                                className="categoryName"
+                                                value={{ value: TableData[index][items.name] || '', label:TableData[index][items.name] || ''}}
+                                                onChange={(e) =>
+                                                   setTableData((prev) =>
+                                                      prev.map((item, idx) =>
+                                                        idx === index
+                                                          ? { ...item, [items.name]: e.value }
+                                                          : item
+                                                      )
+                                                    )}
+                                                
+                                                styles={{ ...customStyle, width: '100%' }}
+                                                options={items.options.map(option => ({ value: option, label: option }))}
+                                             />
+                                          ) : (
+                                             <Form.Control onChange={(e) =>
+                                                setTableData((prev) =>
+                                                  prev.map((item, idx) =>
+                                                    idx === index
+                                                      ? { ...item, [items.name]: e.target.value }
+                                                      : item
+                                                  )
+                                                )
+                                              } />
+                                          )}
+                                       </td>
                                     ))}
                                     <td><Form.Control type="text" /></td>
                                     <td><Form.Control name="cost" onChange={(e) => handleTabData(e, index)} type="text" /></td>
@@ -412,24 +452,59 @@ const AddInfo = ({ params }) => {
                   {Array.from({ length: 6 }, (_, index) => (
                      <Col md={3} key={`col${index}`}>
                         <div className="image-uploder-custom">
-                           <input type="file" name="images" className="Listing-img-uploader" />
-                           <span><TbCameraPlus /></span>
+                           {!uploadImages.hasOwnProperty('mainImage') || Object.keys(uploadImages.mainImage).length == 0 || !uploadImages.mainImage[index] ? (<><input type="file" name="images" onChange={(e) => setUploadImages((prev) => ({
+                              ...prev,
+                              mainImage: {
+                                 ...prev.mainImage,
+                                 [index]: e.target.files[0]
+                              }
+                           }))} className="Listing-img-uploader" />
+                              <span><TbCameraPlus /></span></>) : (<><img src={URL.createObjectURL(uploadImages.mainImage[index])} alt='upload-imges' /><span onClick={(e) => handleImgdeleted(e, 'mainImage', index)} id="img-close-icon"><IoMdCloseCircle /></span></>)}
                         </div>
                      </Col>
                   ))}
                </Row>
-               {VariantTab2.map((items,index)=>(
+               {VariantTab2.map((items, index) => (
                   <Row className="g-3" key={`images${index}`}>
-                  <Col md={12}><label className="fw-semibold my-3 fs-5"> Variant {items} Images:</label></Col>
-                  {Array.from({ length: 4 }, (_, index) => (
-                     <Col md={3}>
-                        <div className="image-uploder-custom">
-                           <input type="file" name="images" className="Listing-img-uploader" />
-                           <span><TbCameraPlus /></span>
-                        </div>
-                     </Col>
-                  ))}
-               </Row>
+                     <Col md={12}><label className="fw-semibold my-3 fs-5"> Variant {items} Images:</label></Col>
+                     {Array.from({ length: 4 }, (_, idk) => (
+                        <Col md={3} key={`col_${idk}`}>
+                           <div className="image-uploder-custom">
+                              {!uploadImages.hasOwnProperty(items) || Object.keys(uploadImages[items]).length === 0 || !uploadImages[items][idk] ? (
+                                 <>
+                                    <input
+                                       type="file"
+                                       name="images"
+                                       onChange={(e) =>
+                                          setUploadImages((prev) => ({
+                                             ...prev,
+                                             [items]: {
+                                                ...prev[items],
+                                                [idk]: e.target.files[0]
+                                             }
+                                          }))
+                                       }
+                                       className="Listing-img-uploader"
+                                    />
+                                    <span><TbCameraPlus /></span>
+                                 </>
+                              ) : (
+                                 <>
+                                    {uploadImages[items][idk] instanceof Blob || uploadImages[items][idk] instanceof File ? (
+                                       <img src={URL.createObjectURL(uploadImages[items][idk])} alt='upload-images' />
+                                    ) : (
+                                       <span>Invalid image</span>
+                                    )}
+                                    <span onClick={(e) => handleImgdeleted(e, items, idk)} id="img-close-icon">
+                                       <IoMdCloseCircle />
+                                    </span>
+                                 </>
+                              )}
+                           </div>
+                        </Col>
+                     ))}
+
+                  </Row>
                ))}
             </div>
          )}

@@ -412,6 +412,5 @@ color: #fff !important;
     border: none !important;
     color: #b8bbc3;
     font-weight: 600;
-
-
 }
+.content-night input:focus{color: #b8bbc3;}
