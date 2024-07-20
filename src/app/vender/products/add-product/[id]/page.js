@@ -25,11 +25,11 @@ const AddInfo = ({ params }) => {
    const [VariantTab, setVariantTab] = useState({})
    const [variantOption, setVariantOption] = useState([]);
    const [VariantTab2, setVariantTab2] = useState([])
+   const [TableData, setTableData] = useState([])
+   const [PageValidation, setPageValidation] = useState([1, 1, 1, 1, 1])
    const [pagecount, setPagecount] = useState(1)
    const [pointsCount, setPointsCount] = useState(1)
    const [validationError, setValidationError] = useState()
-   const [PageValidation, setPageValidation] = useState([1, 1, 1, 1, 1])
-   const [TableData, setTableData] = useState()
 
    const customStyle = {
       control: (style) => ({ ...style, background: nightmode ? '#0c1220' : null, border: nightmode ? 'currentColor' : '' }),
@@ -130,14 +130,17 @@ const AddInfo = ({ params }) => {
    useEffect(() => {
       const id = params.id
       const token = Cookies.get('token')
-
       PostApi('ValidateCategoryId', JSON.stringify({ id: id }), token).then((response) => {
          if (response.status == 200) return setCategoryData(response.data)
          alert(response.message)
       })
    }, [])
    useEffect(() => {
-      const initialData = VariantTab2.map(item => ({
+      const newArray = [...TableData]
+      const filteredData = VariantTab2.filter(value =>
+         !newArray.some(obj => obj.variant === value)
+       );
+      const initialData = filteredData.map(item => ({
          variant: item,
          quantity: 0,
          cost: 0,
@@ -147,9 +150,10 @@ const AddInfo = ({ params }) => {
          margin: 0, // Placeholder for margin calculation
          finalPrice: 0
       }));
-      setTableData(initialData)
+     
+      if(filteredData.length > 0)  setTableData(prevData => [...prevData, ...initialData]);
    }, [VariantTab2])
-   useEffect(() => {
+   useEffect(() => { //whole page validation
       const newData = { ...CategoryData };
       const Key = pagecount === 1 ? 'virtualInfo' : pagecount === 5 ? 'MoreInfo' : null
       if (Key && newData.details) {
@@ -172,14 +176,21 @@ const AddInfo = ({ params }) => {
               (typeof value !== 'number' || (!isNaN(value) && value !== 0))
             )
           );
-          
-          console.log(allObjectsValid); // Output: false
-          
+         const filteredData = newData.details['VariantData'].map((items) => items.name)
+         const hasproperty = filteredData.every((key)=> TableData.every((obj)=>obj.hasOwnProperty(key)))
+          if (allObjectsValid && hasproperty) {
+            setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 0, ...previousIndex.slice(pagecount)]));
+          } else {
+            setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)])); 
+          }
+      }else if(!Key && newData.details && pagecount == 4){
+         const imaeValid = (uploadImages.hasOwnProperty('mainImage') && uploadImages.mainImage.length === 6) && (VariantTab2.every((name)=> uploadImages.hasOwnProperty(name)) && Object.values(uploadImages).every(values=>Array.isArray(values)&& values.length >=4))
+         console.log('object',imaeValid)
       }
 
-   }, [CategoryInput,pagecount,TableData])
+   }, [CategoryInput,pagecount,TableData,uploadImages])
    console.log(TableData)
-   console.log(PageValidation)
+   // console.log(PageValidation)
 
    return (
       <>
