@@ -1,28 +1,15 @@
 "use client"
 import React, { useEffect, useState, useContext } from "react";
 import { FadeLoader } from 'react-spinners';
-import { Col, Row } from 'react-bootstrap'
-import { useFormik, Field } from 'formik'
-import * as yup from 'yup'
+import { Col, Row ,Form,Button} from 'react-bootstrap'
 import { AuthContext } from '@/app/common/auth'
-import dynamic from 'next/dynamic';
-import { Form, Button, InputGroup, FormControl } from "react-bootstrap";
 import 'react-quill/dist/quill.snow.css';
-import BulkEdiTable from "@/app/common/table-bulkEdit";
 import { GetFetchAPI, PostApi } from "@/app/common/serverFunctions";
 import Cookies from "js-cookie";
 import { FaRegStar } from "react-icons/fa";
 import {useRouter} from "next/navigation";
-const Quill = dynamic(() => import('react-quill'), { ssr: false })
-const Select = dynamic(() => import('react-select'), { ssr: false })
 
-
-
-
-
-
-
-const BulkEdit = () => {
+const ProductListing = () => {
   const { nightmode } = useContext(AuthContext);
   const [isloading, setIsloading] = useState(false)
   const [CategoryData, setCategoryData] = useState({})
@@ -34,51 +21,6 @@ const BulkEdit = () => {
   const [isChecked, setIschecked] = useState({ Brandname: false, productId: false })
 
 const router = useRouter()
-
-
-
-  const customStyle = {
-    control: (style) => ({ ...style, background: nightmode ? '#0c1220' : null, border: 'currentColor' }),
-    singleValue: (style) => ({ ...style, color: nightmode ? '#fff' : null }),
-    menu: (style) => ({ ...style, background: nightmode ? '#0c1220' : null }),
-    option: (styles, { data, isDisabled, isFocused, isSelected }) => {
-      return {
-        ...styles,
-        backgroundColor: isFocused ? "#ff0000" : null,
-        background: nightmode ? '#0c1220' : '#fff',
-        color: nightmode ? '#fcfcfc' : "#333333",
-        ':active': {
-          ...styles['.active'],
-          background: '#232836'
-        },
-        ':hover': {
-          ...styles['.hover'],
-          backgroundColor: '#fcfcfc',
-          color: '#000'
-        }
-      };
-    }
-  }
-
-  const toolbarOptions = [
-    ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-    ['blockquote', 'code-block'],
-
-    [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-    [{ 'script': 'sub' }, { 'script': 'super' }],      // superscript/subscript
-    [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
-    [{ 'direction': 'rtl' }],                         // text direction
-
-    [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-
-    [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-    [{ 'font': [] }],
-    [{ 'align': [] }],
-
-    ['clean']                                         // remove formatting button
-  ];
 
   const handleCategoryChange = (action, data) => {
     const newData = [...Category]
@@ -187,4 +129,4 @@ const router = useRouter()
   );
 };
 
-export default BulkEdit;
+export default ProductListing;

@@ -1,5 +1,6 @@
 'use client'
 import React, { useContext, useEffect, useState } from "react";
+import { FadeLoader } from 'react-spinners';
 import { PostApi } from "@/app/common/serverFunctions";
 import Cookies from "js-cookie";
 import { AuthContext } from "@/app/common/auth";
@@ -15,17 +16,19 @@ const Select = dynamic(() => import('react-select'), { ssr: false })
 const ColorsOption = ["Black", "White", "Red", "Blue", "Green", "Yellow", "Pink", "Purple", "Orange", "Gray", "Brown", "Beige", "Navy", "Teal", "Turquoise", "Silver", "Gold", "Cream", "Burgundy", "Magenta", "Lavender", "Charcoal", "Olive", "Sky Blue", "Tan", "Maroon", "Indigo", "Emerald", "Sapphire", "Ruby", "Amber", "Ivory", "Coral", "Slate", "Pearl", "Champagne", "Peach", "Crimson", "Steel"];
 
 const AddInfo = ({ params }) => {
+   const { nightmode } = useContext(AuthContext)
+   const [createTableButon, setCreateTableButton] = useState(false)
+   const [isloading, setIsloading] = useState(false)
    const [CategoryData, setCategoryData] = useState({})
-   const [pagecount, setPagecount] = useState(1)
+   const [uploadImages, setUploadImages] = useState({});
    const [CategoryInput, setCategoryInput] = useState({})
+   const [VariantTab, setVariantTab] = useState({})
    const [variantOption, setVariantOption] = useState([]);
    const [VariantTab2, setVariantTab2] = useState([])
-   const [VariantTab, setVariantTab] = useState({})
-   const { nightmode } = useContext(AuthContext)
+   const [pagecount, setPagecount] = useState(1)
    const [pointsCount, setPointsCount] = useState(1)
-   const [createTableButon, setCreateTableButton] = useState(false)
-   const [uploadImages, setUploadImages] = useState({});
-
+   const [validationError, setValidationError] = useState()
+   const [PageValidation, setPageValidation] = useState([1, 1, 1, 1, 1])
    const [TableData, setTableData] = useState()
 
    const customStyle = {
@@ -67,7 +70,6 @@ const AddInfo = ({ params }) => {
       }))
 
    }
-   console.log(CategoryInput)
    const handleVariantTab2 = (e) => {
       const data = Object.values(VariantTab)
       const key = Object.keys(VariantTab).filter((key) => !VariantTab[key])
@@ -86,6 +88,7 @@ const AddInfo = ({ params }) => {
    }
    const handleTabData = (e, index) => {
       const { name, value } = e.target
+   if(isNaN(value)) return false
       const newData = [...TableData]
       newData[index][name] = value
       setTableData(newData);
@@ -97,7 +100,6 @@ const AddInfo = ({ params }) => {
 
       const gstRate = parseInt(gst) / 100;
       const CalPrice = parseInt(price) - parseInt(discount)
-      console.log(CalPrice)
       const margin = (parseFloat(CalPrice) - parseFloat(cost)) || 0;
       const finalPrice = parseFloat(CalPrice) + (parseFloat(CalPrice) * gstRate) || 0;
       const newData = [...TableData];
@@ -109,7 +111,13 @@ const AddInfo = ({ params }) => {
       const newObject = { ...uploadImages }
       delete newObject[key][index];
       setUploadImages(newObject);
-
+   }
+   const handleNext = (e) => {
+      setIsloading(true);
+      setTimeout(() => {
+         setIsloading(false)
+         setPagecount(count => count + 1)
+      }, 1000);
    }
    useEffect(() => {
       setVariantTab(variantOption.reduce((acc, item) => {
@@ -130,7 +138,7 @@ const AddInfo = ({ params }) => {
    }, [])
    useEffect(() => {
       const initialData = VariantTab2.map(item => ({
-         variant : item,
+         variant: item,
          quantity: 0,
          cost: 0,
          price: 0,
@@ -140,12 +148,42 @@ const AddInfo = ({ params }) => {
          finalPrice: 0
       }));
       setTableData(initialData)
-
    }, [VariantTab2])
+   useEffect(() => {
+      const newData = { ...CategoryData };
+      const Key = pagecount === 1 ? 'virtualInfo' : pagecount === 5 ? 'MoreInfo' : null
+      if (Key && newData.details) {
+         const filteredData = newData.details[Key].filter((items) => items.Isimportant === true).map((items) => items.name)
+         const ValidateName = filteredData.filter((name) => { return !CategoryInput.details[Key].hasOwnProperty(name) || !CategoryInput.details[Key][name] })
+         console.log(ValidateName)
+         if (ValidateName.length == 0) setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 0, ...previousIndex.slice(pagecount)]));
+         if (ValidateName.length != 0) setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
+      }else if(!Key && newData.details && pagecount == 2){
+         if(CategoryInput.details?.discription && CategoryInput.details.discription.length <= 200){
+            setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 0, ...previousIndex.slice(pagecount)]));
+         }else{
+            setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
+         }
+      }else if(!Key && newData.details && pagecount == 3){
+         const newTableContent = [...TableData]
+         const allObjectsValid = newTableContent.every(obj => 
+            Object.values(obj).every(value => 
+              value !== null && value !== undefined && value !== '' && 
+              (typeof value !== 'number' || (!isNaN(value) && value !== 0))
+            )
+          );
+          
+          console.log(allObjectsValid); // Output: false
+          
+      }
+
+   }, [CategoryInput,pagecount,TableData])
    console.log(TableData)
+   console.log(PageValidation)
+
    return (
       <>
-
+         <div className={`overlap ${!isloading ? 'd-none' : ''}`}><div className="fadeloader"><FadeLoader color="#ccc" /></div></div>
          <Row md={1} className="g-2">
             <div className="add-product-head  rounded-2  py-1">
                <ul>
@@ -211,68 +249,15 @@ const AddInfo = ({ params }) => {
                      return null;
                   })
                ) : null}
-            </Row>
-         </div>)}
-         {pagecount == 5 && (<div>
-            <Row md={1} className="g-3">
-               {CategoryData && CategoryData.details ? (
-                  CategoryData.details.MoreInfo.map((item, index) => {
-                     if (item.type === 'Input') {
-                        return (
-                           <Col key={`input-${index}`} md={parseInt(item.size)}>
-                              <Form.Label className="fw-semibold">{item.name}:{item.Isimportant && (<span className="text-danger">*</span>)}</Form.Label>
-                              <Form.Control type="text" name={item.name} onBlur={(e) =>
-                                 setCategoryInput((prev) => ({
-                                    ...prev,
-                                    details: {
-                                       ...prev.details,
-                                       MoreInfo: {
-                                          ...((prev.details && prev.details.MoreInfo) || {}),
-                                          [item.name]: e.target.value
-                                       }
-                                    }
-                                 }))
-                              } />
-                           </Col>
-                        );
-                     } else if (item.type === 'DropDwon') {
-                        return (
-                           <Col key={`dropdown-${index}`} md={parseInt(item.size)}>
-                              <Form.Label className="fw-semibold">{item.name}:{item.Isimportant && (<span className="text-danger">*</span>)}</Form.Label>
-                              <Select
-                                 name="sub categories"
-                                 menuPortalTarget={document ? document.body : ''}
-                                 menuPosition="fixed"
-                                 menuPlacement="bottom"
-                                 className="categoryName"
-                                 value={{ value: CategoryInput.details?.virtualInfo[item.name] || '', label: CategoryInput.details?.virtualInfo[item.name] || '' }}
-                                 onChange={(e) =>
-                                    setCategoryInput((prev) => ({
-                                       ...prev,
-                                       details: {
-                                          ...prev.details,
-                                          virtualInfo: {
-                                             ...((prev.details && prev.details.virtualInfo) || {}),
-                                             [item.name]: e.value
-                                          }
-                                       }
-                                    }))
-                                 }
-                                 styles={{ ...customStyle, width: '100%' }}
-                                 options={item.options.map(option => ({ value: option, label: option }))}
-                              />
-                           </Col>
-                        );
-                     }
-                     return null;
-                  })
-               ) : null}
+               <Col md={12}>
+                  <Button className="nextbutton me-4" onClick={(e) => handleNext(e)} style={{ background: '#362465', border: 'none', float: 'right' }}>Next</Button>
+               </Col>
             </Row>
          </div>)}
          {pagecount == 2 && (
             <Row className="g-3">
                <Col md={12}>
-                  <Form.Label className="fw-semibold mx-3">Discription</Form.Label>
+                  <Form.Label className="fw-semibold mx-3">Discription<span className="text-danger">*</span></Form.Label>
                   <Form.Control as='textarea' rows={10} style={{ resize: 'none' }} onBlur={(e) =>
                      setCategoryInput((prev) => ({
                         ...prev,
@@ -309,6 +294,9 @@ const AddInfo = ({ params }) => {
                         )
                      })}
                   </ul>
+               </Col>
+               <Col md={12}>
+                  <Button className="nextbutton me-4" onClick={(e) => handleNext(e)} style={{ background: '#362465', border: 'none', float: 'right' }}>Next</Button>
                </Col>
             </Row>
          )}
@@ -402,36 +390,36 @@ const AddInfo = ({ params }) => {
                                                 menuPosition="fixed"
                                                 menuPlacement="bottom"
                                                 className="categoryName"
-                                                value={{ value: TableData[index][items.name] || '', label:TableData[index][items.name] || ''}}
+                                                value={{ value: TableData[index][items.name] || '', label: TableData[index][items.name] || '' }}
                                                 onChange={(e) =>
                                                    setTableData((prev) =>
                                                       prev.map((item, idx) =>
-                                                        idx === index
-                                                          ? { ...item, [items.name]: e.value }
-                                                          : item
+                                                         idx === index
+                                                            ? { ...item, [items.name]: e.value }
+                                                            : item
                                                       )
-                                                    )}
-                                                
+                                                   )}
+
                                                 styles={{ ...customStyle, width: '100%' }}
                                                 options={items.options.map(option => ({ value: option, label: option }))}
                                              />
                                           ) : (
                                              <Form.Control onChange={(e) =>
                                                 setTableData((prev) =>
-                                                  prev.map((item, idx) =>
-                                                    idx === index
-                                                      ? { ...item, [items.name]: e.target.value }
-                                                      : item
-                                                  )
+                                                   prev.map((item, idx) =>
+                                                      idx === index
+                                                         ? { ...item, [items.name]: e.target.value }
+                                                         : item
+                                                   )
                                                 )
-                                              } />
+                                             } />
                                           )}
                                        </td>
                                     ))}
-                                    <td><Form.Control type="text" /></td>
-                                    <td><Form.Control name="cost" onChange={(e) => handleTabData(e, index)} type="text" /></td>
-                                    <td><Form.Control name="price" onChange={(e) => handleTabData(e, index)} type="text" /></td>
-                                    <td><Form.Control name="discount" onChange={(e) => handleTabData(e, index)} type="text" /></td>
+                                    <td><Form.Control name="quantity" onChange={(e) => handleTabData(e, index)} type="number" /></td>
+                                    <td><Form.Control  name="cost" onChange={(e) => handleTabData(e, index)} type="number" /></td>
+                                    <td><Form.Control name="price" onChange={(e) => handleTabData(e, index)} type="number" /></td>
+                                    <td><Form.Control name="discount" onChange={(e) => handleTabData(e, index)} type="number" /></td>
                                     <td name="gst">{TableData[index]?.gst || 0}%</td>
                                     <td name="margin">{TableData[index]?.margin || 0}</td>
                                     <td name='avesPrice'>{TableData[index]?.finalPrice || 0}</td>
@@ -442,6 +430,9 @@ const AddInfo = ({ params }) => {
                         </table>
                      </Col>
                   )}
+                  <Col md={12}>
+                     <Button className="nextbutton me-4" onClick={(e) => handleNext(e)} style={{ background: '#362465', border: 'none', float: 'right' }}>Next</Button>
+                  </Col>
                </Row>
             </div>
          )}
@@ -506,8 +497,72 @@ const AddInfo = ({ params }) => {
 
                   </Row>
                ))}
+               <Row>
+                  <Col md={12}>
+                     <Button className="nextbutton me-4" onClick={(e) => handleNext(e)} style={{ background: '#362465', border: 'none', float: 'right' }}>Next</Button>
+                  </Col>
+               </Row>
             </div>
          )}
+         {pagecount == 5 && (<div>
+            <Row md={1} className="g-3">
+               {CategoryData && CategoryData.details ? (
+                  CategoryData.details.MoreInfo.map((item, index) => {
+                     if (item.type === 'Input') {
+                        return (
+                           <Col key={`input-${index}`} md={parseInt(item.size)}>
+                              <Form.Label className="fw-semibold">{item.name}:{item.Isimportant && (<span className="text-danger">*</span>)}</Form.Label>
+                              <Form.Control type="text" name={item.name} onBlur={(e) =>
+                                 setCategoryInput((prev) => ({
+                                    ...prev,
+                                    details: {
+                                       ...prev.details,
+                                       MoreInfo: {
+                                          ...((prev.details && prev.details.MoreInfo) || {}),
+                                          [item.name]: e.target.value
+                                       }
+                                    }
+                                 }))
+                              } />
+                           </Col>
+                        );
+                     } else if (item.type === 'DropDwon') {
+                        return (
+                           <Col key={`dropdown-${index}`} md={parseInt(item.size)}>
+                              <Form.Label className="fw-semibold">{item.name}:{item.Isimportant && (<span className="text-danger">*</span>)}</Form.Label>
+                              <Select
+                                 name="sub categories"
+                                 menuPortalTarget={document ? document.body : ''}
+                                 menuPosition="fixed"
+                                 menuPlacement="bottom"
+                                 className="categoryName"
+                                 value={{ value: CategoryInput.details?.virtualInfo?.[item.name] || '', label: CategoryInput.details?.virtualInfo?.[item.name] || '' }}
+                                 onChange={(e) =>
+                                    setCategoryInput((prev) => ({
+                                       ...prev,
+                                       details: {
+                                          ...prev.details,
+                                          virtualInfo: {
+                                             ...((prev.details && prev.details.virtualInfo) || {}),
+                                             [item.name]: e.value
+                                          }
+                                       }
+                                    }))
+                                 }
+                                 styles={{ ...customStyle, width: '100%' }}
+                                 options={item.options.map(option => ({ value: option, label: option }))}
+                              />
+                           </Col>
+                        );
+                     }
+                     return null;
+                  })
+               ) : null}
+               <Col md={12}>
+                  <Button className="nextbutton me-4" onClick={(e) => handleNext(e)} style={{ background: '#362465', border: 'none', float: 'right' }}>Publish</Button>
+               </Col>
+            </Row>
+         </div>)}
       </>
 
    )
