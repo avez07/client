@@ -3,7 +3,6 @@ import React, { useEffect, useState, useContext } from "react";
 import { FadeLoader } from 'react-spinners';
 import { Col, Row ,Form,Button} from 'react-bootstrap'
 import { AuthContext } from '@/app/common/auth'
-import 'react-quill/dist/quill.snow.css';
 import { GetFetchAPI, PostApi } from "@/app/common/serverFunctions";
 import Cookies from "js-cookie";
 import { FaRegStar } from "react-icons/fa";

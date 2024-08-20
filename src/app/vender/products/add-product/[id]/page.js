@@ -83,7 +83,10 @@ const AddInfo = ({ params }) => {
    }
    const handleDeleteVariantTab = (index) => {
       const newData = [...VariantTab2];
+      const TableContent = [...TableData];
       newData.splice(index, 1)
+      TableContent.splice(index,1)
+      setTableData(TableContent)
       setVariantTab2(newData)
    }
    const handleTabData = (e, index) => {
@@ -156,9 +159,9 @@ const AddInfo = ({ params }) => {
    useEffect(() => { //whole page validation
       const newData = { ...CategoryData };
       const Key = pagecount === 1 ? 'virtualInfo' : pagecount === 5 ? 'MoreInfo' : null
-      if (Key && newData.details) {
+      if (Key && newData.details?.[Key]) {
          const filteredData = newData.details[Key].filter((items) => items.Isimportant === true).map((items) => items.name)
-         const ValidateName = filteredData.filter((name) => { return !CategoryInput.details[Key].hasOwnProperty(name) || !CategoryInput.details[Key][name] })
+         const ValidateName = filteredData.filter((name) => { return !CategoryInput.details?.[Key].hasOwnProperty(name) || !CategoryInput.details[Key][name] })
          console.log(ValidateName)
          if (ValidateName.length == 0) setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 0, ...previousIndex.slice(pagecount)]));
          if (ValidateName.length != 0) setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
@@ -183,14 +186,18 @@ const AddInfo = ({ params }) => {
           } else {
             setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)])); 
           }
+          console.log(allObjectsValid,hasproperty)
       }else if(!Key && newData.details && pagecount == 4){
-         const imaeValid = (uploadImages.hasOwnProperty('mainImage') && uploadImages.mainImage.length === 6) && (VariantTab2.every((name)=> uploadImages.hasOwnProperty(name)) && Object.values(uploadImages).every(values=>Array.isArray(values)&& values.length >=4))
-         console.log('object',imaeValid)
+         const imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length === 6) && (VariantTab2.length > 0 ? VariantTab2.every((name)=> uploadImages.hasOwnProperty(name)) && Object.values(uploadImages).every(values=>Object.keys(values).length >= 4):true)
+         if (imaeValid) {
+            setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 0, ...previousIndex.slice(pagecount)]));
+          } else {
+            setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)])); 
+          }
       }
 
    }, [CategoryInput,pagecount,TableData,uploadImages])
-   console.log(TableData)
-   // console.log(PageValidation)
+
 
    return (
       <>
@@ -198,11 +205,11 @@ const AddInfo = ({ params }) => {
          <Row md={1} className="g-2">
             <div className="add-product-head  rounded-2  py-1">
                <ul>
-                  <li className={`${pagecount == 1 ? 'active' : ''}`} onClick={(e) => setPagecount(1)}><span className="text-danger pe-1"><FaInfoCircle /></span>Vital Info</li>
-                  <li className={`${pagecount == 2 ? 'active' : ''}`} onClick={(e) => setPagecount(2)}><span className="text-danger pe-1"><FaInfoCircle /></span>Discription</li>
-                  <li className={`${pagecount == 3 ? 'active' : ''}`} onClick={(e) => setPagecount(3)}><span className="text-danger pe-1"><FaInfoCircle /></span>Variant</li>
-                  <li className={`${pagecount == 4 ? 'active' : ''}`} onClick={(e) => setPagecount(4)}><span className="text-danger pe-1"><FaInfoCircle /></span>Images</li>
-                  <li className={`${pagecount == 5 ? 'active' : ''}`} onClick={(e) => setPagecount(5)}><span className="text-danger pe-1"><FaInfoCircle /></span>More Info</li>
+                  <li className={`${pagecount == 1 ? 'active' : ''}`} onClick={(e) => setPagecount(1)}>{PageValidation[0] == 1 &&(<span className="text-danger pe-1"><FaInfoCircle /></span>)}Vital Info</li>
+                  <li className={`${pagecount == 2 ? 'active' : ''}`} onClick={(e) => setPagecount(2)}>{PageValidation[1] == 1 &&(<span className="text-danger pe-1"><FaInfoCircle /></span>)}Discription</li>
+                  <li className={`${pagecount == 3 ? 'active' : ''}`} onClick={(e) => setPagecount(3)}>{PageValidation[2] == 1 &&(<span className="text-danger pe-1"><FaInfoCircle /></span>)}Variant</li>
+                  <li className={`${pagecount == 4 ? 'active' : ''}`} onClick={(e) => setPagecount(4)}>{PageValidation[3] == 1 &&(<span className="text-danger pe-1"><FaInfoCircle /></span>)}Images</li>
+                  <li className={`${pagecount == 5 ? 'active' : ''}`} onClick={(e) => setPagecount(5)}>{PageValidation[4] == 1 &&(<span className="text-danger pe-1"><FaInfoCircle /></span>)}More Info</li>
                </ul>
             </div>
          </Row>
