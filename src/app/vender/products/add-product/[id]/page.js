@@ -118,9 +118,18 @@ const AddInfo = ({ params }) => {
    const handleImageValidation = async (e)=>{
       // return console.log( e.target.files[0])
       const file = await e.target.files[0];
+      const formData = new FormData()
+      formData.append('URL',file)
+      // formData.append('otherData',JSON.stringify(loginData))
       const token = Cookies.get('token')
-      const valid = await PostApi('ValidateImage',JSON.stringify({...loginData,Url:file}),token)
-      console.log(valid)
+     const response = await fetch(process.env.NEXT_PUBLIC_APP_URL+'ValidateImage',{
+      method:'POST',
+      body:formData,
+      headers:{
+         'authorization': 'Bearer ' + token
+     }
+     })
+      console.log(response)
    }
    const handleNext = (e) => {
       setIsloading(true);
