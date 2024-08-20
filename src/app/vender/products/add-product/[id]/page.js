@@ -8,6 +8,7 @@ import { Button, Col, Form, Row } from "react-bootstrap";
 import { FaInfoCircle, FaPlus } from "react-icons/fa";
 import { TbCameraPlus } from "react-icons/tb";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { IoClose } from "react-icons/io5";
 import { IoMdCloseCircle, IoMdCloseCircleOutline } from "react-icons/io";
 const Select = dynamic(() => import('react-select'), { ssr: false })
@@ -16,7 +17,7 @@ const Select = dynamic(() => import('react-select'), { ssr: false })
 const ColorsOption = ["Black", "White", "Red", "Blue", "Green", "Yellow", "Pink", "Purple", "Orange", "Gray", "Brown", "Beige", "Navy", "Teal", "Turquoise", "Silver", "Gold", "Cream", "Burgundy", "Magenta", "Lavender", "Charcoal", "Olive", "Sky Blue", "Tan", "Maroon", "Indigo", "Emerald", "Sapphire", "Ruby", "Amber", "Ivory", "Coral", "Slate", "Pearl", "Champagne", "Peach", "Crimson", "Steel"];
 
 const AddInfo = ({ params }) => {
-   const { nightmode } = useContext(AuthContext)
+   const { nightmode ,loginData} = useContext(AuthContext)
    const [createTableButon, setCreateTableButton] = useState(false)
    const [isloading, setIsloading] = useState(false)
    const [CategoryData, setCategoryData] = useState({})
@@ -29,7 +30,7 @@ const AddInfo = ({ params }) => {
    const [PageValidation, setPageValidation] = useState([1, 1, 1, 1, 1])
    const [pagecount, setPagecount] = useState(1)
    const [pointsCount, setPointsCount] = useState(1)
-   const [validationError, setValidationError] = useState()
+   const router = useRouter()
 
    const customStyle = {
       control: (style) => ({ ...style, background: nightmode ? '#0c1220' : null, border: nightmode ? 'currentColor' : '' }),
@@ -85,13 +86,13 @@ const AddInfo = ({ params }) => {
       const newData = [...VariantTab2];
       const TableContent = [...TableData];
       newData.splice(index, 1)
-      TableContent.splice(index,1)
+      TableContent.splice(index, 1)
       setTableData(TableContent)
       setVariantTab2(newData)
    }
    const handleTabData = (e, index) => {
       const { name, value } = e.target
-   if(isNaN(value)) return false
+      if (isNaN(value)) return false
       const newData = [...TableData]
       newData[index][name] = value
       setTableData(newData);
@@ -100,7 +101,6 @@ const AddInfo = ({ params }) => {
    const calculateDerivedValues = (index) => {
       const item = TableData[index];
       const { cost, price, gst, discount } = item;
-
       const gstRate = parseInt(gst) / 100;
       const CalPrice = parseInt(price) - parseInt(discount)
       const margin = (parseFloat(CalPrice) - parseFloat(cost)) || 0;
@@ -114,6 +114,13 @@ const AddInfo = ({ params }) => {
       const newObject = { ...uploadImages }
       delete newObject[key][index];
       setUploadImages(newObject);
+   }
+   const handleImageValidation = async (e)=>{
+      // return console.log( e.target.files[0])
+      const file = await e.target.files[0];
+      const token = Cookies.get('token')
+      const valid = await PostApi('ValidateImage',JSON.stringify({...loginData,Url:file}),token)
+      console.log(valid)
    }
    const handleNext = (e) => {
       setIsloading(true);
@@ -133,6 +140,10 @@ const AddInfo = ({ params }) => {
    useEffect(() => {
       const id = params.id
       const token = Cookies.get('token')
+      const productDetails = JSON.parse(sessionStorage.getItem('productDetails'))
+      const avalableKey = ['brandName', 'id', 'itemName', 'productId', 'VariantCheck']
+      const isValid = productDetails && avalableKey.every(key => key === 'VariantCheck' ? typeof productDetails[key] === 'boolean' : productDetails[key] !== undefined && productDetails[key] !== null && productDetails[key] !== '');
+      if (!isValid) return router.back()
       PostApi('ValidateCategoryId', JSON.stringify({ id: id }), token).then((response) => {
          if (response.status == 200) return setCategoryData(response.data)
          alert(response.message)
@@ -142,7 +153,7 @@ const AddInfo = ({ params }) => {
       const newArray = [...TableData]
       const filteredData = VariantTab2.filter(value =>
          !newArray.some(obj => obj.variant === value)
-       );
+      );
       const initialData = filteredData.map(item => ({
          variant: item,
          quantity: 0,
@@ -153,8 +164,8 @@ const AddInfo = ({ params }) => {
          margin: 0, // Placeholder for margin calculation
          finalPrice: 0
       }));
-     
-      if(filteredData.length > 0)  setTableData(prevData => [...prevData, ...initialData]);
+
+      if (filteredData.length > 0) setTableData(prevData => [...prevData, ...initialData]);
    }, [VariantTab2])
    useEffect(() => { //whole page validation
       const newData = { ...CategoryData };
@@ -162,41 +173,39 @@ const AddInfo = ({ params }) => {
       if (Key && newData.details?.[Key]) {
          const filteredData = newData.details[Key].filter((items) => items.Isimportant === true).map((items) => items.name)
          const ValidateName = filteredData.filter((name) => { return !CategoryInput.details?.[Key].hasOwnProperty(name) || !CategoryInput.details[Key][name] })
-         console.log(ValidateName)
          if (ValidateName.length == 0) setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 0, ...previousIndex.slice(pagecount)]));
          if (ValidateName.length != 0) setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
-      }else if(!Key && newData.details && pagecount == 2){
-         if(CategoryInput.details?.discription && CategoryInput.details.discription.length <= 200){
+      } else if (!Key && newData.details && pagecount == 2) {
+         if (CategoryInput.details?.discription && CategoryInput.details.discription.length <= 200) {
             setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 0, ...previousIndex.slice(pagecount)]));
-         }else{
+         } else {
             setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
          }
-      }else if(!Key && newData.details && pagecount == 3){
+      } else if (!Key && newData.details && pagecount == 3) {
          const newTableContent = [...TableData]
-         const allObjectsValid = newTableContent.every(obj => 
-            Object.values(obj).every(value => 
-              value !== null && value !== undefined && value !== '' && 
-              (typeof value !== 'number' || (!isNaN(value) && value !== 0))
+         const allObjectsValid = newTableContent.every(obj =>
+            Object.values(obj).every(value =>
+               value !== null && value !== undefined && value !== '' &&
+               (typeof value !== 'number' || (!isNaN(value) && value !== 0))
             )
-          );
+         );
          const filteredData = newData.details['VariantData'].map((items) => items.name)
-         const hasproperty = filteredData.every((key)=> TableData.every((obj)=>obj.hasOwnProperty(key)))
-          if (allObjectsValid && hasproperty) {
+         const hasproperty = filteredData.every((key) => TableData.every((obj) => obj.hasOwnProperty(key)))
+         if (allObjectsValid && hasproperty) {
             setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 0, ...previousIndex.slice(pagecount)]));
-          } else {
-            setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)])); 
-          }
-          console.log(allObjectsValid,hasproperty)
-      }else if(!Key && newData.details && pagecount == 4){
-         const imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length === 6) && (VariantTab2.length > 0 ? VariantTab2.every((name)=> uploadImages.hasOwnProperty(name)) && Object.values(uploadImages).every(values=>Object.keys(values).length >= 4):true)
+         } else {
+            setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
+         }
+      } else if (!Key && newData.details && pagecount == 4) {
+         const imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length === 6) && (VariantTab2.length > 0 ? VariantTab2.every((name) => uploadImages.hasOwnProperty(name)) && Object.values(uploadImages).every(values => Object.keys(values).length >= 4) : true)
          if (imaeValid) {
             setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 0, ...previousIndex.slice(pagecount)]));
-          } else {
-            setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)])); 
-          }
+         } else {
+            setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
+         }
       }
 
-   }, [CategoryInput,pagecount,TableData,uploadImages])
+   }, [CategoryInput, pagecount, TableData, uploadImages])
 
 
    return (
@@ -205,11 +214,11 @@ const AddInfo = ({ params }) => {
          <Row md={1} className="g-2">
             <div className="add-product-head  rounded-2  py-1">
                <ul>
-                  <li className={`${pagecount == 1 ? 'active' : ''}`} onClick={(e) => setPagecount(1)}>{PageValidation[0] == 1 &&(<span className="text-danger pe-1"><FaInfoCircle /></span>)}Vital Info</li>
-                  <li className={`${pagecount == 2 ? 'active' : ''}`} onClick={(e) => setPagecount(2)}>{PageValidation[1] == 1 &&(<span className="text-danger pe-1"><FaInfoCircle /></span>)}Discription</li>
-                  <li className={`${pagecount == 3 ? 'active' : ''}`} onClick={(e) => setPagecount(3)}>{PageValidation[2] == 1 &&(<span className="text-danger pe-1"><FaInfoCircle /></span>)}Variant</li>
-                  <li className={`${pagecount == 4 ? 'active' : ''}`} onClick={(e) => setPagecount(4)}>{PageValidation[3] == 1 &&(<span className="text-danger pe-1"><FaInfoCircle /></span>)}Images</li>
-                  <li className={`${pagecount == 5 ? 'active' : ''}`} onClick={(e) => setPagecount(5)}>{PageValidation[4] == 1 &&(<span className="text-danger pe-1"><FaInfoCircle /></span>)}More Info</li>
+                  <li className={`${pagecount == 1 ? 'active' : ''}`} onClick={(e) => setPagecount(1)}>{PageValidation[0] == 1 && (<span className="text-danger pe-1"><FaInfoCircle /></span>)}Vital Info</li>
+                  <li className={`${pagecount == 2 ? 'active' : ''}`} onClick={(e) => setPagecount(2)}>{PageValidation[1] == 1 && (<span className="text-danger pe-1"><FaInfoCircle /></span>)}Discription</li>
+                  <li className={`${pagecount == 3 ? 'active' : ''}`} onClick={(e) => setPagecount(3)}>{PageValidation[2] == 1 && (<span className="text-danger pe-1"><FaInfoCircle /></span>)}Variant</li>
+                  <li className={`${pagecount == 4 ? 'active' : ''}`} onClick={(e) => setPagecount(4)}>{PageValidation[3] == 1 && (<span className="text-danger pe-1"><FaInfoCircle /></span>)}Images</li>
+                  <li className={`${pagecount == 5 ? 'active' : ''}`} onClick={(e) => setPagecount(5)}>{PageValidation[4] == 1 && (<span className="text-danger pe-1"><FaInfoCircle /></span>)}More Info</li>
                </ul>
             </div>
          </Row>
@@ -296,7 +305,7 @@ const AddInfo = ({ params }) => {
                   </div>
                   <ul>
                      {Array.from({ length: pointsCount }, (_, index) => {
-                        console.log(index); return (
+                        return (
                            <li key={index} className="d-flex align-items-center"><Form.Control size="sm" onBlur={(e) =>
                               setCategoryInput((prev) => ({
                                  ...prev,
@@ -435,7 +444,7 @@ const AddInfo = ({ params }) => {
                                        </td>
                                     ))}
                                     <td><Form.Control name="quantity" onChange={(e) => handleTabData(e, index)} type="number" /></td>
-                                    <td><Form.Control  name="cost" onChange={(e) => handleTabData(e, index)} type="number" /></td>
+                                    <td><Form.Control name="cost" onChange={(e) => handleTabData(e, index)} type="number" /></td>
                                     <td><Form.Control name="price" onChange={(e) => handleTabData(e, index)} type="number" /></td>
                                     <td><Form.Control name="discount" onChange={(e) => handleTabData(e, index)} type="number" /></td>
                                     <td name="gst">{TableData[index]?.gst || 0}%</td>
@@ -461,37 +470,37 @@ const AddInfo = ({ params }) => {
                   {Array.from({ length: 6 }, (_, index) => (
                      <Col md={3} key={`col${index}`}>
                         <div className="image-uploder-custom">
-                           {!uploadImages.hasOwnProperty('mainImage') || Object.keys(uploadImages.mainImage).length == 0 || !uploadImages.mainImage[index] ? (<><input type="file" name="images" onChange={(e) => setUploadImages((prev) => ({
+                           {!uploadImages.hasOwnProperty('mainImage') || Object.keys(uploadImages.mainImage).length == 0 || !uploadImages.mainImage[index] ? (<><input type="file" name="images" onChange={(e) => {setUploadImages((prev) => ({
                               ...prev,
                               mainImage: {
                                  ...prev.mainImage,
                                  [index]: e.target.files[0]
                               }
-                           }))} className="Listing-img-uploader" />
+                           }))}} className="Listing-img-uploader" />
                               <span><TbCameraPlus /></span></>) : (<><img src={URL.createObjectURL(uploadImages.mainImage[index])} alt='upload-imges' /><span onClick={(e) => handleImgdeleted(e, 'mainImage', index)} id="img-close-icon"><IoMdCloseCircle /></span></>)}
                         </div>
                      </Col>
                   ))}
                </Row>
-               {VariantTab2.map((items, index) => (
+               {VariantTab2.map((variantName, index) => (
                   <Row className="g-3" key={`images${index}`}>
-                     <Col md={12}><label className="fw-semibold my-3 fs-5"> Variant {items} Images:</label></Col>
+                     <Col md={12}><label className="fw-semibold my-3 fs-5"> Variant {variantName} Images:</label></Col>
                      {Array.from({ length: 4 }, (_, idk) => (
                         <Col md={3} key={`col_${idk}`}>
                            <div className="image-uploder-custom">
-                              {!uploadImages.hasOwnProperty(items) || Object.keys(uploadImages[items]).length === 0 || !uploadImages[items][idk] ? (
+                              {!uploadImages.hasOwnProperty(variantName) || Object.keys(uploadImages[variantName]).length === 0 || !uploadImages[variantName][idk] ? (
                                  <>
                                     <input
                                        type="file"
                                        name="images"
-                                       onChange={(e) =>
+                                       onChange={(e) =>{ handleImageValidation(e);
                                           setUploadImages((prev) => ({
                                              ...prev,
-                                             [items]: {
-                                                ...prev[items],
+                                             [variantName]: {
+                                                ...prev[variantName],
                                                 [idk]: e.target.files[0]
                                              }
-                                          }))
+                                          }))}
                                        }
                                        className="Listing-img-uploader"
                                     />
@@ -499,12 +508,12 @@ const AddInfo = ({ params }) => {
                                  </>
                               ) : (
                                  <>
-                                    {uploadImages[items][idk] instanceof Blob || uploadImages[items][idk] instanceof File ? (
-                                       <img src={URL.createObjectURL(uploadImages[items][idk])} alt='upload-images' />
+                                    {uploadImages[variantName][idk] instanceof Blob || uploadImages[variantName][idk] instanceof File ? (
+                                       <img src={URL.createObjectURL(uploadImages[variantName][idk])} alt='upload-images' />
                                     ) : (
                                        <span>Invalid image</span>
                                     )}
-                                    <span onClick={(e) => handleImgdeleted(e, items, idk)} id="img-close-icon">
+                                    <span onClick={(e) => handleImgdeleted(e, variantName, idk)} id="img-close-icon">
                                        <IoMdCloseCircle />
                                     </span>
                                  </>

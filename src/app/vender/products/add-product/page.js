@@ -1,12 +1,12 @@
 "use client"
 import React, { useEffect, useState, useContext } from "react";
 import { FadeLoader } from 'react-spinners';
-import { Col, Row ,Form,Button} from 'react-bootstrap'
+import { Col, Row, Form, Button } from 'react-bootstrap'
 import { AuthContext } from '@/app/common/auth'
 import { GetFetchAPI, PostApi } from "@/app/common/serverFunctions";
 import Cookies from "js-cookie";
 import { FaRegStar } from "react-icons/fa";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const ProductListing = () => {
   const { nightmode } = useContext(AuthContext);
@@ -17,9 +17,9 @@ const ProductListing = () => {
   const [validation, setvalidation] = useState(false)
   const [ProductData, setProductData] = useState({})
   const [pageCount, setPageCount] = useState(0)
-  const [isChecked, setIschecked] = useState({ Brandname: false, productId: false })
+  const [isChecked, setIschecked] = useState({ Brandname: false, productId: false ,VariantCheck:false})
 
-const router = useRouter()
+  const router = useRouter()
 
   const handleCategoryChange = (action, data) => {
     const newData = [...Category]
@@ -55,17 +55,20 @@ const router = useRouter()
     if (e.target.name === 'brandNameCheck') { isChecked['Brandname'] = !isChecked['Brandname']; newData['brandName'] = isChecked['Brandname'] ? 'Generic' : undefined }
     if (e.target.name === 'productId') newData['productId'] = e.target.value
     if (e.target.name === 'productIdCheck') { isChecked['productId'] = !isChecked['productId']; newData['productId'] = isChecked['productId'] ? 'product Id Not available' : undefined }
+    if (e.target.name === 'VariantCheck') {isChecked['VariantCheck'] = !isChecked['VariantCheck']; newData['VariantCheck'] = isChecked['VariantCheck']}
     setProductData(newData)
   }
   const handleNext = async () => {
     if (!ProductData['itemName'] || !ProductData['brandName'] || !ProductData['productId'] || !ProductData['CategoryName']?.length == 3) return setvalidation(true)
-      setIsloading(true)
+    setIsloading(true)
     const token = await Cookies.get('token');
-    const res = await PostApi('getCategoryId',JSON.stringify(ProductData),token)
+    const res = await PostApi('getCategoryId', JSON.stringify(ProductData), token)
     setIsloading(false)
-    if(res.status == 200) router.push('/vender/products/add-product/'+res.data._id)
-      if(res.status != 200) alert(res.message)
-    
+    if (res.status == 200) {
+      await sessionStorage.setItem('productDetails', JSON.stringify({ ...ProductData, id: res.data._id,VariantCheck:isChecked['VariantCheck'] }))
+      router.push('/vender/products/add-product/' + res.data._id)
+    }
+    if (res.status != 200) alert(res.message)
     setPageCount((count) => count + 1)
   }
 
@@ -106,6 +109,9 @@ const router = useRouter()
                 </div>
               ) : null}
             </div>
+          </Col>
+          <Col md={12}>
+            <Form.Check type="checkbox" name="VariantCheck" checked={isChecked['VariantCheck']} className="brand-not-avail my-2" onChange={(e) => { handlleInputChange(e) }} label="Product Has Variant" />
           </Col>
           <Col md={6}>
             <Form.Label>Brand Name<span className="text-danger">*</span></Form.Label>
