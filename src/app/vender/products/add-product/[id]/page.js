@@ -1,5 +1,5 @@
 'use client'
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState,useCallback } from "react";
 import { FadeLoader } from 'react-spinners';
 import { PostApi } from "@/app/common/serverFunctions";
 import Cookies from "js-cookie";
@@ -8,6 +8,7 @@ import { Button, Col, Form, Row } from "react-bootstrap";
 import { FaInfoCircle, FaPlus } from "react-icons/fa";
 import { TbCameraPlus } from "react-icons/tb";
 import dynamic from "next/dynamic";
+import debounce  from "lodash/debounce";
 import { useRouter } from "next/navigation";
 import { IoClose } from "react-icons/io5";
 import { IoMdCloseCircle, IoMdCloseCircleOutline } from "react-icons/io";
@@ -17,7 +18,7 @@ const Select = dynamic(() => import('react-select'), { ssr: false })
 const ColorsOption = ["Black", "White", "Red", "Blue", "Green", "Yellow", "Pink", "Purple", "Orange", "Gray", "Brown", "Beige", "Navy", "Teal", "Turquoise", "Silver", "Gold", "Cream", "Burgundy", "Magenta", "Lavender", "Charcoal", "Olive", "Sky Blue", "Tan", "Maroon", "Indigo", "Emerald", "Sapphire", "Ruby", "Amber", "Ivory", "Coral", "Slate", "Pearl", "Champagne", "Peach", "Crimson", "Steel"];
 
 const AddInfo = ({ params }) => {
-   const { nightmode ,loginData} = useContext(AuthContext)
+   const { nightmode, loginData } = useContext(AuthContext)
    const [createTableButon, setCreateTableButton] = useState(false)
    const [isloading, setIsloading] = useState(false)
    const [CategoryData, setCategoryData] = useState({})
@@ -115,28 +116,67 @@ const AddInfo = ({ params }) => {
       delete newObject[key][index];
       setUploadImages(newObject);
    }
-   const handleImageValidation = async (e)=>{
-      // return console.log( e.target.files[0])
+   const handleImageValidation = async (e, variant, idk) => {
+      const imagesObject = { ...uploadImages }
       const file = await e.target.files[0];
       const formData = new FormData()
-      formData.append('URL',file)
+      formData.append('URL', file)
       // formData.append('otherData',JSON.stringify(loginData))
       const token = Cookies.get('token')
-     const response = await fetch(process.env.NEXT_PUBLIC_APP_URL+'ValidateImage',{
-      method:'POST',
-      body:formData,
-      headers:{
-         'authorization': 'Bearer ' + token
-     }
-     })
-      console.log(response)
+      const response = await fetch(process.env.NEXT_PUBLIC_APP_URL + 'ValidateImage', {
+         method: 'POST',
+         body: formData,
+         headers: {
+            'authorization': 'Bearer ' + token
+         }
+      })
+      const result = await response.json()
+      if (result.status !== 200) {
+         setUploadImages(prev => ({
+            ...prev,
+            [variant]: {
+               ...prev[variant],
+               [idk]: {
+                  ...prev[variant][idk],
+                  error: result.message
+               }
+            }
+         }));
+      } else {
+         setUploadImages(prev => ({
+            ...prev,
+            [variant]: {
+               ...prev[variant],
+               [idk]: {
+                  ...prev[variant][idk],
+                  error: ''
+               }
+            }
+         }));
+      }
    }
+
    const handleNext = (e) => {
       setIsloading(true);
       setTimeout(() => {
          setIsloading(false)
          setPagecount(count => count + 1)
       }, 1000);
+   }
+   const useDebounce = (value = '', delay) => {
+      const [debouncedValue, setDebouncedValue] = useState(value);
+
+      useEffect(() => {
+         const handler = setTimeout(() => {
+            setDebouncedValue(value);
+         }, delay);
+
+         return () => {
+            clearTimeout(handler);
+         };
+      }, [value, delay]);
+
+      return debouncedValue;
    }
    useEffect(() => {
       setVariantTab(variantOption.reduce((acc, item) => {
@@ -146,6 +186,8 @@ const AddInfo = ({ params }) => {
       setVariantTab2([])
       setCreateTableButton(false)
    }, [variantOption]);
+   console.log(CategoryInput)
+   console.log(TableData)
    useEffect(() => {
       const id = params.id
       const token = Cookies.get('token')
@@ -216,6 +258,26 @@ const AddInfo = ({ params }) => {
 
    }, [CategoryInput, pagecount, TableData, uploadImages])
 
+   const deepUpdate = (obj, path, value) => {
+      const keys = path.split('.');
+      const lastKey = keys.pop();
+      const deepObj = keys.reduce((acc, key) => {
+         if (!acc[key]) acc[key] = {};
+         return acc[key];
+      }, obj);
+      deepObj[lastKey] = value;
+      return { ...obj };
+   };
+   const debouncedUpdate = useCallback(
+      debounce((path, value) => {
+         setCategoryInput((prev) => deepUpdate(prev, path, value));
+      }, 0),
+      []
+   );
+
+   const handleChange = (value, path) => {
+      debouncedUpdate(path, value);
+   };
 
    return (
       <>
@@ -239,18 +301,9 @@ const AddInfo = ({ params }) => {
                         return (
                            <Col key={`input-${index}`} md={parseInt(item.size)}>
                               <Form.Label className="fw-semibold">{item.name}:{item.Isimportant && (<span className="text-danger">*</span>)}</Form.Label>
-                              <Form.Control type="text" name={item.name} onBlur={(e) =>
-                                 setCategoryInput((prev) => ({
-                                    ...prev,
-                                    details: {
-                                       ...prev.details,
-                                       virtualInfo: {
-                                          ...((prev.details && prev.details.virtualInfo) || {}),
-                                          [item.name]: e.target.value
-                                       }
-                                    }
-                                 }))
-                              } />
+                              <Form.Control type="text" name={item.name} value={CategoryInput?.details?.virtualInfo?.[item.name]||''}
+                              onChange={(e) => handleChange(e.target.value, `details.virtualInfo.${item.name}`)}
+                             />
                            </Col>
                         );
                      } else if (item.type === 'DropDwon') {
@@ -263,19 +316,8 @@ const AddInfo = ({ params }) => {
                                  menuPosition="fixed"
                                  menuPlacement="bottom"
                                  className="categoryName"
-                                 value={{ value: CategoryInput.details?.virtualInfo[item.name] || '', label: CategoryInput.details?.virtualInfo[item.name] || '' }}
-                                 onChange={(e) =>
-                                    setTableData((prev) => ({
-                                       ...prev,
-                                       details: {
-                                          ...prev.details,
-                                          virtualInfo: {
-                                             ...((prev.details && prev.details.virtualInfo) || {}),
-                                             [item.name]: e.value
-                                          }
-                                       }
-                                    }))
-                                 }
+                                 value={{ value: CategoryInput.details?.virtualInfo?.[item.name] || '', label: CategoryInput.details?.virtualInfo?.[item.name] || '' }}
+                                 onChange={(e) => handleChange(e.value, `details.virtualInfo.${item.name}`)}
                                  styles={{ ...customStyle, width: '100%' }}
                                  options={item.options.map(option => ({ value: option, label: option }))}
                               />
@@ -294,15 +336,9 @@ const AddInfo = ({ params }) => {
             <Row className="g-3">
                <Col md={12}>
                   <Form.Label className="fw-semibold mx-3">Discription<span className="text-danger">*</span></Form.Label>
-                  <Form.Control as='textarea' rows={10} style={{ resize: 'none' }} onBlur={(e) =>
-                     setCategoryInput((prev) => ({
-                        ...prev,
-                        details: {
-                           ...prev.details,
-                           ['discription']: e.target.value
-                        }
-                     }))
-                  } />
+                  <Form.Control as='textarea' rows={10} style={{ resize: 'none' }} value={CategoryInput?.details?.discription || ''} onChange={(e) => handleChange(e.target.value, `details.discription`)}
+                   
+                   />
                </Col>
                <Col md={12}>
                   <div className="d-flex justify-content-between mx-3">
@@ -315,18 +351,10 @@ const AddInfo = ({ params }) => {
                   <ul>
                      {Array.from({ length: pointsCount }, (_, index) => {
                         return (
-                           <li key={index} className="d-flex align-items-center"><Form.Control size="sm" onBlur={(e) =>
-                              setCategoryInput((prev) => ({
-                                 ...prev,
-                                 details: {
-                                    ...prev.details,
-                                    bulletPoints: [
-                                       ...prev.details?.bulletPoints || [],
-                                       [index] = `index_${index}`
-                                    ]
-                                 }
-                              }))
-                           } className="my-3 me-auto" style={{ width: '95%' }} name="buletPoints" type="text" /><span className="fs-4 fw-bold mx-auto text-danger" style={{ cursor: 'pointer' }} onClick={(e) => setPointsCount((prev) => prev - 1)}><IoClose /></span></li>
+                           <li key={index} className="d-flex align-items-center">
+                              <Form.Control size="sm" value={CategoryInput?.details?.bulletPoints?.[index]||''} onChange={(e) => handleChange(e.target.value, `details.bulletPoints.${index}`)} className="my-3 me-auto" style={{ width: '95%' }} name="buletPoints" type="text" />
+                              <span className="fs-4 fw-bold mx-auto text-danger" style={{ cursor: 'pointer' }} onClick={(e) => setPointsCount((prev) => prev - 1)}><IoClose /></span>
+                           </li>
                         )
                      })}
                   </ul>
@@ -382,7 +410,7 @@ const AddInfo = ({ params }) => {
                            </div>
                         </Col>
                         <Col md={2} className="d-flex align-items-center">
-                           <div ><Button className="add-Variant" onClick={(e) => handleVariantTab2(e)} style={{ background: '#362465', border: 'none' }}>Add Variant</Button></div>
+                           <div >{VariantTab2.length <= 20 ?(<Button className="add-Variant" onClick={(e) => handleVariantTab2(e)} style={{ background: '#362465', border: 'none' }}>Add Variant</Button>):(<span className="fw-bold text-danger">MAx Reached</span>)}</div>
                         </Col>
                         <Col md={6} className="d-flex align-items-center">
                            <div className="d-flex flex-wrap" >{VariantTab2.map((items, index) => (<div key={index} className="border border-2 mx-2 my-1 d-flex align-items-center justify-content-between px-2 py-1 rounded-2">{items}<IoMdCloseCircleOutline className="ms-2 fs-5" onClick={(e) => handleDeleteVariantTab(index)} style={{ cursor: 'pointer' }} /></div>))}</div>
@@ -417,7 +445,7 @@ const AddInfo = ({ params }) => {
                               {VariantTab2.map((items, index) => (
                                  <tr className="text-center" key={`row-${index}`}>
                                     <td>{items}</td>
-                                    {CategoryData.details.VariantData.map((items) => (
+                                    {CategoryData.details.VariantData.map((items,idk) => (
                                        <td key={`datas-${items.name}`}>
                                           {items.type == 'DropDwon' ? (
                                              <Select
@@ -440,7 +468,7 @@ const AddInfo = ({ params }) => {
                                                 options={items.options.map(option => ({ value: option, label: option }))}
                                              />
                                           ) : (
-                                             <Form.Control onChange={(e) =>
+                                             <Form.Control value={TableData?.[index]?.[items.name]||''} onChange={(e) =>
                                                 setTableData((prev) =>
                                                    prev.map((item, idx) =>
                                                       idx === index
@@ -452,10 +480,10 @@ const AddInfo = ({ params }) => {
                                           )}
                                        </td>
                                     ))}
-                                    <td><Form.Control name="quantity" onChange={(e) => handleTabData(e, index)} type="number" /></td>
-                                    <td><Form.Control name="cost" onChange={(e) => handleTabData(e, index)} type="number" /></td>
-                                    <td><Form.Control name="price" onChange={(e) => handleTabData(e, index)} type="number" /></td>
-                                    <td><Form.Control name="discount" onChange={(e) => handleTabData(e, index)} type="number" /></td>
+                                    <td><Form.Control name="quantity" value={TableData?.[index]?.quantity||''} onChange={(e) => handleTabData(e, index)} type="number" /></td>
+                                    <td><Form.Control name="cost" value={TableData?.[index]?.cost||''} onChange={(e) => handleTabData(e, index)} type="number" /></td>
+                                    <td><Form.Control name="price" value={TableData?.[index]?.price||''} onChange={(e) => handleTabData(e, index)} type="number" /></td>
+                                    <td><Form.Control name="discount" value={TableData?.[index]?.discount||''} onChange={(e) => handleTabData(e, index)} type="number" /></td>
                                     <td name="gst">{TableData[index]?.gst || 0}%</td>
                                     <td name="margin">{TableData[index]?.margin || 0}</td>
                                     <td name='avesPrice'>{TableData[index]?.finalPrice || 0}</td>
@@ -479,14 +507,19 @@ const AddInfo = ({ params }) => {
                   {Array.from({ length: 6 }, (_, index) => (
                      <Col md={3} key={`col${index}`}>
                         <div className="image-uploder-custom">
-                           {!uploadImages.hasOwnProperty('mainImage') || Object.keys(uploadImages.mainImage).length == 0 || !uploadImages.mainImage[index] ? (<><input type="file" name="images" onChange={(e) => {setUploadImages((prev) => ({
-                              ...prev,
-                              mainImage: {
-                                 ...prev.mainImage,
-                                 [index]: e.target.files[0]
-                              }
-                           }))}} className="Listing-img-uploader" />
-                              <span><TbCameraPlus /></span></>) : (<><img src={URL.createObjectURL(uploadImages.mainImage[index])} alt='upload-imges' /><span onClick={(e) => handleImgdeleted(e, 'mainImage', index)} id="img-close-icon"><IoMdCloseCircle /></span></>)}
+                           {!uploadImages.hasOwnProperty('mainImage') || Object.keys(uploadImages.mainImage).length == 0 || !uploadImages.mainImage[index] ? (<><input type="file" name="images" onChange={(e) => {
+                              handleImageValidation(e, 'mainImage', index), setUploadImages((prev) => ({
+                                 ...prev,
+                                 mainImage: {
+                                    ...prev.mainImage,
+                                    [index]: { url: e.target.files[0] }
+                                 }
+                              }))
+                           }} className="Listing-img-uploader" />
+                              <span><TbCameraPlus /></span></>) : (<><img src={URL.createObjectURL(uploadImages.mainImage[index].url)} alt='upload-imges' /><span onClick={(e) => handleImgdeleted(e, 'mainImage', index)} id="img-close-icon"><IoMdCloseCircle /></span>
+                                 <div className="text-center text-capitalize fw-bold text-danger mt-1">{uploadImages.mainImage[index].error}</div>
+
+                              </>)}
                         </div>
                      </Col>
                   ))}
@@ -502,14 +535,16 @@ const AddInfo = ({ params }) => {
                                     <input
                                        type="file"
                                        name="images"
-                                       onChange={(e) =>{ handleImageValidation(e);
+                                       onChange={(e) => {
+                                          handleImageValidation(e, variantName, idk);
                                           setUploadImages((prev) => ({
                                              ...prev,
                                              [variantName]: {
                                                 ...prev[variantName],
-                                                [idk]: e.target.files[0]
+                                                [idk]: { url: e.target.files[0] }
                                              }
-                                          }))}
+                                          }))
+                                       }
                                        }
                                        className="Listing-img-uploader"
                                     />
@@ -517,14 +552,15 @@ const AddInfo = ({ params }) => {
                                  </>
                               ) : (
                                  <>
-                                    {uploadImages[variantName][idk] instanceof Blob || uploadImages[variantName][idk] instanceof File ? (
-                                       <img src={URL.createObjectURL(uploadImages[variantName][idk])} alt='upload-images' />
+                                    {uploadImages[variantName][idk].url instanceof Blob || uploadImages[variantName][idk].url instanceof File ? (
+                                       <img src={URL.createObjectURL(uploadImages[variantName][idk].url)} alt='upload-images' />
                                     ) : (
                                        <span>Invalid image</span>
                                     )}
                                     <span onClick={(e) => handleImgdeleted(e, variantName, idk)} id="img-close-icon">
                                        <IoMdCloseCircle />
                                     </span>
+                                    <div className="text-center text-capitalize fw-bold text-danger mt-1">{uploadImages[variantName][idk].error}</div>
                                  </>
                               )}
                            </div>
@@ -548,18 +584,7 @@ const AddInfo = ({ params }) => {
                         return (
                            <Col key={`input-${index}`} md={parseInt(item.size)}>
                               <Form.Label className="fw-semibold">{item.name}:{item.Isimportant && (<span className="text-danger">*</span>)}</Form.Label>
-                              <Form.Control type="text" name={item.name} onBlur={(e) =>
-                                 setCategoryInput((prev) => ({
-                                    ...prev,
-                                    details: {
-                                       ...prev.details,
-                                       MoreInfo: {
-                                          ...((prev.details && prev.details.MoreInfo) || {}),
-                                          [item.name]: e.target.value
-                                       }
-                                    }
-                                 }))
-                              } />
+                              <Form.Control type="text" name={item.name} value={CategoryInput?.details?.MoreInfo?.[item.name]} onChange={(e) => handleChange(e.target.value, `details.MoreInfo.${item.name}`)}/>
                            </Col>
                         );
                      } else if (item.type === 'DropDwon') {
@@ -573,18 +598,7 @@ const AddInfo = ({ params }) => {
                                  menuPlacement="bottom"
                                  className="categoryName"
                                  value={{ value: CategoryInput.details?.virtualInfo?.[item.name] || '', label: CategoryInput.details?.virtualInfo?.[item.name] || '' }}
-                                 onChange={(e) =>
-                                    setCategoryInput((prev) => ({
-                                       ...prev,
-                                       details: {
-                                          ...prev.details,
-                                          virtualInfo: {
-                                             ...((prev.details && prev.details.virtualInfo) || {}),
-                                             [item.name]: e.value
-                                          }
-                                       }
-                                    }))
-                                 }
+                                 onChange={(e) => handleChange(e.value, `details.MoreInfo.${item.name}`)}
                                  styles={{ ...customStyle, width: '100%' }}
                                  options={item.options.map(option => ({ value: option, label: option }))}
                               />
