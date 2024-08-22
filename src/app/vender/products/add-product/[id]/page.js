@@ -1,5 +1,5 @@
 'use client'
-import React, { useContext, useEffect, useState,useCallback } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import { FadeLoader } from 'react-spinners';
 import { PostApi } from "@/app/common/serverFunctions";
 import Cookies from "js-cookie";
@@ -8,7 +8,7 @@ import { Button, Col, Form, Row } from "react-bootstrap";
 import { FaInfoCircle, FaPlus } from "react-icons/fa";
 import { TbCameraPlus } from "react-icons/tb";
 import dynamic from "next/dynamic";
-import debounce  from "lodash/debounce";
+import debounce from "lodash/debounce";
 import { useRouter } from "next/navigation";
 import { IoClose } from "react-icons/io5";
 import { IoMdCloseCircle, IoMdCloseCircleOutline } from "react-icons/io";
@@ -22,6 +22,7 @@ const AddInfo = ({ params }) => {
    const [createTableButon, setCreateTableButton] = useState(false)
    const [isloading, setIsloading] = useState(false)
    const [CategoryData, setCategoryData] = useState({})
+   const [productPermit, setproductPermit] = useState({})
    const [uploadImages, setUploadImages] = useState({});
    const [CategoryInput, setCategoryInput] = useState({})
    const [VariantTab, setVariantTab] = useState({})
@@ -163,20 +164,40 @@ const AddInfo = ({ params }) => {
          setPagecount(count => count + 1)
       }, 1000);
    }
-   const useDebounce = (value = '', delay) => {
-      const [debouncedValue, setDebouncedValue] = useState(value);
+   const handlePublish = async () => {
+      const newObj = {};
+      const imageFiles = [];
+      let continousIndexing = 0;
 
-      useEffect(() => {
-         const handler = setTimeout(() => {
-            setDebouncedValue(value);
-         }, delay);
+      Object.entries(uploadImages).forEach(([key, value]) => {
+        newObj[key] = {};
+      
+        Object.entries(value).forEach(([k, v]) => {
+          newObj[key][k] = { index: continousIndexing++, error: v.error };
+          imageFiles.push(v.url); // Collect the files into imageFiles
+        });
+      });
+      
+// return console.log(newObj,imageFiles)
+const body = { ...CategoryInput, TableData: TableData,loginData:loginData,productDetails:productPermit}
 
-         return () => {
-            clearTimeout(handler);
-         };
-      }, [value, delay]);
+      const formData = new FormData()
+      formData.append('details',JSON.stringify(body))
+      formData.append('imagesData',JSON.stringify(newObj))
 
-      return debouncedValue;
+      imageFiles.forEach(file => {
+         formData.append('imageFiles', file);
+     });
+      
+      const token = Cookies.get('token')
+       const response = await fetch(process.env.NEXT_PUBLIC_APP_URL + 'ProductListing', {
+         method: 'POST',
+         body: formData,
+         headers: {
+            'authorization': 'Bearer ' + token
+         }
+      })
+      console.log(await response.json())
    }
    useEffect(() => {
       setVariantTab(variantOption.reduce((acc, item) => {
@@ -186,8 +207,7 @@ const AddInfo = ({ params }) => {
       setVariantTab2([])
       setCreateTableButton(false)
    }, [variantOption]);
-   console.log(CategoryInput)
-   console.log(TableData)
+  
    useEffect(() => {
       const id = params.id
       const token = Cookies.get('token')
@@ -195,6 +215,7 @@ const AddInfo = ({ params }) => {
       const avalableKey = ['brandName', 'id', 'itemName', 'productId', 'VariantCheck']
       const isValid = productDetails && avalableKey.every(key => key === 'VariantCheck' ? typeof productDetails[key] === 'boolean' : productDetails[key] !== undefined && productDetails[key] !== null && productDetails[key] !== '');
       if (!isValid) return router.back()
+      setproductPermit(productDetails)
       PostApi('ValidateCategoryId', JSON.stringify({ id: id }), token).then((response) => {
          if (response.status == 200) return setCategoryData(response.data)
          alert(response.message)
@@ -223,16 +244,19 @@ const AddInfo = ({ params }) => {
       const Key = pagecount === 1 ? 'virtualInfo' : pagecount === 5 ? 'MoreInfo' : null
       if (Key && newData.details?.[Key]) {
          const filteredData = newData.details[Key].filter((items) => items.Isimportant === true).map((items) => items.name)
-         const ValidateName = filteredData.filter((name) => { return !CategoryInput.details?.[Key].hasOwnProperty(name) || !CategoryInput.details[Key][name] })
+         const ValidateName = filteredData.filter((name) => { return !CategoryInput.details?.[Key]?.hasOwnProperty(name) || !CategoryInput.details?.[Key]?.[name] })
          if (ValidateName.length == 0) setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 0, ...previousIndex.slice(pagecount)]));
          if (ValidateName.length != 0) setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
       } else if (!Key && newData.details && pagecount == 2) {
-         if (CategoryInput.details?.discription && CategoryInput.details.discription.length <= 200) {
+         if (CategoryInput.details?.discription && CategoryInput.details.discription.length <= 500) {
             setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 0, ...previousIndex.slice(pagecount)]));
          } else {
             setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
          }
       } else if (!Key && newData.details && pagecount == 3) {
+         if (!productPermit?.VariantCheck) return setPagecount((count) => count + 1)
+            if(VariantTab2.length == 0) return setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
+
          const newTableContent = [...TableData]
          const allObjectsValid = newTableContent.every(obj =>
             Object.values(obj).every(value =>
@@ -248,8 +272,11 @@ const AddInfo = ({ params }) => {
             setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
          }
       } else if (!Key && newData.details && pagecount == 4) {
-         const imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length === 6) && (VariantTab2.length > 0 ? VariantTab2.every((name) => uploadImages.hasOwnProperty(name)) && Object.values(uploadImages).every(values => Object.keys(values).length >= 4) : true)
-         if (imaeValid) {
+         const imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length <= 6) && (VariantTab2.length > 0 ? VariantTab2.every((name) => uploadImages.hasOwnProperty(name)) && Object.values(uploadImages).every(values => Object.keys(values).length >= 4) : true)
+         const imageValidate = Object.values(uploadImages).every(item =>
+            Object.values(item).every(nested => !nested.error?.trim())
+        );
+         if (imaeValid && imageValidate) {
             setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 0, ...previousIndex.slice(pagecount)]));
          } else {
             setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
@@ -257,7 +284,7 @@ const AddInfo = ({ params }) => {
       }
 
    }, [CategoryInput, pagecount, TableData, uploadImages])
-
+   console.log(CategoryInput)
    const deepUpdate = (obj, path, value) => {
       const keys = path.split('.');
       const lastKey = keys.pop();
@@ -287,8 +314,7 @@ const AddInfo = ({ params }) => {
                <ul>
                   <li className={`${pagecount == 1 ? 'active' : ''}`} onClick={(e) => setPagecount(1)}>{PageValidation[0] == 1 && (<span className="text-danger pe-1"><FaInfoCircle /></span>)}Vital Info</li>
                   <li className={`${pagecount == 2 ? 'active' : ''}`} onClick={(e) => setPagecount(2)}>{PageValidation[1] == 1 && (<span className="text-danger pe-1"><FaInfoCircle /></span>)}Discription</li>
-                  <li className={`${pagecount == 3 ? 'active' : ''}`} onClick={(e) => setPagecount(3)}>{PageValidation[2] == 1 && (<span className="text-danger pe-1"><FaInfoCircle /></span>)}Variant</li>
-                  <li className={`${pagecount == 4 ? 'active' : ''}`} onClick={(e) => setPagecount(4)}>{PageValidation[3] == 1 && (<span className="text-danger pe-1"><FaInfoCircle /></span>)}Images</li>
+                  {productPermit?.VariantCheck && (<li className={`${pagecount == 3 ? 'active' : ''}`} onClick={(e) => setPagecount(3)}>{PageValidation[2] == 1 && (<span className="text-danger pe-1"><FaInfoCircle /></span>)}Variant</li>)}                  <li className={`${pagecount == 4 ? 'active' : ''}`} onClick={(e) => setPagecount(4)}>{PageValidation[3] == 1 && (<span className="text-danger pe-1"><FaInfoCircle /></span>)}Images</li>
                   <li className={`${pagecount == 5 ? 'active' : ''}`} onClick={(e) => setPagecount(5)}>{PageValidation[4] == 1 && (<span className="text-danger pe-1"><FaInfoCircle /></span>)}More Info</li>
                </ul>
             </div>
@@ -301,9 +327,9 @@ const AddInfo = ({ params }) => {
                         return (
                            <Col key={`input-${index}`} md={parseInt(item.size)}>
                               <Form.Label className="fw-semibold">{item.name}:{item.Isimportant && (<span className="text-danger">*</span>)}</Form.Label>
-                              <Form.Control type="text" name={item.name} value={CategoryInput?.details?.virtualInfo?.[item.name]||''}
-                              onChange={(e) => handleChange(e.target.value, `details.virtualInfo.${item.name}`)}
-                             />
+                              <Form.Control type="text" name={item.name} value={CategoryInput?.details?.virtualInfo?.[item.name] || ''}
+                                 onChange={(e) => handleChange(e.target.value, `details.virtualInfo.${item.name}`)}
+                              />
                            </Col>
                         );
                      } else if (item.type === 'DropDwon') {
@@ -337,8 +363,8 @@ const AddInfo = ({ params }) => {
                <Col md={12}>
                   <Form.Label className="fw-semibold mx-3">Discription<span className="text-danger">*</span></Form.Label>
                   <Form.Control as='textarea' rows={10} style={{ resize: 'none' }} value={CategoryInput?.details?.discription || ''} onChange={(e) => handleChange(e.target.value, `details.discription`)}
-                   
-                   />
+
+                  />
                </Col>
                <Col md={12}>
                   <div className="d-flex justify-content-between mx-3">
@@ -352,7 +378,7 @@ const AddInfo = ({ params }) => {
                      {Array.from({ length: pointsCount }, (_, index) => {
                         return (
                            <li key={index} className="d-flex align-items-center">
-                              <Form.Control size="sm" value={CategoryInput?.details?.bulletPoints?.[index]||''} onChange={(e) => handleChange(e.target.value, `details.bulletPoints.${index}`)} className="my-3 me-auto" style={{ width: '95%' }} name="buletPoints" type="text" />
+                              <Form.Control size="sm" value={CategoryInput?.details?.bulletPoints?.[index] || ''} onChange={(e) => handleChange(e.target.value, `details.bulletPoints.${index}`)} className="my-3 me-auto" style={{ width: '95%' }} name="buletPoints" type="text" />
                               <span className="fs-4 fw-bold mx-auto text-danger" style={{ cursor: 'pointer' }} onClick={(e) => setPointsCount((prev) => prev - 1)}><IoClose /></span>
                            </li>
                         )
@@ -410,7 +436,7 @@ const AddInfo = ({ params }) => {
                            </div>
                         </Col>
                         <Col md={2} className="d-flex align-items-center">
-                           <div >{VariantTab2.length <= 20 ?(<Button className="add-Variant" onClick={(e) => handleVariantTab2(e)} style={{ background: '#362465', border: 'none' }}>Add Variant</Button>):(<span className="fw-bold text-danger">MAx Reached</span>)}</div>
+                           <div >{VariantTab2.length <= 20 ? (<Button className="add-Variant" onClick={(e) => handleVariantTab2(e)} style={{ background: '#362465', border: 'none' }}>Add Variant</Button>) : (<span className="fw-bold text-danger">MAx Reached</span>)}</div>
                         </Col>
                         <Col md={6} className="d-flex align-items-center">
                            <div className="d-flex flex-wrap" >{VariantTab2.map((items, index) => (<div key={index} className="border border-2 mx-2 my-1 d-flex align-items-center justify-content-between px-2 py-1 rounded-2">{items}<IoMdCloseCircleOutline className="ms-2 fs-5" onClick={(e) => handleDeleteVariantTab(index)} style={{ cursor: 'pointer' }} /></div>))}</div>
@@ -445,7 +471,7 @@ const AddInfo = ({ params }) => {
                               {VariantTab2.map((items, index) => (
                                  <tr className="text-center" key={`row-${index}`}>
                                     <td>{items}</td>
-                                    {CategoryData.details.VariantData.map((items,idk) => (
+                                    {CategoryData.details.VariantData.map((items, idk) => (
                                        <td key={`datas-${items.name}`}>
                                           {items.type == 'DropDwon' ? (
                                              <Select
@@ -468,7 +494,7 @@ const AddInfo = ({ params }) => {
                                                 options={items.options.map(option => ({ value: option, label: option }))}
                                              />
                                           ) : (
-                                             <Form.Control value={TableData?.[index]?.[items.name]||''} onChange={(e) =>
+                                             <Form.Control value={TableData?.[index]?.[items.name] || ''} onChange={(e) =>
                                                 setTableData((prev) =>
                                                    prev.map((item, idx) =>
                                                       idx === index
@@ -480,10 +506,10 @@ const AddInfo = ({ params }) => {
                                           )}
                                        </td>
                                     ))}
-                                    <td><Form.Control name="quantity" value={TableData?.[index]?.quantity||''} onChange={(e) => handleTabData(e, index)} type="number" /></td>
-                                    <td><Form.Control name="cost" value={TableData?.[index]?.cost||''} onChange={(e) => handleTabData(e, index)} type="number" /></td>
-                                    <td><Form.Control name="price" value={TableData?.[index]?.price||''} onChange={(e) => handleTabData(e, index)} type="number" /></td>
-                                    <td><Form.Control name="discount" value={TableData?.[index]?.discount||''} onChange={(e) => handleTabData(e, index)} type="number" /></td>
+                                    <td><Form.Control name="quantity" value={TableData?.[index]?.quantity || ''} onChange={(e) => handleTabData(e, index)} type="number" /></td>
+                                    <td><Form.Control name="cost" value={TableData?.[index]?.cost || ''} onChange={(e) => handleTabData(e, index)} type="number" /></td>
+                                    <td><Form.Control name="price" value={TableData?.[index]?.price || ''} onChange={(e) => handleTabData(e, index)} type="number" /></td>
+                                    <td><Form.Control name="discount" value={TableData?.[index]?.discount || ''} onChange={(e) => handleTabData(e, index)} type="number" /></td>
                                     <td name="gst">{TableData[index]?.gst || 0}%</td>
                                     <td name="margin">{TableData[index]?.margin || 0}</td>
                                     <td name='avesPrice'>{TableData[index]?.finalPrice || 0}</td>
@@ -584,7 +610,7 @@ const AddInfo = ({ params }) => {
                         return (
                            <Col key={`input-${index}`} md={parseInt(item.size)}>
                               <Form.Label className="fw-semibold">{item.name}:{item.Isimportant && (<span className="text-danger">*</span>)}</Form.Label>
-                              <Form.Control type="text" name={item.name} value={CategoryInput?.details?.MoreInfo?.[item.name]} onChange={(e) => handleChange(e.target.value, `details.MoreInfo.${item.name}`)}/>
+                              <Form.Control type="text" name={item.name} value={CategoryInput?.details?.MoreInfo?.[item.name]} onChange={(e) => handleChange(e.target.value, `details.MoreInfo.${item.name}`)} />
                            </Col>
                         );
                      } else if (item.type === 'DropDwon') {
@@ -597,7 +623,7 @@ const AddInfo = ({ params }) => {
                                  menuPosition="fixed"
                                  menuPlacement="bottom"
                                  className="categoryName"
-                                 value={{ value: CategoryInput.details?.virtualInfo?.[item.name] || '', label: CategoryInput.details?.virtualInfo?.[item.name] || '' }}
+                                 value={{ value: CategoryInput.details?.MoreInfo?.[item.name] || '', label: CategoryInput.details?.MoreInfo?.[item.name] || '' }}
                                  onChange={(e) => handleChange(e.value, `details.MoreInfo.${item.name}`)}
                                  styles={{ ...customStyle, width: '100%' }}
                                  options={item.options.map(option => ({ value: option, label: option }))}
@@ -609,7 +635,7 @@ const AddInfo = ({ params }) => {
                   })
                ) : null}
                <Col md={12}>
-                  <Button className="nextbutton me-4" onClick={(e) => handleNext(e)} style={{ background: '#362465', border: 'none', float: 'right' }}>Publish</Button>
+                  <Button className="nextbutton me-4" onClick={(e) => handlePublish(e)} style={{ background: '#362465', border: 'none', float: 'right' }}>Publish</Button>
                </Col>
             </Row>
          </div>)}
