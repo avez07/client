@@ -1,5 +1,6 @@
 'use client'
 import React, { useContext, useEffect, useState, useCallback } from "react";
+import { Slide, Snackbar, TextField, Alert } from '@mui/material';
 import { FadeLoader } from 'react-spinners';
 import { PostApi } from "@/app/common/serverFunctions";
 import Cookies from "js-cookie";
@@ -32,6 +33,7 @@ const AddInfo = ({ params }) => {
    const [PageValidation, setPageValidation] = useState([1, 1, 1, 1, 1])
    const [pagecount, setPagecount] = useState(1)
    const [pointsCount, setPointsCount] = useState(1)
+   const [responseMeg, setResponseMeg] = useState()
    const router = useRouter()
 
    const customStyle = {
@@ -165,40 +167,51 @@ const AddInfo = ({ params }) => {
       }, 1000);
    }
    const handlePublish = async () => {
+      if(PageValidation.every(val=>val===1)) return false
+      setIsloading(true)
       const newObj = {};
       const imageFiles = [];
       let continousIndexing = 0;
 
       Object.entries(uploadImages).forEach(([key, value]) => {
-        newObj[key] = {};
-      
-        Object.entries(value).forEach(([k, v]) => {
-          newObj[key][k] = { index: continousIndexing++, error: v.error };
-          imageFiles.push(v.url); // Collect the files into imageFiles
-        });
+         newObj[key] = {};
+         Object.entries(value).forEach(([k, v]) => {
+            newObj[key][k] = { index: continousIndexing++, error: v.error };
+            imageFiles.push(v.url); // Collect the files into imageFiles
+         });
       });
-      
-// return console.log(newObj,imageFiles)
-const body = { ...CategoryInput, TableData: TableData,loginData:loginData,productDetails:productPermit}
+      const body = { ...CategoryInput, TableData: TableData, loginData: loginData, productDetails: productPermit }
 
       const formData = new FormData()
-      formData.append('details',JSON.stringify(body))
-      formData.append('imagesData',JSON.stringify(newObj))
+      formData.append('details', JSON.stringify(body))
+      formData.append('imagesData', JSON.stringify(newObj))
 
       imageFiles.forEach(file => {
          formData.append('imageFiles', file);
-     });
-      
+      });
+
       const token = Cookies.get('token')
-       const response = await fetch(process.env.NEXT_PUBLIC_APP_URL + 'ProductListing', {
+      const response = await fetch(process.env.NEXT_PUBLIC_APP_URL + 'ProductListing', {
          method: 'POST',
          body: formData,
          headers: {
             'authorization': 'Bearer ' + token
          }
       })
-      console.log(await response.json())
+      const res = await response.json()
+      setIsloading(false)
+      if (res.status) setResponseMeg(res)
+      setTimeout(() => {
+         router.push('../mange-products')
+      }, 3000);
+      sessionStorage.clear()
    }
+   const handleClose = (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+      setResponseMeg()
+    }
    useEffect(() => {
       setVariantTab(variantOption.reduce((acc, item) => {
          acc[item] = '';
@@ -207,7 +220,7 @@ const body = { ...CategoryInput, TableData: TableData,loginData:loginData,produc
       setVariantTab2([])
       setCreateTableButton(false)
    }, [variantOption]);
-  
+
    useEffect(() => {
       const id = params.id
       const token = Cookies.get('token')
@@ -255,7 +268,7 @@ const body = { ...CategoryInput, TableData: TableData,loginData:loginData,produc
          }
       } else if (!Key && newData.details && pagecount == 3) {
          if (!productPermit?.VariantCheck) return setPagecount((count) => count + 1)
-            if(VariantTab2.length == 0) return setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
+         if (VariantTab2.length == 0) return setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
 
          const newTableContent = [...TableData]
          const allObjectsValid = newTableContent.every(obj =>
@@ -275,7 +288,7 @@ const body = { ...CategoryInput, TableData: TableData,loginData:loginData,produc
          const imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length <= 6) && (VariantTab2.length > 0 ? VariantTab2.every((name) => uploadImages.hasOwnProperty(name)) && Object.values(uploadImages).every(values => Object.keys(values).length >= 4) : true)
          const imageValidate = Object.values(uploadImages).every(item =>
             Object.values(item).every(nested => !nested.error?.trim())
-        );
+         );
          if (imaeValid && imageValidate) {
             setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 0, ...previousIndex.slice(pagecount)]));
          } else {
@@ -308,6 +321,16 @@ const body = { ...CategoryInput, TableData: TableData,loginData:loginData,produc
 
    return (
       <>
+       <Snackbar open={responseMeg} onClose={handleClose} autoHideDuration={3000} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+        <Alert
+          onClose={handleClose}
+          severity={responseMeg && responseMeg?.status !== 200 ?"danger":"success"}
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+         {responseMeg?responseMeg.message:null}
+        </Alert>
+      </Snackbar>
          <div className={`overlap ${!isloading ? 'd-none' : ''}`}><div className="fadeloader"><FadeLoader color="#ccc" /></div></div>
          <Row md={1} className="g-2">
             <div className="add-product-head  rounded-2  py-1">
@@ -635,7 +658,7 @@ const body = { ...CategoryInput, TableData: TableData,loginData:loginData,produc
                   })
                ) : null}
                <Col md={12}>
-                  <Button className="nextbutton me-4" onClick={(e) => handlePublish(e)} style={{ background: '#362465', border: 'none', float: 'right' }}>Publish</Button>
+                  {!responseMeg &&(<Button className="nextbutton me-4" disabled={isloading || PageValidation.every(val=>val===1)} onClick={(e) => handlePublish(e)} style={{ background: '#362465', border: 'none', float: 'right' }}>Publish</Button>)}
                </Col>
             </Row>
          </div>)}
