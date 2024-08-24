@@ -1,5 +1,5 @@
 "use client"
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
 import Badge from "react-bootstrap/Badge";
@@ -9,10 +9,29 @@ import Link from "next/link";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import deco_cake from "/public/assets/product_store/choclate.webp";
-import { FaThumbsUp,FaPlus } from "react-icons/fa";
+import { FaThumbsUp,FaPlus, FaThumbsDown } from "react-icons/fa";
 import Image from "next/image";
+import { AuthContext } from "@/app/common/auth";
+import { GetFetchAPI } from "@/app/common/serverFunctions";
+import Cookies from "js-cookie";
 
 function ManageProduct() {
+ const [Data,setData] = useState([])
+ const {loginData} = useContext(AuthContext)
+
+ 
+useEffect(()=>{
+  if(!loginData) return
+  // return console.log('useeffect',loginData)
+const url = 'getListedProduct?id='+loginData.loginId
+const token = Cookies.get('token')
+ GetFetchAPI(url,token).then((response)=>{
+  setData(response.data)
+ }).catch((err)=>{
+  console.log('error while fetching data: ',err)
+ })
+},[loginData])
+console.log(Data)
   return (
     <>
       <Container fluid>
@@ -20,7 +39,7 @@ function ManageProduct() {
       <Link href="./mange-products/add-product"><Button variant="secondary"><span><FaPlus /></span> Add Product</Button></Link>
         </div>
         <Row xs={1} md={1} className="g-4">
-          {Array.from({ length: 4 }).map((_, idx) => (
+          {Data.length != 0 ? Data.map((items, idx) => (
             <Col key={idx}>
               <Card>
                 <Card.Body>
@@ -29,30 +48,30 @@ function ManageProduct() {
                       className="d-flex  align-items-center"
                       style={{ width: "20%" }}
                     >
-                      <Image src={deco_cake} priority={true} alt="demo_cake" height={50} />
+                      <Image src={process.env.NEXT_PUBLIC_PUBLIC_URL+'uploads/'+items.displayImg} priority={true} alt="demo_cake" height={60} width={60}/>
                       <p className="text-capitalize fw-semibold product-name">
-                        cocolate cakebbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+                       {items.itemName}
                       </p>
                     </div>
                     <div style={{ width: "10%" }}>
                       <p className="fw-bold">Status</p>
                       <div>
-                        <Badge bg="success">Active</Badge>
+                        <Badge bg={items.status?"success":"warning"}>{items.status?'Active':'waiting'}</Badge>
                       </div>
                     </div>
                     <div style={{ width: "20%" }}>
                       <p className="fw-bold">Inventory</p>
                       <div>
                         <span className="text-danger fw-semibold">
-                          8 of stock
+                          {items.quantity} of stock
                         </span>{" "}
-                        of 6 variant
+                        of {items.VariantCount} variant
                       </div>
                     </div>
                     <div style={{ width: "7%" }}>
                       <p className="fw-bold">Price</p>
                       <div>
-                        <span className="fw-semibold">999</span>
+                        <span className="fw-semibold">{items.price}</span>
                       </div>
                     </div>
                     <div style={{ width: "20%" }}>
@@ -65,14 +84,18 @@ function ManageProduct() {
                     <div style={{ width: "10%" }}>
                       <p className="fw-bold">Availability</p>
                       <div className="text-center">
-                        <span className="text-success fs-3 text-center"><FaThumbsUp /></span>
+                        {items.active?(
+                          <span className="text-success fs-3 text-center"><FaThumbsUp /></span>
+                        ):(
+                          <span className="text-danger fs-3 text-center"><FaThumbsDown /></span>
+                        )}
                       </div>
                     </div>
                   </div>
                 </Card.Body>
               </Card>
             </Col>
-          ))}
+          )):null}
         </Row>
       </Container>
     </>

@@ -39,6 +39,7 @@ const Login = () => {
         const data = await response.json()
         //  setLoginData(data.data);
         await Cookies.set('token', data.token, new Date(Date.now() + 86400000))
+        setLoginData(data.data)
         setActive(true)
       }else{
         const error = await response.json()

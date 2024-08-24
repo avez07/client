@@ -566,7 +566,7 @@ const AddInfo = ({ params }) => {
                               }))
                            }} className="Listing-img-uploader" />
                               <span><TbCameraPlus /></span></>) : (<><img src={URL.createObjectURL(uploadImages.mainImage[index].url)} alt='upload-imges' /><span onClick={(e) => handleImgdeleted(e, 'mainImage', index)} id="img-close-icon"><IoMdCloseCircle /></span>
-                                 <div className="text-center text-capitalize fw-bold text-danger mt-1">{uploadImages.mainImage[index].error}</div>
+                                 <div className="text-center text-capitalize fw-bold text-danger  image-validation">{uploadImages.mainImage[index].error}</div>
 
                               </>)}
                         </div>
@@ -609,7 +609,7 @@ const AddInfo = ({ params }) => {
                                     <span onClick={(e) => handleImgdeleted(e, variantName, idk)} id="img-close-icon">
                                        <IoMdCloseCircle />
                                     </span>
-                                    <div className="text-center text-capitalize fw-bold text-danger mt-1">{uploadImages[variantName][idk].error}</div>
+                                    <div className="text-center text-capitalize fw-bold text-danger  image-validation">{uploadImages[variantName][idk].error}</div>
                                  </>
                               )}
                            </div>

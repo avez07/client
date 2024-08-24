@@ -1111,3 +1111,12 @@ form label {
 .content-night .image-uploder-custom span {
   color: #1a202e;
 }
+.image-validation{
+  /* z-index: 100; */
+  margin: 31px opx;
+  position: absolute;
+  bottom: 27%;
+  background-color: antiquewhite;
+  left: 25%;
+  width: 135px;
+}
