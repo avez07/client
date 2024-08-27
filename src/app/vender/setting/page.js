@@ -68,6 +68,8 @@ const Setting = () => {
                         <li onClick={(e) => setActive(4)} className={`${active == 4 ? 'active' : ''}`}>Carrier allowed</li>
                     </ul>
                 </Col>
+                {active === 1 ? (
+
                 <Col md={8} className={`store ${active == 1 ? 'd-block' : 'd-none'} `}>
                     <form onSubmit={formik.handleSubmit}>
                         <div className="store detail">
@@ -268,6 +270,10 @@ const Setting = () => {
                         </div>
                     </form>
                 </Col>
+                ):
+                active === 2 ?(
+
+
                 <Col md={8} className={`store ${active == 2 ? 'd-block' : 'd-none'} `}>
                     <div className="store detail">
                         <div className="coupons-button d-flex justify-content-end">
@@ -300,6 +306,10 @@ const Setting = () => {
                         </Card>
                     </div>
                 </Col>
+                ):
+                active === 3 ? (
+
+
                 <Col md={8} className={`store ${active == 3 ? 'd-block' : 'd-none'} `}>
                     <form>
                         <div className="store detail">
@@ -382,6 +392,10 @@ const Setting = () => {
                         </div>
                     </form>
                 </Col>
+                ):
+                active === 4 ? (
+
+
                 <Col md={8} className={`store ${active == 4 ? 'd-block' : 'd-none'} `}>
                     <form>
                         <div className="store detail">
@@ -429,6 +443,8 @@ const Setting = () => {
                         </div>
                     </form>
                 </Col>
+                ):null}
+
             </Row>
         </Container>
 

@@ -38,7 +38,9 @@ function ManageProduct() {
     }).catch((err) => {
       console.log('error while fetching data: ', err)
     })
-    setIsloading(false)
+    setTimeout(() => {
+      setIsloading(false)
+    }, 700);
   }, [loginData, page])
   return (
     <>

@@ -1,8 +1,11 @@
 "use client"
-import React from "react";
+import React, { useContext, useState } from "react";
 import { Modal, Button, Row, Col, Card, Form } from 'react-bootstrap';
 import { useFormik } from 'formik'
 import * as Yup from 'yup';
+import { PostApi } from "./serverFunctions";
+import Cookies from "js-cookie";
+import { AuthContext } from "./auth";
 
 const schmea = Yup.object().shape({
     coupen_Code: Yup.string().required("coupen code is required"),
@@ -23,7 +26,9 @@ const schmea = Yup.object().shape({
 })
 
 const CuponModel = (props) => {
+    const {loginData} = useContext(AuthContext)
     const [active, setActive] = React.useState(1);
+    const [res,setRes] = useState({})
 
     const getcouponcode = () => {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -50,7 +55,11 @@ const CuponModel = (props) => {
             usage_copenLimit: '',
             usage_XitemLimit: '0',
             usage_UserLimit: '0',
-        }, validationSchema: schmea, onSubmit: (values) => console.log(values)
+        }, validationSchema: schmea, onSubmit: async (values) => {
+            const token = Cookies.get('token')
+           const body =   {...values,id:loginData.loginId}
+            PostApi('createCoupen',JSON.stringify(values),token).then((response)=>setRes(response)).catch(error=>setRes(error))
+        }
     })
     return (
         <Modal

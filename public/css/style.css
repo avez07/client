@@ -973,15 +973,18 @@ form label {
 
 .overlap {
   height: 100%;
-  width: 99%;
+  width: 100%;
   background: #ebebeb24;
-  position: absolute;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
 }
 
 .fadeloader {
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: 58%;
 }
 
 .category-DropDwon,
