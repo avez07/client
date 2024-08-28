@@ -297,7 +297,6 @@ const AddInfo = ({ params }) => {
       }
 
    }, [CategoryInput, pagecount, TableData, uploadImages])
-   console.log(CategoryInput)
    const deepUpdate = (obj, path, value) => {
       const keys = path.split('.');
       const lastKey = keys.pop();
@@ -324,7 +323,7 @@ const AddInfo = ({ params }) => {
        <Snackbar open={responseMeg} onClose={handleClose} autoHideDuration={3000} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
         <Alert
           onClose={handleClose}
-          severity={responseMeg && responseMeg?.status !== 200 ?"danger":"success"}
+          severity={responseMeg && responseMeg?.status !== 200 ?"error":"success"}
           variant="filled"
           sx={{ width: '100%' }}
         >

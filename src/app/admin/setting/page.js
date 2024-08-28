@@ -286,6 +286,7 @@ const Setting = () => {
                                                     <div>
                                                         <Form.Check // prettier-ignore
                                                             type="switch"
+                                                            checked
                                                             className="cuopens-switch"
                                                             value='1'
                                                         />
