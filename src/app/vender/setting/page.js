@@ -1,11 +1,12 @@
 "use client"
-import React from "react";
+import React, { useState } from "react";
 import CouponModel from "@/app/common/cupoan-model";
 import { Row, Col, Container, Card, Form, Button, Alert } from 'react-bootstrap'
 import { FaBell, FaThumbsUp, FaShareAlt } from "react-icons/fa";
 import { HiOutlineShare } from "react-icons/hi";
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import ShareCoupen from "@/app/common/coupenShare";
 
 
 const schema = yup.object().shape({
@@ -29,9 +30,10 @@ const schema = yup.object().shape({
 });
 
 const Setting = () => {
-    const [active, setActive] = React.useState(1);
-    const [additionalRate, setAdditionalRate] = React.useState(0);
-    const [modalShow, setModalShow] = React.useState(false);
+    const [active, setActive] = useState(1);
+    const [additionalRate, setAdditionalRate] = useState(0);
+    const [modalShow, setModalShow] = useState(false);
+    const [shareWith,setSharWith]  = useState(false)
 
     const formik = useFormik({
         initialValues: {
@@ -304,7 +306,7 @@ const Setting = () => {
                                                                     <div><p className="subtag">Total revenew:</p><p className="fw-bold">&#8377;0</p></div>
                                                                 </div>
                                                             </div>
-                                                            <div className="share-button text-capitalize text-center d-flex justify-content-center align-items-center py-1" style={{ cursor: 'pointer' }}><HiOutlineShare /> share now </div>
+                                                            <div className="share-button text-capitalize text-center d-flex justify-content-center align-items-center py-1" onClick={()=>setSharWith(true)} style={{ cursor: 'pointer' }}><HiOutlineShare /> share now </div>
                                                         </Card.Body>
                                                     </Card>
                                                 </Col>
@@ -313,6 +315,7 @@ const Setting = () => {
                                     </Card.Body>
                                 </Card>
                             </div>
+                            <ShareCoupen show={shareWith} onHide={() => setSharWith(false)}/>
                         </Col>
                     ) :
                         active === 3 ? (

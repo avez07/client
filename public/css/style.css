@@ -591,6 +591,7 @@ option:hover {
   color: #000 !important;
 }
 
+
 /* setting */
 .setting-list-group {
   padding: 0;
@@ -603,6 +604,16 @@ option:hover {
   font-weight: 600;
   text-transform: capitalize;
 
+}
+
+.shareWith .active .shareWith-icon{
+color: #999797;
+}
+.modal{
+  z-index: 1050;
+}
+.modal-backdrop {
+  z-index: 1040;
 }
 
 /* shiping rate table  */
