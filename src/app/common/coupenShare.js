@@ -43,29 +43,58 @@ const ShareCoupen = (props) => {
             };
         }
     }
+    const handleDownload = async () => {
+        setIsloading(true)
+        try {
+            const response = await fetch(process.env.NEXT_PUBLIC_APP_URL+'downloadCoupen', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/pdf',
+                },
+            });
+            if (!response.ok) throw new Error('Network response was not ok');
+            
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'coupon.pdf');
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('There was an error downloading the file:', error);
+        }
+        setTimeout(() => {
+            setIsloading(false)
+            props.onHide()
+            setShareWith(0)
+        }, 700);
+    };
     useEffect(() => {
         const token = Cookies.get('token')
         if (Getuser.length > 0) return
         GetFetchAPI('getAllUser', token).then((response) => setGetuser((response.data))).catch(err => console.log('Error while Fetching: ', err))
     }, [])
-    useEffect(() => {
-        if (shareWith === 1) {
-            setIsloading(true)
-            setTimeout(() => {
-                setIsloading(false)
-                props.onHide()
-                setShareWith(0)
-            }, 700);
-        }
-    }, [shareWith])
-    console.log(shareWith)
+    // useEffect(() => {
+    //     if (shareWith === 1) {
+           
+    //         setTimeout(() => {
+    //             setIsloading(false)
+    //             props.onHide()
+    //             setShareWith(0)
+    //         }, 700);
+    //     }
+    // }, [shareWith])
     return (
         <>
             <Modal {...props} size="md" aria-labelledby="contained-modal-title-vcenter" centered>
                 <Modal.Header closeButton><h5>Share Coupens Via:</h5></Modal.Header>
                 <Modal.Body>
                     <div className="d-flex justify-content-around text-center shareWith">
-                        <div style={{ cursor: 'pointer' }} className={`${shareWith == 1 ? 'active' : ''}`} onClick={() => setShareWith(1)}><span className="shareWith-icon"><FaDownload className="fs-4" /></span><p className="fs-6">Download</p></div>
+                        <div style={{ cursor: 'pointer' }} className={`${shareWith == 1 ? 'active' : ''}`} onClick={(e) => {setShareWith(1),handleDownload(e)}}><span className="shareWith-icon"><FaDownload className="fs-4" /></span><p className="fs-6">Download</p></div>
                         <div style={{ cursor: 'pointer' }} className={`${shareWith == 2 ? 'active' : ''}`} onClick={() => setShareWith(2)}><span className="shareWith-icon"><FaEnvelopeOpen className="fs-4" /></span><p className="fs-6">Email</p></div>
                         <div style={{ cursor: 'pointer' }} className={`${shareWith == 3 ? 'active' : ''}`} onClick={() => setShareWith(3)}><span className="shareWith-icon"><FaUser className="fs-4" /></span><p className="fs-6">Direct</p></div>
                     </div>
