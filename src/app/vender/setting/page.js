@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import CouponModel from "@/app/common/cupoan-model";
 import { Row, Col, Container, Card, Form, Button, Alert } from 'react-bootstrap'
 import { FaBell, FaThumbsUp, FaShareAlt } from "react-icons/fa";
@@ -7,6 +7,9 @@ import { HiOutlineShare } from "react-icons/hi";
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import ShareCoupen from "@/app/common/coupenShare";
+import { GetFetchAPI } from "@/app/common/serverFunctions";
+import { AuthContext } from "@/app/common/auth";
+import Cookies from "js-cookie";
 
 
 const schema = yup.object().shape({
@@ -31,9 +34,11 @@ const schema = yup.object().shape({
 
 const Setting = () => {
     const [active, setActive] = useState(1);
+    const {loginData} = useContext(AuthContext)
     const [additionalRate, setAdditionalRate] = useState(0);
     const [modalShow, setModalShow] = useState(false);
     const [shareWith,setSharWith]  = useState(false)
+    const [AllCoupens,setAllCoupens] = useState([])
 
     const formik = useFormik({
         initialValues: {
@@ -57,7 +62,12 @@ const Setting = () => {
         }
 
     })
-    // console.log(formik.values);
+    useEffect(()=>{
+        if(active !== 2 || !loginData) return
+        const loginId = loginData.loginId
+        const token = Cookies.get('token')
+        GetFetchAPI('getAllCoupen?id='+loginId,token).then((response)=>console.log(response)).catch(err=>console.log('Error while Fectching: ',err))
+    },[active,loginData])
     return (
         <Container>
             <Row xs={1} md={2} className="g-4">
