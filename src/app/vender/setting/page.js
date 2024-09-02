@@ -1,8 +1,13 @@
 "use client"
 import React, { useContext, useEffect, useState } from "react";
+import percentageImage from '/public/assets/percentage-discount.png'
+import cart_discount from '/public/assets/cart-discount.png'
+import tagDiscount from '/public/assets/tagDiscount.png'
+
 import CouponModel from "@/app/common/cupoan-model";
 import { Row, Col, Container, Card, Form, Button, Alert } from 'react-bootstrap'
-import { FaBell, FaThumbsUp, FaShareAlt } from "react-icons/fa";
+import { Pagination, Stack } from "@mui/material"
+import { FaBell, FaThumbsUp, } from "react-icons/fa";
 import { HiOutlineShare } from "react-icons/hi";
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -10,6 +15,8 @@ import ShareCoupen from "@/app/common/coupenShare";
 import { GetFetchAPI } from "@/app/common/serverFunctions";
 import { AuthContext } from "@/app/common/auth";
 import Cookies from "js-cookie";
+import { FadeLoader } from 'react-spinners';
+import Image from "next/image";
 
 
 const schema = yup.object().shape({
@@ -34,11 +41,14 @@ const schema = yup.object().shape({
 
 const Setting = () => {
     const [active, setActive] = useState(1);
-    const {loginData} = useContext(AuthContext)
+    const { loginData } = useContext(AuthContext)
     const [additionalRate, setAdditionalRate] = useState(0);
     const [modalShow, setModalShow] = useState(false);
-    const [shareWith,setSharWith]  = useState(false)
-    const [AllCoupens,setAllCoupens] = useState([])
+    const [shareWith, setSharWith] = useState(false)
+    const [AllCoupens, setAllCoupens] = useState([])
+    const [isloading, setIsloading] = useState(false)
+    const [page, setPage] = useState(1)
+    const [TotalCount, setTotalCount] = useState(1)
 
     const formik = useFormik({
         initialValues: {
@@ -62,19 +72,45 @@ const Setting = () => {
         }
 
     })
-    useEffect(()=>{
-        if(active !== 2 || !loginData) return
-        const loginId = loginData.loginId
+    const handleactivechange = async (id) => {
+        setIsloading(true)
+        const Url = `${process.env.NEXT_PUBLIC_APP_URL}getAllCoupen?id=${id}`
         const token = Cookies.get('token')
-        GetFetchAPI('getAllCoupen?id='+loginId,token).then((response)=>console.log(response)).catch(err=>console.log('Error while Fectching: ',err))
-    },[active,loginData])
+        const response = await fetch(Url, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + token
+            },
+        })
+        console.log(await response.json())
+        if (response.ok) {
+            const newObj = AllCoupens.map((items) => items._id === id ? { ...items, Active: !items.Active } : items)
+            setAllCoupens(newObj)
+        }
+        setTimeout(() => { setIsloading(false) }, 200);
+
+    }
+    const handlePageChange = (event, value) => setPage(value)
+    useEffect(() => {
+        if (active !== 2 || !loginData) return
+        setIsloading(true)
+        const loginId = loginData.loginId
+        const url = `getAllCoupen?id=${loginId}+&page=${page}&limit=4`
+        const token = Cookies.get('token')
+        GetFetchAPI(url, token).then((response) => { setAllCoupens(response.data.Document), setTotalCount(response.data.TotalCount) }).catch(err => console.log('Error while Fectching: ', err))
+        setTimeout(() => { setIsloading(false) }, 500);
+    }, [active, loginData, page])
+    console.log(AllCoupens[0])
     return (
         <Container>
+            <div className={`overlap ${!isloading ? 'd-none' : ''}`}><div className="fadeloader"><FadeLoader color="#ccc" /></div></div>
             <Row xs={1} md={2} className="g-4">
                 <Col md={4}>
                     <p>Getting Started</p>
                     <ul className="setting-list-group">
                         <li onClick={(e) => setActive(1)} className={`${active == 1 ? 'active' : ''}`}>store detail</li>
+                        <li onClick={(e) => setActive(5)} className={`${active == 5 ? 'active' : ''}`}>Billing</li>
                         <li onClick={(e) => setActive(2)} className={`${active == 2 ? 'active' : ''}`}>Coupons</li>
                         <li onClick={(e) => setActive(3)} className={`${active == 3 ? 'active' : ''}`}>shipping and delivery</li>
                         <li onClick={(e) => setActive(4)} className={`${active == 4 ? 'active' : ''}`}>Carrier allowed</li>
@@ -284,49 +320,64 @@ const Setting = () => {
                     </Col>
                 ) :
                     active === 2 ? (
-
-
-                        <Col md={8} className={`store ${active == 2 ? 'd-block' : 'd-none'} `}>
-                            <div className="store detail">
-                                <div className="coupons-button d-flex justify-content-end">
-                                    <Button style={{ background: '#3e2d68', border: 'none', fontSize: '15px' }} onClick={() => setModalShow(true)} className="mb-3 text-capitalize" >create coupons</Button>
-                                    <CouponModel show={modalShow} onHide={() => setModalShow(false)} />
-                                </div>
-                                <Card>
-                                    <Card.Body>
-                                        <Card.Title>Coupons</Card.Title>
-                                        <Row xs={1} md={2} className="g-4">
-                                            {Array.from({ length: 4 }).map((_, idx) => (
-                                                <Col key={idx}>
-                                                    <Card className="copen-card">
-                                                        <Card.Body className="p-2">
-                                                            <Card.Title>BKRSKP4I7</Card.Title>
-                                                            <div>
-                                                                <Form.Check // prettier-ignore
-                                                                    checked
-                                                                    type="switch"
-                                                                    className="cuopens-switch"
-                                                                    value='1'
-                                                                />
-                                                            </div>
-                                                            <div className="cupon-item">
-                                                                <p className="subtag mb-2 fw-semibold">15% off on order above  Rs.300.</p>
-                                                                <div className="d-flex justify-content-between">
-                                                                    <div><p className="subtag">Time used:</p><p className="fw-bold">0</p></div>
-                                                                    <div><p className="subtag">Total revenew:</p><p className="fw-bold">&#8377;0</p></div>
+                        <>
+                            <Col md={8} className={`store ${active == 2 ? 'd-block' : 'd-none'} `}>
+                                <div className="store detail">
+                                    <div className="coupons-button d-flex justify-content-end">
+                                        <Button style={{ background: '#3e2d68', border: 'none', fontSize: '15px' }} onClick={() => setModalShow(true)} className="mb-3 text-capitalize" >create coupons</Button>
+                                        <CouponModel show={modalShow} onHide={() => setModalShow(false)} />
+                                    </div>
+                                    <Card>
+                                        <Card.Body>
+                                            <Card.Title>Coupons</Card.Title>
+                                            <Row xs={1} md={2} className="g-4">
+                                                {AllCoupens.map((items) => (
+                                                    <Col key={items._id}>
+                                                        <Card className="copen-card">
+                                                            <Card.Body className="p-2">
+                                                                <Card.Title>{items.CoupenCode}<Image className="ms-2" src={items.CoupenType == 1 ? percentageImage.src : items.CoupenType == 2 ? cart_discount.src : tagDiscount.src} height={20} width={20} loading="lazy" alt="img" /></Card.Title>
+                                                                <div>
+                                                                    <Form.Check // prettier-ignore
+                                                                        checked={items.Active}
+                                                                        type="switch"
+                                                                        className="cuopens-switch"
+                                                                        value={items.Active}
+                                                                        onChange={(e) => handleactivechange(items._id)}
+                                                                    />
                                                                 </div>
-                                                            </div>
-                                                            <div className="share-button text-capitalize text-center d-flex justify-content-center align-items-center py-1" onClick={()=>setSharWith(true)} style={{ cursor: 'pointer' }}><HiOutlineShare /> share now </div>
-                                                        </Card.Body>
-                                                    </Card>
-                                                </Col>
-                                            ))}
-                                        </Row>
-                                    </Card.Body>
-                                </Card>
-                            </div>
-                            <ShareCoupen show={shareWith} onHide={() => setSharWith(false)}/>
-                        </Col>
+                                                                <div className="cupon-item">
+                                                                    <p className="subtag mb-2 fw-semibold">{items.CoupenType == 1 ? `${items.Ammount}% off on order above  Rs.${items.MinLimit}` : `Flat ${items.Ammount} Discount On ${items.CoupenType == 2 ? 'Cart' : 'Single Product'}`}</p>
+                                                                    <div className="d-flex justify-content-between">
+                                                                        <div><p className="subtag">Time used:</p><p className="fw-bold">0</p></div>
+                                                                        <div><p className="subtag">Total revenew:</p><p className="fw-bold">&#8377;0</p></div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="share-button text-capitalize text-center d-flex justify-content-center align-items-center py-1" onClick={() => setSharWith(true)} style={{ cursor: 'pointer' }}><HiOutlineShare /> share now </div>
+                                                            </Card.Body>
+                                                        </Card>
+                                                    </Col>
+                                                ))}
+
+                                            </Row>
+                                        </Card.Body>
+                                    </Card>
+                                </div>
+                                <ShareCoupen show={shareWith} onHide={() => setSharWith(false)} />
+                            </Col>
+                            <Col md={12}>
+                                <Stack style={{ float: 'right' }}>
+                                    <Pagination count={TotalCount} page={page} sx={{
+                                        '& .MuiPaginationItem-root': {
+                                            color: '#000000', // Change to your custom color
+                                        },
+                                        '& .MuiPaginationItem-root.Mui-selected': {
+                                            backgroundColor: '#3d257e', // Change to your selected color
+                                            color: 'white', // Change text color if needed
+                                        },
+                                    }} onChange={handlePageChange} />
+                                </Stack>
+                            </Col>
+                        </>
                     ) :
                         active === 3 ? (
 
@@ -459,6 +510,92 @@ const Setting = () => {
                                                 </Card.Body>
                                             </Card>
                                         </div>
+                                        <div className="d-flex justify-content-end">
+                                            <Button style={{ background: '#3e2d68', border: 'none' }} className="mt-2" type="submit">Save</Button>
+                                        </div>
+                                    </form>
+                                </Col>
+                            ) : active == 5 ? (
+                                <Col md={8} className={`store ${active == 5 ? 'd-block' : 'd-none'} `}>
+                                    <form onSubmit={formik.handleSubmit}>
+                                        <div className="store detail">
+                                            <Card>
+                                                <Card.Body>
+                                                    <Card.Title>Bank Details</Card.Title>
+                                                    <Row xs={1} md={1} className="g-4 mt-2">
+                                                        <Col md={12}>
+                                                            <Form.Label>Bank Name<span className="text-danger">*</span></Form.Label>
+                                                            <Form.Control
+                                                                type="text"
+                                                                name="storeName"
+                                                                value={formik.values.storeName}
+                                                                onChange={formik.handleChange}
+                                                            />
+                                                            {formik.touched.storeName && formik.errors.storeName ? (
+                                                                <div className="text-danger">{formik.errors.storeName}</div>
+                                                            ) : (null)}
+                                                        </Col>
+                                                        <Col md={6}>
+                                                            <Form.Label>Account No.<span className="text-danger">*</span></Form.Label>
+                                                            <Form.Control
+                                                                type="text"
+                                                                name="phone"
+                                                                value={formik.values.phone}
+                                                                onChange={formik.handleChange}
+                                                            />
+                                                            {formik.touched.phone && formik.errors.phone ? (
+                                                                <div className="text-danger">{formik.errors.phone}</div>
+                                                            ) : (null)}
+                                                        </Col>
+                                                        <Col md={6}>
+                                                            <Form.Label>IFSC Code<span className="text-danger">*</span></Form.Label>
+                                                            <Form.Control
+                                                                type="text"
+                                                                name="storeEmail"
+                                                                value={formik.values.storeEmail}
+                                                                onChange={formik.handleChange}
+                                                            />
+                                                            {formik.touched.storeEmail && formik.errors.storeEmail ? (
+                                                                <div className="text-danger">{formik.errors.storeEmail}</div>
+                                                            ) : (null)}
+                                                        </Col>
+                                                        <Col sm={12}>
+                                                            <Alert className="p-2" style={{ fontSize: '14px' }} variant='warning'>
+                                                                <FaBell className="me-2" />
+                                                                Confirm that you have access to johndoe@gmail.com in sender email settings.
+                                                            </Alert>
+                                                        </Col>
+                                                    </Row>
+
+                                                </Card.Body>
+                                            </Card>
+                                        </div>
+                                        <div className="billing-details mt-3">
+                                            <Card>
+                                                <Card.Body>
+                                                    <Card.Title>Cards</Card.Title>
+                                                    <Row xs={1} md={1} className="g-4 mt-2">
+                                                        {Array.from({ length: 4 }, (_, index) => {
+                                                            <Col md={6}>
+                                                                <Card key={index}>
+                                                                    <Card.Body>
+                                                                        <div>Bank Of Bharadhra</div>
+                                                                        <div>XXX{('789546395').slice(-4)}</div>
+                                                                        <div>07/27</div>
+
+
+                                                                    </Card.Body>
+                                                                </Card>
+
+                                                            </Col>
+                                                        })}
+
+
+                                                    </Row>
+                                                </Card.Body>
+                                            </Card>
+                                        </div>
+
                                         <div className="d-flex justify-content-end">
                                             <Button style={{ background: '#3e2d68', border: 'none' }} className="mt-2" type="submit">Save</Button>
                                         </div>

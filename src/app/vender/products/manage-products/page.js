@@ -2,8 +2,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Card, Container, Badge, Button, Col, Row } from "react-bootstrap";
 import defaultIMG from "/public/assets/product-default-img.png"
-
-
 import Link from "next/link";
 import { FadeLoader } from 'react-spinners';
 import { FaThumbsUp, FaPlus, FaThumbsDown } from "react-icons/fa";
