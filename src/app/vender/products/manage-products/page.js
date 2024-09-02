@@ -63,7 +63,7 @@ function ManageProduct() {
                         className="d-flex  align-items-center"
                         style={{ width: "20%" }}
                       >
-                        <Image src={process.env.NEXT_PUBLIC_PUBLIC_URL + 'uploads/' + items.displayImg} onError={(e)=>e.target.src = defaultIMG} alt="demo_cake" height={60} width={60} loading="lazy" />
+                        <Image src={process.env.NEXT_PUBLIC_PUBLIC_URL + 'uploads/' + items.displayImg} onError={(e)=>e.target.src = defaultIMG.src} alt="demo_cake" height={60} width={60} loading="lazy" />
                         <p className="text-capitalize fw-semibold product-name">
                           {items.itemName}
                         </p>
