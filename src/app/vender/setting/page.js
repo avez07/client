@@ -566,7 +566,6 @@ const Setting = () => {
                                                             </Alert>
                                                         </Col>
                                                     </Row>
-
                                                 </Card.Body>
                                             </Card>
                                         </div>
@@ -589,8 +588,6 @@ const Setting = () => {
 
                                                             </Col>
                                                         })}
-
-
                                                     </Row>
                                                 </Card.Body>
                                             </Card>
@@ -601,7 +598,8 @@ const Setting = () => {
                                         </div>
                                     </form>
                                 </Col>
-                            ) : null}
+                            ) : 
+                            null}
 
             </Row>
         </Container>

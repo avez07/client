@@ -16,7 +16,7 @@ import "slick-carousel/slick/slick-theme.css";
 
 
 
-const SinglePage = () => {
+const SinglePage = ({params}) => {
     const [imgActive, setImgActive] = React.useState(0);
     const [hoverPosition, setHoverPosition] = React.useState({ x: 0, y: 0 })
     const [zoomin, setZoomin] = React.useState(false)
