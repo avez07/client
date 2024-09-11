@@ -778,7 +778,7 @@ form label {
   position: absolute;
   background-color: #e3e3e363;
   height: 120px;
-  width: 240px;
+  width: 244px;
 }
 
 .zoomin-img {
@@ -801,8 +801,9 @@ form label {
 
 .zoomin-img img {
   position: absolute;
-  height: 258%;
-  width: 146%;
+  height: 450%;
+  width: 212%;
+  object-fit: contain;
 }
 
 .star-contain {

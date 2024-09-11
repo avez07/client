@@ -1,29 +1,35 @@
 "use client"
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Slider from "react-slick";
 import { FaStar, FaRegStar, FaCamera } from "react-icons/fa";
 import { IoStar, IoStarOutline } from "react-icons/io5";
 import Link from 'next/link'
 import { FaPlus, FaMinus, FaChevronRight, FaChevronLeft } from "react-icons/fa6";
-import { BsInfoCircleFill ,BsFillQuestionCircleFill} from 'react-icons/bs'
+import { BsInfoCircleFill, BsFillQuestionCircleFill } from 'react-icons/bs'
 import { Row, Col, Container, Button, Card, Form, ProgressBar, Modal } from 'react-bootstrap'
 import cake from '/public/assets/red.jpg';
 import default_image from '/public/assets/Default_pfp.svg.png'
 import camera from '/public/assets/camera.png'
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { GetFetchAPI } from "@/app/common/serverFunctions";
 
 
 
-const SinglePage = ({params}) => {
+const SinglePage = ({ params }) => {
     const [imgActive, setImgActive] = React.useState(0);
+    const [subimgActive, setSubImgActive] = React.useState(0);
+    const [displayImge, setDisplayImg] = useState('')
     const [hoverPosition, setHoverPosition] = React.useState({ x: 0, y: 0 })
     const [zoomin, setZoomin] = React.useState(false)
     const [qty, setQty] = React.useState(1)
     const [showReviewModal, setShowReviewModal] = React.useState(false)
     const [showQuestionModal, setShowQuestionModal] = React.useState(false)
     const [ratingStar, setRatingStar] = React.useState(0)
+    const [ProductData, setProductData] = useState()
+    const [ProductColor, setProductColor] = useState(false)
+    const [variantTab, setVariantTab] = useState([])
 
 
     const handleMouseMove = (e) => {
@@ -34,7 +40,7 @@ const SinglePage = ({params}) => {
         const offsetY = (e.clientY - rect.top - 50) * scaleY;
         const parentWidth = e.currentTarget.offsetWidth;
         const parentHeight = e.currentTarget.offsetHeight;
-        const movingDivWidth = 255;
+        const movingDivWidth = 250;
         const movingDivHeight = 125;
         const maxX = parentWidth - movingDivWidth;
         const maxY = parentHeight - movingDivHeight;
@@ -54,19 +60,57 @@ const SinglePage = ({params}) => {
             <FaChevronLeft />
         </div>
     );
+    function rearrangeArray(arr, variant) {
+        const result = {};
+      
+        arr.forEach(item => {
+          if (item === "mainImage") return result.mainImage = item;
+      
+          item.split('/').reduce((acc, part, i, parts) => {
+            if (i === parts.length - 1) acc[part] = item;
+            else acc[part] = acc[part] || {};
+            return acc[part];
+          }, result);
+        });
+      
+        return result;
+      }
+    useEffect(() => {
+        const id = params.slug
+        GetFetchAPI(`productData?id=${id}`, 'NoToken').then((response) => setProductData(response.data)).catch(error => console.error(error))
 
-    return (
+    }, [])
+    useEffect(() => {
+        if (!ProductData) return
+        const url = Object.values(ProductData.ImageData)[imgActive][subimgActive].url
+        setDisplayImg(url)
+
+    }, [imgActive, subimgActive, ProductData])
+    useEffect(() => {
+        if (!ProductData) return
+        const valueToFind = ['color', 'colors']
+        const lowerCaseArray = ProductData.VariantOption.map(item => item.toLowerCase());
+        const Colorfound = valueToFind.some(value => lowerCaseArray.includes(value.toLowerCase()));
+        if (Colorfound) setProductColor(true)
+        if (ProductData.ProductDetails.VariantCheck) setVariantTab(ProductData.VariantOption)
+          const imageData =  Object.keys(ProductData.ImageData)
+        console.log(rearrangeArray(imageData,ProductData.VariantOption))
+
+    }, [ProductData])
+    console.log(ProductData)
+
+    return ProductData && (
         <>
             <Container fluid className="my-4">
                 <Row xs={1} md={1} className="g-4 mb-5">
                     <Col md={6} xs={12} className="d-flex flex-row sticky-top" style={{ height: '540px' }}>
                         <div className="d-flex flex-column single-page-imgcollect">
-                            {Array(6).fill().map((_, index) => (
-                                <Image key={index} onMouseOver={() => setImgActive(index)} onClick={() => setImgActive(index)} className={`single-page-imge-view ${imgActive == index ? 'active' : ''}`} src={cake} height={70} width={70} alt="cake" />
+                            {Object.values(Object.values(ProductData.ImageData)[imgActive]).map((items, index) => (
+                                <img key={index} onMouseOver={() => setSubImgActive(index)} onClick={() => setSubImgActive(index)} className={`single-page-imge-view ${subimgActive == index ? 'active' : ''}`} src={process.env.NEXT_PUBLIC_PUBLIC_URL + 'uploads/' + items?.url} style={{ objectFit: 'contain' }} height={70} width={70} alt="product image" loading="lazy" />
                             ))}
                         </div>
                         <div style={{ height: '540px', width: '100%', margin: '10px 0 0 10px', position: 'relative' }} onMouseEnter={() => setZoomin(true)} onMouseLeave={() => setZoomin(false)} onMouseMove={(e) => handleMouseMove(e)}>
-                            <Image src={cake} style={{ width: '535px', height: 'auto' }} alt="cake" className="single-img" />
+                            <img src={`${process.env.NEXT_PUBLIC_PUBLIC_URL}uploads/${displayImge}`} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="display imag" className="single-img" />
                             {zoomin ? (
                                 <div className="hover-mouse"
                                     style={{ left: hoverPosition.x, top: hoverPosition.y }}>
@@ -76,25 +120,27 @@ const SinglePage = ({params}) => {
                         {zoomin ? (
                             <div className="zoomimg-partent">
                                 <div className="zoomin-img">
-                                    <Image src={cake} style={{ top: -hoverPosition.y, left: -hoverPosition.x }} alt="large img" />
+                                    <img src={`${process.env.NEXT_PUBLIC_PUBLIC_URL}uploads/${displayImge}`} style={{ top: -hoverPosition.y * 2.3, left: -hoverPosition.x * 2.6 }} alt="large img" />
                                 </div>
                             </div>
                         ) : null}
 
                     </Col>
                     <Col md={6}>
-                        <div className="text-capitalize"><Link href='/#'>Brand: tycase</Link></div>
-                        <div className="fs-5 fw-bold text-capitalize">typecase Keyboard Case for Samsung Galaxy Tab A8 10.5 Inch 2022 Model (SM-X200/X205/X207), Slim Lightweight Stand Cover with Magnetically Detachable Wireless Bluetooth Keyboard, Black</div>
+                        <div className="text-capitalize"><Link href='/#'>Brand: {ProductData.ProductDetails.brandName}</Link></div>
+                        <div className="fs-5 fw-bold text-capitalize">{ProductData.ProductDetails.itemName}</div>
                         <div className="d-flex mt-3"><span className="star-contain">4.1 <FaStar /></span><span className="ms-2"><a href="#">91 Reviews</a></span></div>
                         <div className="mt-2"><span className="deals-span text-light fw-semibold">Limited time deal</span></div>
                         <div className="d-flex mt-2 fs-1"><span className="text-danger me-3">-53%</span><span className="d-flex align-items-start"><span className="rs-symbols">&#8377;</span>1899</span></div>
                         <div className="text-muted" style={{ fontSize: '14px' }}>MRP: <s>&#8377;4999</s></div>
                         <div className="text-muted fw-semibold" style={{ fontSize: '14px' }}>Inclusive of all taxes</div>
-                        <div className="mt-3">color : <span className="fw-semibold">RED</span></div>
+                        {ProductData.ProductDetails.VariantCheck && ProductColor && (<div className="mt-3">Color : <span className="fw-semibold">{imgActive == 0 ? ProductData.VirtualInfo?.Color : null}</span></div>)}
                         <div className="d-flex flex-row single-page-imgcollect">
-                            {Array(3).fill().map((_, index) => (
-                                <Image key={index} onMouseOver={() => setImgActive(index)} onClick={() => setImgActive(index)} className={`single-page-imge-view ${imgActive == index ? 'active' : ''}`} src={cake} height={70} width={70} alt="cake" />
-                            ))}
+                            {ProductColor ? (
+                                Object.values(ProductData.ImageData).map((items, index) => (
+                                    <img key={index} onClick={() => setImgActive(index)} className={`single-page-imge-view ${imgActive == index ? 'active' : ''}`} src={process.env.NEXT_PUBLIC_PUBLIC_URL + 'uploads/' + items[0]?.url} height={70} width={70} alt="product colors" style={{ objectFit: 'contain' }} />
+                                ))
+                            ) : null}
                         </div>
                         <div className="d-flex mt-3">
                             <div>Quantity: </div>
@@ -243,7 +289,7 @@ const SinglePage = ({params}) => {
                             <div className="text-center mt-5 fw-semibold">Have you tried our product? <br /> Let us and other customers know what you think!</div>
                             <div className="d-flex flex-wrap flex-md-row flex-column  justify-content-between mt-3 cart-button">
                                 <Button type='button' onClick={() => setShowReviewModal(true)} variant="danger" style={{ width: '48%' }}>Write Review</Button>
-                                <Button type="button"  onClick={() => setShowQuestionModal(true)} variant="outline-danger" style={{ width: '48%' }}>Ask Question</Button>
+                                <Button type="button" onClick={() => setShowQuestionModal(true)} variant="outline-danger" style={{ width: '48%' }}>Ask Question</Button>
                             </div>
                         </div>
                     </Col>
@@ -272,12 +318,12 @@ const SinglePage = ({params}) => {
                         />
                     </div>
                     <div className="m-4">
-                        <input type="file" className="review-file-image" multiple/>
-                        <Button type="button" variant="outline-danger" className="add-imagebtn" style={{ width: '48%' }}><Image src={camera} height={25} className="me-2" alt="camera"/>Add Photos</Button>
+                        <input type="file" className="review-file-image" multiple />
+                        <Button type="button" variant="outline-danger" className="add-imagebtn" style={{ width: '48%' }}><Image src={camera} height={25} className="me-2" alt="camera" />Add Photos</Button>
                     </div>
-                    <div style={{width:'20%'}} className="d-flex justify-content-between mt-3 ms-auto">
-                    <Button type="button" onClick={()=>setShowReviewModal(false)} variant="secondary" className="close btn" >Discart</Button>
-                    <Button type="button" variant="outline-danger" className="close btn" >Post</Button>
+                    <div style={{ width: '20%' }} className="d-flex justify-content-between mt-3 ms-auto">
+                        <Button type="button" onClick={() => setShowReviewModal(false)} variant="secondary" className="close btn" >Discart</Button>
+                        <Button type="button" variant="outline-danger" className="close btn" >Post</Button>
                     </div>
                 </Modal.Body>
             </Modal>
@@ -291,7 +337,7 @@ const SinglePage = ({params}) => {
                             <span className="text-dark ms-2" style={{ fontSize: '13px' }}>Your Review, Shared Public!</span>
                         </span>
                     </div>
-                   
+
                     <div className="mt-4">
                         <Form.Control
                             as="textarea"
@@ -299,10 +345,10 @@ const SinglePage = ({params}) => {
                             style={{ height: '100px' }}
                         />
                     </div>
-                  
-                    <div style={{width:'20%'}} className="d-flex justify-content-between mt-3 ms-auto">
-                    <Button type="button" onClick={()=>setShowQuestionModal(false)} variant="secondary" className="close btn" >Discart</Button>
-                    <Button type="button" variant="outline-danger" className="close btn" >Post</Button>
+
+                    <div style={{ width: '20%' }} className="d-flex justify-content-between mt-3 ms-auto">
+                        <Button type="button" onClick={() => setShowQuestionModal(false)} variant="secondary" className="close btn" >Discart</Button>
+                        <Button type="button" variant="outline-danger" className="close btn" >Post</Button>
                     </div>
                 </Modal.Body>
             </Modal>

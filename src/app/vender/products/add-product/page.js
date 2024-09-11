@@ -1,6 +1,7 @@
 "use client"
 import React, { useEffect, useState, useContext } from "react";
 import { FadeLoader } from 'react-spinners';
+import {Snackbar,Alert}from '@mui/material'
 import { Col, Row, Form, Button } from 'react-bootstrap'
 import { AuthContext } from '@/app/common/auth'
 import { GetFetchAPI, PostApi } from "@/app/common/serverFunctions";
@@ -10,6 +11,7 @@ import { useRouter } from "next/navigation";
 
 const ProductListing = () => {
   const { nightmode } = useContext(AuthContext);
+  const [responseMeg,setResponseMeg] = useState()
   const [isloading, setIsloading] = useState(false)
   const [CategoryData, setCategoryData] = useState({})
   const [Category, setCategory] = useState([])
@@ -17,7 +19,7 @@ const ProductListing = () => {
   const [validation, setvalidation] = useState(false)
   const [ProductData, setProductData] = useState({})
   const [pageCount, setPageCount] = useState(0)
-  const [isChecked, setIschecked] = useState({ Brandname: false, productId: false ,VariantCheck:false})
+  const [isChecked, setIschecked] = useState({ Brandname: false, productId: false ,VariantCheck:false,CodAvailable:false})
 
   const router = useRouter()
 
@@ -56,6 +58,8 @@ const ProductListing = () => {
     if (e.target.name === 'productId') newData['productId'] = e.target.value
     if (e.target.name === 'productIdCheck') { isChecked['productId'] = !isChecked['productId']; newData['productId'] = isChecked['productId'] ? 'product Id Not available' : undefined }
     if (e.target.name === 'VariantCheck') {isChecked['VariantCheck'] = !isChecked['VariantCheck']; newData['VariantCheck'] = isChecked['VariantCheck']}
+    if (e.target.name === 'CodAvailable') {isChecked['CodAvailable'] = !isChecked['CodAvailable']; newData['CodAvailable'] = isChecked['CodAvailable']}
+
     setProductData(newData)
   }
   const handleNext = async () => {
@@ -65,15 +69,31 @@ const ProductListing = () => {
     const res = await PostApi('getCategoryId', JSON.stringify(ProductData), token)
     setIsloading(false)
     if (res.status == 200) {
-      await sessionStorage.setItem('productDetails', JSON.stringify({ ...ProductData, id: res.data._id,VariantCheck:isChecked['VariantCheck'] }))
+      await sessionStorage.setItem('productDetails', JSON.stringify({ ...ProductData, id: res.data._id,VariantCheck:isChecked['VariantCheck'],CodAvailable:isChecked['CodAvailable'] }))
       router.push('/vender/products/add-product/' + res.data._id)
     }
-    if (res.status != 200) alert(res.message)
+    if (res.status != 200) setResponseMeg(res)
     setPageCount((count) => count + 1)
+  }
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setResponseMeg()
   }
 
   return (
     <>
+    <Snackbar open={responseMeg && responseMeg?.status !==200} onClose={handleClose} autoHideDuration={3000} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+        <Alert
+          onClose={handleClose}
+          severity={responseMeg && responseMeg?.status !== 200 ?"error":""}
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+         {responseMeg?.status !== 200 ? responseMeg?.message:null}
+        </Alert>
+      </Snackbar>
       <div className={`overlap ${!isloading ? 'd-none' : ''}`}><div className="fadeloader"><FadeLoader color="#ccc" /></div></div>
       <div>
         <Row md={1} className="g-3">
@@ -110,8 +130,11 @@ const ProductListing = () => {
               ) : null}
             </div>
           </Col>
-          <Col md={12}>
+          <Col md={6}>
             <Form.Check type="checkbox" name="VariantCheck" checked={isChecked['VariantCheck']} className="brand-not-avail my-2" onChange={(e) => { handlleInputChange(e) }} label="Product Has Variant" />
+          </Col>
+          <Col md={6}>
+            <Form.Check type="checkbox" name="CodAvailable" checked={isChecked['CodAvailable']} className="brand-not-avail my-2" onChange={(e) => { handlleInputChange(e) }} label="Cod Paymode Available" />
           </Col>
           <Col md={6}>
             <Form.Label>Brand Name<span className="text-danger">*</span></Form.Label>

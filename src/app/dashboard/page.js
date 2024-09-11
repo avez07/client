@@ -53,8 +53,8 @@ function home() {
     if (response.status == 200) setProduct(Data.data)
   }
 const handleSingleClick = (id)=>{
-  router.push(`/dashboard/catelog/${id}`)
-
+  const url = `/dashboard/catelog/${id}`
+  window.open(url, '_blank');
 }
   useState(() => {
     FetchData()
@@ -253,7 +253,7 @@ const handleSingleClick = (id)=>{
               {product.map((items, index) => (
                 <Col key={index}>
                   <Card>
-                    <Card.Img style={{ cursor: 'pointer' }} onClick={(e)=>handleSingleClick(items._id)} variant="top" src={process.env.NEXT_PUBLIC_PUBLIC_URL + 'uploads/' + items.displayImg} />
+                    <Card.Img style={{ cursor: 'pointer' }} onClick={(e)=>handleSingleClick(items.id)} variant="top" src={process.env.NEXT_PUBLIC_PUBLIC_URL + 'uploads/' + items.displayImg} />
                   </Card>
                 </Col>
               ))}
