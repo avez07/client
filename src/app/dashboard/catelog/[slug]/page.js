@@ -30,6 +30,10 @@ const SinglePage = ({ params }) => {
     const [ProductData, setProductData] = useState()
     const [ProductColor, setProductColor] = useState(false)
     const [variantTab, setVariantTab] = useState([])
+    const [variantName, setVariantName] = useState()
+    const [valueToFind, setValuetofind] = useState(['color','Colour', 'colors', 'shapes', 'styles', 'designs', 'Patterns', 'Finishes'])
+
+
 
 
     const handleMouseMove = (e) => {
@@ -60,21 +64,16 @@ const SinglePage = ({ params }) => {
             <FaChevronLeft />
         </div>
     );
-    function rearrangeArray(arr, variant) {
-        const result = {};
-      
-        arr.forEach(item => {
-          if (item === "mainImage") return result.mainImage = item;
-      
-          item.split('/').reduce((acc, part, i, parts) => {
-            if (i === parts.length - 1) acc[part] = item;
-            else acc[part] = acc[part] || {};
-            return acc[part];
-          }, result);
-        });
-      
-        return result;
-      }
+    function rearrangeArray(title, variant) {
+        const variantData = variant.map(item => item.split('/').map(val => val.toLowerCase())); // Convert all values to lowercase
+        const uniqueValues = title.reduce((acc, currentTitle, index) => {
+            const values = variantData.map(variant => variant[index]);
+            acc[currentTitle] = [...new Set(values)]; // Remove duplicates using Set
+            return acc;
+        }, {});
+
+        return uniqueValues
+    }
     useEffect(() => {
         const id = params.slug
         GetFetchAPI(`productData?id=${id}`, 'NoToken').then((response) => setProductData(response.data)).catch(error => console.error(error))
@@ -88,17 +87,28 @@ const SinglePage = ({ params }) => {
     }, [imgActive, subimgActive, ProductData])
     useEffect(() => {
         if (!ProductData) return
-        const valueToFind = ['color', 'colors']
         const lowerCaseArray = ProductData.VariantOption.map(item => item.toLowerCase());
         const Colorfound = valueToFind.some(value => lowerCaseArray.includes(value.toLowerCase()));
         if (Colorfound) setProductColor(true)
         if (ProductData.ProductDetails.VariantCheck) setVariantTab(ProductData.VariantOption)
-          const imageData =  Object.keys(ProductData.ImageData)
-        console.log(rearrangeArray(imageData,ProductData.VariantOption))
+        const [mainImage, ...rest] = Object.keys(ProductData.ImageData)
+    let NewVal  = ''
+    variantTab.map((item)=>{
+        const matchingKey = Object.keys(ProductData.VirtualInfo).find(
+            (key) => key.toLowerCase() === item.toLowerCase()
+        );
+        if (matchingKey) {
+            NewVal += `${ProductData.VirtualInfo[matchingKey]}/`;
+        }
+    })
+    NewVal = NewVal.slice(0,-1)
+    rest.unshift(NewVal)
+    const newOBJ = rearrangeArray(ProductData.VariantOption, rest)
+        setVariantName(newOBJ)
 
     }, [ProductData])
     console.log(ProductData)
-
+    
     return ProductData && (
         <>
             <Container fluid className="my-4">
@@ -134,14 +144,6 @@ const SinglePage = ({ params }) => {
                         <div className="d-flex mt-2 fs-1"><span className="text-danger me-3">-53%</span><span className="d-flex align-items-start"><span className="rs-symbols">&#8377;</span>1899</span></div>
                         <div className="text-muted" style={{ fontSize: '14px' }}>MRP: <s>&#8377;4999</s></div>
                         <div className="text-muted fw-semibold" style={{ fontSize: '14px' }}>Inclusive of all taxes</div>
-                        {ProductData.ProductDetails.VariantCheck && ProductColor && (<div className="mt-3">Color : <span className="fw-semibold">{imgActive == 0 ? ProductData.VirtualInfo?.Color : null}</span></div>)}
-                        <div className="d-flex flex-row single-page-imgcollect">
-                            {ProductColor ? (
-                                Object.values(ProductData.ImageData).map((items, index) => (
-                                    <img key={index} onClick={() => setImgActive(index)} className={`single-page-imge-view ${imgActive == index ? 'active' : ''}`} src={process.env.NEXT_PUBLIC_PUBLIC_URL + 'uploads/' + items[0]?.url} height={70} width={70} alt="product colors" style={{ objectFit: 'contain' }} />
-                                ))
-                            ) : null}
-                        </div>
                         <div className="d-flex mt-3">
                             <div>Quantity: </div>
                             <div className="d-flex align-items-center ms-3">
@@ -155,45 +157,87 @@ const SinglePage = ({ params }) => {
                         {isNaN(qty) || !qty || qty <= 0 ? (
                             <span className="text-danger mt-2">Invalid  quantity!</span>
                         ) : null}
-                        <div className="mt-3">Size : <span className="fw-semibold">XL</span></div>
-                        <div className="d-flex flex-wrap flex-row single-page-imgcollect available size">
-                            <div className="sizetab active">Xs</div>
-                            <div className="sizetab">S</div>
-                            <div className="sizetab">M</div>
-                            <div className="sizetab">L</div>
-                            <div className="sizetab">XL</div>
-                            <div className="sizetab">XXL</div>
-                            <div className="sizetab">XXXL</div>
-                        </div>
+
+
+                        {ProductData.ProductDetails.VariantCheck && variantTab.map((variant, index) => {
+                            if (valueToFind.some(value => variant.toLowerCase().includes(value.toLowerCase()))) {
+                                return (
+                                    <div key={index}>
+                                        {ProductData.ProductDetails.VariantCheck && ProductColor && (
+                                            <div className="mt-3">
+                                                Color : <span className="fw-semibold">{imgActive === 0 ? ProductData.VirtualInfo?.Color : null}</span>
+                                            </div>
+                                        )}
+                                        <div className="d-flex flex-row single-page-imgcollect">
+                                            {ProductColor ? (
+                                                Object.values(ProductData.ImageData).map((items, idx) => (
+                                                    <img
+                                                        key={idx}
+                                                        onClick={() => setImgActive(idx)}
+                                                        className={`single-page-imge-view ${imgActive === idx ? 'active' : ''}`}
+                                                        src={`${process.env.NEXT_PUBLIC_PUBLIC_URL}uploads/${items[0]?.url}`}
+                                                        height={70}
+                                                        width={70}
+                                                        alt="product colors"
+                                                        style={{ objectFit: 'contain' }}
+                                                    />
+                                                ))
+                                            ) : null}
+                                        </div>
+                                    </div>
+                                );
+                            } else {
+                                return (
+                                    <>
+                                        <div className="mt-3" key={index}>{variant}</div>
+                                        <div className="d-flex flex-wrap flex-row single-page-imgcollect available size">
+                                            {variantName[variant].map((items) => (
+                                                <div className="sizetab active" key={items}>{items}</div>
+                                            ))}
+                                        </div>
+                                    </>
+                                )
+
+                            }
+                        })}
                         <div className="d-flex flex-wrap flex-md-row flex-column  justify-content-between mt-3 cart-button">
                             <Button type='submit' className="btn btn-danger" style={{ width: '48%' }}>Add to Cart</Button>
                             <Link href="/cart" className="btn btn-outline-danger" style={{ width: '48%' }}>Buy Now</Link>
                         </div>
                         <div className="fw-bold mt-3 mb-2 fs-5">Product details: </div>
                         <div className="product-details text-capitalize">
-                            <div className=" d-flex w-50 justify-content-between"><span className="fw-semibold">Material composition</span><span className="text-start w-50">: Cotton</span></div>
-                            <div className=" d-flex w-50 justify-content-between"><span className="fw-semibold">Sleeve type</span><span className="text-start w-50">: 3/4 Sleeve</span></div>
-                            <div className=" d-flex w-50 justify-content-between"><span className="fw-semibold">Length</span><span className="text-start w-50">: Knee Length</span></div>
-                            <div className=" d-flex w-50 justify-content-between"><span className="fw-semibold">Neck style</span><span className="text-start w-50">: V-Neck</span></div>
-                            <div className=" d-flex w-50 justify-content-between"><span className="fw-semibold">Pattern</span><span className="text-start w-50">: Printed</span></div>
-                            <div className=" d-flex w-50 justify-content-between"><span className="fw-semibold">Style</span><span className="text-start w-50">: Kurta</span></div>
-                            <div className=" d-flex w-50 justify-content-between"><span className="fw-semibold">Country of Origin</span><span className="text-start w-50">: India</span></div>
+                            {Object.entries(ProductData.VirtualInfo).map(([key,value])=>(
+                                <div className=" d-flex justify-content-between"  key={key}><span className="fw-semibold"style={{width:'30%'}}>{key}</span><span className="text-start" style={{width:'70%'}}>: {value}</span></div>
+                            ))}
+                            
                         </div>
-                        <div className="fw-bold mt-3 mb-2 fs-5">Additonal Information: </div>
+                        {/* <div className="fw-bold mt-3 mb-2 fs-5">Additonal Information: </div>
                         <div className="mt-3 additional-interformation text-capitalize">
-                            <div className=" d-flex w-60 justify-content-between"><span className="fw-semibold">Brand</span><span className="text-start w-50">: typecase</span></div>
-                            <div className=" d-flex w-60 justify-content-between"><span className="fw-semibold">Date First Available </span><span className="text-start w-50">: 3/4 Sleeve</span></div>
-                            <div className=" d-flex w-60 justify-content-between"><span className="fw-semibold">Manufacturer </span><span className="text-start w-50">: Knee Length</span></div>
-                            <div className=" d-flex w-60 justify-content-between"><span className="fw-semibold">Product Dimensions <span className="fw-bold">LxWxH</span></span><span className="text-start w-50">: V-Neck</span></div>
-                            <div className=" d-flex w-60 justify-content-between"><span className="fw-semibold">Item Weight</span><span className="text-start w-50">: India</span></div>
-                            <div className=" d-flex w-60 justify-content-between"><span className="fw-semibold">Packer </span><span className="text-start w-50">: Printed</span></div>
-                            <div className=" d-flex w-60 justify-content-between"><span className="fw-semibold">Department</span><span className="text-start w-50">: Kurta</span></div>
-                            <div className=" d-flex w-60 justify-content-between"><span className="fw-semibold">Included Components</span><span className="text-start w-50">: Kurta</span></div>
-                            <div className=" d-flex w-60 justify-content-between"><span className="fw-semibold">Included Components</span><span className="text-start w-50">: Kurta</span></div>
-                        </div>
+                        {Object.entries(ProductData.MoreInfo).map(([key,value])=>(
+                                <div className=" d-flex justify-content-between"  key={key}><span className="fw-semibold"style={{width:'30%'}}>{key}</span><span className="text-start" style={{width:'70%'}}>: {value}</span></div>
+                            ))}
+                        </div> */}
                         <div className="fw-bold mt-3 mb-2 fs-5">Discription: </div>
+                        <div>{ProductData.Discription || ''}</div>
                         <div>
-                            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                        <div className="fw-bold mt-3 mb-2 fs-5">About This Item: </div>
+                        <div>
+                        <ul>
+                            {Object.values(ProductData.BulletPoints).map((points,index)=>(
+                                <li key={index}>{points}</li>
+
+                        ))}</ul></div>
+                        </div>
+
+                    </Col>
+                </Row>
+                <Row>
+                    <Col md={6}>
+                    <div className="fw-bold mt-3 mb-2 fs-5">Additonal Information: </div>
+                        <div className="mt-3 additional-interformation text-capitalize">
+                        {Object.entries(ProductData.MoreInfo).map(([key,value])=>(
+                                <div className=" d-flex justify-content-between"  key={key}><span className="fw-semibold"style={{width:'30%'}}>{key}</span><span className="text-start" style={{width:'70%'}}>: {value}</span></div>
+                            ))}
                         </div>
                     </Col>
                 </Row>
