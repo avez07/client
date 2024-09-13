@@ -167,7 +167,7 @@ const AddInfo = ({ params }) => {
       }, 1000);
    }
    const handlePublish = async () => {
-      if(PageValidation.every(val=>val===1)) return false
+      if (PageValidation.every(val => val === 1)) return false
       setIsloading(true)
       const newObj = {};
       const imageFiles = [];
@@ -208,10 +208,10 @@ const AddInfo = ({ params }) => {
    }
    const handleClose = (event, reason) => {
       if (reason === 'clickaway') {
-        return;
+         return;
       }
       setResponseMeg()
-    }
+   }
    useEffect(() => {
       setVariantTab(variantOption.reduce((acc, item) => {
          acc[item] = '';
@@ -320,16 +320,16 @@ const AddInfo = ({ params }) => {
 
    return (
       <>
-       <Snackbar open={responseMeg} onClose={handleClose} autoHideDuration={3000} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
-        <Alert
-          onClose={handleClose}
-          severity={responseMeg && responseMeg?.status !== 200 ?"error":"success"}
-          variant="filled"
-          sx={{ width: '100%' }}
-        >
-         {responseMeg?responseMeg.message:null}
-        </Alert>
-      </Snackbar>
+         <Snackbar open={responseMeg} onClose={handleClose} autoHideDuration={3000} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+            <Alert
+               onClose={handleClose}
+               severity={responseMeg && responseMeg?.status !== 200 ? "error" : "success"}
+               variant="filled"
+               sx={{ width: '100%' }}
+            >
+               {responseMeg ? responseMeg.message : null}
+            </Alert>
+         </Snackbar>
          <div className={`overlap ${!isloading ? 'd-none' : ''}`}><div className="fadeloader"><FadeLoader color="#ccc" /></div></div>
          <Row md={1} className="g-2">
             <div className="add-product-head  rounded-2  py-1">
@@ -344,6 +344,7 @@ const AddInfo = ({ params }) => {
          {pagecount == 1 && (<div>
             <Row md={1} className="g-3">
                {CategoryData && CategoryData.details ? (
+
                   CategoryData.details.virtualInfo.map((item, index) => {
                      if (item.type === 'Input') {
                         return (
@@ -354,6 +355,7 @@ const AddInfo = ({ params }) => {
                               />
                            </Col>
                         );
+
                      } else if (item.type === 'DropDwon') {
                         return (
                            <Col key={`dropdown-${index}`} md={parseInt(item.size)}>
@@ -374,7 +376,42 @@ const AddInfo = ({ params }) => {
                      }
                      return null;
                   })
+
                ) : null}
+               {CategoryData && CategoryData.details && (
+                  <>
+                     <Col md={6}>
+                        <Form.Label className="fw-semibold">cost:<span className="text-danger">*</span></Form.Label>
+                        <Form.Control type="text" name='cost' value={CategoryInput?.details?.virtualInfo?.cost || ''}
+                           onChange={(e) => handleChange(e.target.value, `details.virtualInfo.cost`)}
+                        />
+                     </Col>
+                     <Col md={6}>
+                        <Form.Label className="fw-semibold">price:<span className="text-danger">*</span></Form.Label>
+                        <Form.Control type="text" name='price' value={CategoryInput?.details?.virtualInfo?.price || ''}
+                           onChange={(e) => handleChange(e.target.value, `details.virtualInfo.price`)}
+                        />
+                     </Col>
+                     <Col md={6}>
+                        <Form.Label className="fw-semibold">Discount:<span className="text-danger">*</span></Form.Label>
+                        <Form.Control type="text" name='discount' value={CategoryInput?.details?.virtualInfo?.discount || ''}
+                           onChange={(e) => handleChange(e.target.value, `details.virtualInfo.discount`)}
+                        />
+                     </Col>
+                     <Col md={6}>
+                        <Form.Label className="fw-semibold">Quantity:<span className="text-danger">*</span></Form.Label>
+                        <Form.Control type="number" name='Quantity' value={CategoryInput?.details?.virtualInfo?.quantity || ''}
+                           onChange={(e) => handleChange(e.target.value, `details.virtualInfo.quantity`)}
+                        />
+                     </Col>
+                     <Col md={6}>
+                        <Form.Label className="fw-semibold">Aves Price:<span className="text-danger">*</span></Form.Label>
+                        <Form.Control type="number" name='ActualPrice' value={CategoryInput?.details?.virtualInfo?.ActualPrice || ''}
+                           onChange={(e) => handleChange(e.target.value, `details.virtualInfo.ActualPrice`)}
+                        />
+                     </Col>
+                  </>
+               )}
                <Col md={12}>
                   <Button className="nextbutton me-4" onClick={(e) => handleNext(e)} style={{ background: '#362465', border: 'none', float: 'right' }}>Next</Button>
                </Col>
@@ -657,7 +694,7 @@ const AddInfo = ({ params }) => {
                   })
                ) : null}
                <Col md={12}>
-                  {!responseMeg &&(<Button className="nextbutton me-4" disabled={isloading || PageValidation.every(val=>val===1)} onClick={(e) => handlePublish(e)} style={{ background: '#362465', border: 'none', float: 'right' }}>Publish</Button>)}
+                  {!responseMeg && (<Button className="nextbutton me-4" disabled={isloading || PageValidation.every(val => val === 1)} onClick={(e) => handlePublish(e)} style={{ background: '#362465', border: 'none', float: 'right' }}>Publish</Button>)}
                </Col>
             </Row>
          </div>)}
