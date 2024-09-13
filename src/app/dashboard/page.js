@@ -39,7 +39,7 @@ import review_2 from "/public/assets/review/review-2.jpg";
 import review_3 from "/public/assets/review/review-3.jpg";
 import review_4 from "/public/assets/review/review-4.jpg";
 import {useRouter} from 'next/navigation'
-function home() {
+const Home = () => {
   const [product, setProduct] = useState([])
   const router = useRouter()
 
@@ -324,4 +324,4 @@ const handleSingleClick = (id)=>{
   );
 }
 
-export default home;
+export default Home;
