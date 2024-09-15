@@ -31,7 +31,7 @@ const SinglePage = ({ params }) => {
     const [ProductColor, setProductColor] = useState(false)
     const [variantTab, setVariantTab] = useState([])
     const [variantName, setVariantName] = useState()
-    const [valueToFind, setValuetofind] = useState(['color','Colour', 'colors', 'shapes', 'styles', 'designs', 'Patterns', 'Finishes'])
+    const [valueToFind, setValuetofind] = useState(['color','Bottle Size','Colour', 'colors', 'shapes', 'styles', 'designs', 'Patterns', 'Finishes'])
 
 
 

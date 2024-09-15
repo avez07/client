@@ -34,6 +34,7 @@ const AddInfo = ({ params }) => {
    const [pagecount, setPagecount] = useState(1)
    const [pointsCount, setPointsCount] = useState(1)
    const [responseMeg, setResponseMeg] = useState()
+   const [valueToFind, setValuetofind] = useState(['color','Bottle Size','Colour', 'colors', 'shapes', 'styles', 'designs', 'Patterns', 'Finishes'])
    const router = useRouter()
 
    const customStyle = {
@@ -252,6 +253,8 @@ const AddInfo = ({ params }) => {
 
       if (filteredData.length > 0) setTableData(prevData => [...prevData, ...initialData]);
    }, [VariantTab2])
+   // console.log('object',variantOption)
+
    useEffect(() => { //whole page validation
       const newData = { ...CategoryData };
       const Key = pagecount === 1 ? 'virtualInfo' : pagecount === 5 ? 'MoreInfo' : null
@@ -267,7 +270,7 @@ const AddInfo = ({ params }) => {
             setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
          }
       } else if (!Key && newData.details && pagecount == 3) {
-         if (!productPermit?.VariantCheck) return setPagecount((count) => count + 1)
+         if (!productPermit?.VariantCheck) { setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)])); return setPagecount((count) => count + 1)}
          if (VariantTab2.length == 0) return setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
 
          const newTableContent = [...TableData]
@@ -285,7 +288,11 @@ const AddInfo = ({ params }) => {
             setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
          }
       } else if (!Key && newData.details && pagecount == 4) {
-         const imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length <= 6) && (VariantTab2.length > 0 ? VariantTab2.every((name) => uploadImages.hasOwnProperty(name)) && Object.values(uploadImages).every(values => Object.keys(values).length >= 4) : true)
+         if(variantOption.filter(element=>valueToFind.includes(element)).length == 0) {
+         var imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length <= 6) && (VariantTab2.length > 0 ? VariantTab2.every((name) => uploadImages.hasOwnProperty(name))  : true)
+         }else{
+            var imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length <= 6) && (VariantTab2.length > 0 ? VariantTab2.every((name) => uploadImages.hasOwnProperty(name)) && Object.values(uploadImages).every(values => Object.keys(values).length >= 4) : true)
+         }
          const imageValidate = Object.values(uploadImages).every(item =>
             Object.values(item).every(nested => !nested.error?.trim())
          );
@@ -454,7 +461,7 @@ const AddInfo = ({ params }) => {
                <Row className="g-3">
                   <Col md={12}>
                      <div className="d-flex justify-content-around my-4"><span className="fw-semibold">Variant Containt:</span><span className="d-flex justify-content-around w-50">{CategoryData.details?.VariantOption.map((items, index) => (
-                        <span key={`check-${index}`}><Form.Check type="checkbox" name={items} onChange={(e) => handleVariantOptionChange(e, index)} key={index} label={items} /></span>))}</span></div>
+                        <span key={`check-${index}`}><Form.Check type="checkbox" name={items} checked={variantOption.includes(items)} onChange={(e) => handleVariantOptionChange(e, index)} key={index} label={items} /></span>))}</span></div>
                   </Col>
                   {variantOption.length > 0 && (
                      <>
@@ -609,7 +616,7 @@ const AddInfo = ({ params }) => {
                      </Col>
                   ))}
                </Row>
-               {VariantTab2.map((variantName, index) => (
+               {variantOption.filter(elements=>valueToFind.includes(elements)).length > 0? VariantTab2.map((variantName, index) => (
                   <Row className="g-3" key={`images${index}`}>
                      <Col md={12}><label className="fw-semibold my-3 fs-5"> Variant {variantName} Images:</label></Col>
                      {Array.from({ length: 4 }, (_, idk) => (
@@ -653,7 +660,7 @@ const AddInfo = ({ params }) => {
                      ))}
 
                   </Row>
-               ))}
+               )):null}
                <Row>
                   <Col md={12}>
                      <Button className="nextbutton me-4" onClick={(e) => handleNext(e)} style={{ background: '#362465', border: 'none', float: 'right' }}>Next</Button>
