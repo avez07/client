@@ -34,7 +34,7 @@ const AddInfo = ({ params }) => {
    const [pagecount, setPagecount] = useState(1)
    const [pointsCount, setPointsCount] = useState(1)
    const [responseMeg, setResponseMeg] = useState()
-   const [valueToFind, setValuetofind] = useState(['color','Bottle Size','Colour', 'colors', 'shapes', 'styles', 'designs', 'Patterns', 'Finishes'])
+   const [valueToFind, setValuetofind] = useState(['Color','Bottle Size','Colour', 'Colors', 'Shapes', 'Styles', 'Designs', 'Patterns', 'Finishes'])
    const router = useRouter()
 
    const customStyle = {
@@ -616,6 +616,7 @@ const AddInfo = ({ params }) => {
                      </Col>
                   ))}
                </Row>
+               {console.log(variantOption,variantOption.filter(elements=>valueToFind.includes(elements)))}
                {variantOption.filter(elements=>valueToFind.includes(elements)).length > 0? VariantTab2.map((variantName, index) => (
                   <Row className="g-3" key={`images${index}`}>
                      <Col md={12}><label className="fw-semibold my-3 fs-5"> Variant {variantName} Images:</label></Col>
