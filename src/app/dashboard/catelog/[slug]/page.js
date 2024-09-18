@@ -81,8 +81,11 @@ const SinglePage = ({ params }) => {
     }, [])
     useEffect(() => {
         if (!ProductData) return
-        const url = Object.values(ProductData.ImageData)[imgActive][subimgActive].url
-        setDisplayImg(url)
+        const currentIndex = imgActive || 0
+        const subIndex = subimgActive || 0
+        const url = Object.values(ProductData.ImageData)[currentIndex][subIndex].url
+        if(url == undefined) setSubImgActive(0)   
+        if(url) setDisplayImg(url)
 
     }, [imgActive, subimgActive, ProductData])
     useEffect(() => {
