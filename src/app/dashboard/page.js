@@ -249,11 +249,11 @@ const handleSingleClick = (id)=>{
             <div className="text-start py-2 mx-5">
               <h3>for Womens</h3>
             </div>
-            <Row xs={2} md={4} className="g-4">
+            <Row xs={2} md={4} className="g-3">
               {product.map((items, index) => (
                 <Col key={index}>
-                  <Card>
-                    <Card.Img style={{ cursor: 'pointer' }} onClick={(e)=>handleSingleClick(items.id)} variant="top" src={process.env.NEXT_PUBLIC_PUBLIC_URL + 'uploads/' + items.displayImg} />
+                  <Card style={{ height: '315px' }}>
+                    <Card.Img style={{ cursor: 'pointer', width:'100%',height:'100%',objectFit:'cover',objectPosition:'top'}}  onClick={(e)=>handleSingleClick(items.id)} variant="top" src={process.env.NEXT_PUBLIC_PUBLIC_URL + 'uploads/' + items.displayImg} />
                   </Card>
                 </Col>
               ))}

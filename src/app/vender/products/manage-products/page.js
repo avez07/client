@@ -33,6 +33,7 @@ function ManageProduct() {
     const url = `getListedProduct?id=${loginData.loginId}+&page=${page}&limit=20`
     const token = Cookies.get('token')
     GetFetchAPI(url, token).then((response) => {
+      console.log(response)
       setData(response.data.Document)
       setTotalCount(response.data.TotalCount)
     }).catch((err) => {

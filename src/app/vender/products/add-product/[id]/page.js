@@ -99,8 +99,8 @@ const AddInfo = ({ params }) => {
       const { name, value } = e.target
       if (isNaN(value)) return false
       const newData = [...TableData]
-      const IntegerValue =  ['cost', 'price', 'gst', 'discount' ]
-      newData[index][name] = IntegerValue.includes(name)?parseFloat(value) || 0 : value
+      const IntegerValue = ['cost', 'price', 'gst', 'discount']
+      newData[index][name] = IntegerValue.includes(name) ? parseFloat(value) || 0 : value
       setTableData(newData);
       calculateDerivedValues(index);
    }
@@ -236,30 +236,31 @@ const AddInfo = ({ params }) => {
          alert(response.message)
       })
    }, [])
-useEffect(()=>{
-   if(VariantTab2.includes('mainData') || !productPermit.VariantCheck) return
-   if(!productPermit.VariantCheck) setVariantTab2((array)=>[...array,'mainData'])
-},[])
-useEffect(() => {
-   const newArray = [...TableData]
-   const filteredData = VariantTab2.filter(value =>
-      !newArray.some(obj => obj.variant === value)
-   );
-   const initialData = filteredData.map(item => ({
-      variant: item,
-      quantity: 0,
-      cost: 0,
-      price: 0,
-      discount: 0,
-      gst: 12, // Assuming a fixed GST of 12%
-      margin: 0, // Placeholder for margin calculation
-      finalPrice: 0
+   useEffect(() => {
+      if (VariantTab2.includes('mainData') || productPermit.VariantCheck) return
+      if (!productPermit.VariantCheck) setVariantTab2((array) => [...array, 'mainData'])
+   }, [])
+console.log(productPermit.VariantCheck)
+   useEffect(() => {
+      const newArray = [...TableData]
+      const filteredData = VariantTab2.filter(value =>
+         !newArray.some(obj => obj.variant === value)
+      );
+      const initialData = filteredData.map(item => ({
+         variant: item,
+         quantity: 0,
+         cost: 0,
+         price: 0,
+         discount: 0,
+         gst: 12, // Assuming a fixed GST of 12%
+         margin: 0, // Placeholder for margin calculation
+         finalPrice: 0
       }));
-      
+
       if (filteredData.length > 0) setTableData(prevData => [...prevData, ...initialData]);
    }, [VariantTab2])
    // console.log('object',variantOption)
-   
+
    useEffect(() => { //whole page validation
       const newData = { ...CategoryData };
       const Key = pagecount === 1 ? 'virtualInfo' : pagecount === 5 ? 'MoreInfo' : null
@@ -275,9 +276,9 @@ useEffect(() => {
             setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
          }
       } else if (!Key && newData.details && pagecount == 3) {
-         
+
          if (VariantTab2.length == 0) return setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
-         
+
          const newTableContent = [...TableData]
          const allObjectsValid = newTableContent.every(obj =>
             Object.values(obj).every(value =>
@@ -299,25 +300,25 @@ useEffect(() => {
             var imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length <= 6) && (VariantTab2.length > 0 ? VariantTab2.every((name) => uploadImages.hasOwnProperty(name)) && Object.values(uploadImages).every(values => Object.keys(values).length >= 1 || Object.keys(values).length <= 4) : true)
          }
          // if(variantOption.filter(element=>valueToFind.includes(element)).length == 0) {
-            // var imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length <= 6) && (VariantTab2.length > 0 ? VariantTab2.every((name) => uploadImages.hasOwnProperty(name))  : true)
-            // }else if(productPermit?.VariantCheck){
-               //    var imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length <= 6) && (VariantTab2.length > 0 ? VariantTab2.every((name) => uploadImages.hasOwnProperty(name)) && Object.values(uploadImages).every(values => Object.keys(values).length >= 1 || Object.keys(values).length <=4) : true)
-               // }else{
-                  //    var imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length <= 6) && (VariantTab2.length > 0 ? VariantTab2.every((name) => uploadImages.hasOwnProperty(name)) && Object.values(uploadImages).every(values => Object.keys(values).length >= 1 || Object.keys(values).length <=4) : true)
-                  // }
-                  const imageValidate = Object.values(uploadImages).every(item =>
-                     Object.values(item).every(nested => !nested.error?.trim())
-                  );
-                  if (imaeValid && imageValidate) {
-                     setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 0, ...previousIndex.slice(pagecount)]));
-                  } else {
-                     setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
-                  }
-               }
-               
-            }, [CategoryInput, pagecount, TableData, uploadImages])
-            const deepUpdate = (obj, path, value) => {
-               const keys = path.split('.');
+         // var imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length <= 6) && (VariantTab2.length > 0 ? VariantTab2.every((name) => uploadImages.hasOwnProperty(name))  : true)
+         // }else if(productPermit?.VariantCheck){
+         //    var imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length <= 6) && (VariantTab2.length > 0 ? VariantTab2.every((name) => uploadImages.hasOwnProperty(name)) && Object.values(uploadImages).every(values => Object.keys(values).length >= 1 || Object.keys(values).length <=4) : true)
+         // }else{
+         //    var imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length <= 6) && (VariantTab2.length > 0 ? VariantTab2.every((name) => uploadImages.hasOwnProperty(name)) && Object.values(uploadImages).every(values => Object.keys(values).length >= 1 || Object.keys(values).length <=4) : true)
+         // }
+         const imageValidate = Object.values(uploadImages).every(item =>
+            Object.values(item).every(nested => !nested.error?.trim())
+         );
+         if (imaeValid && imageValidate) {
+            setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 0, ...previousIndex.slice(pagecount)]));
+         } else {
+            setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
+         }
+      }
+
+   }, [CategoryInput, pagecount, TableData, uploadImages])
+   const deepUpdate = (obj, path, value) => {
+      const keys = path.split('.');
       const lastKey = keys.pop();
       const deepObj = keys.reduce((acc, key) => {
          if (!acc[key]) acc[key] = {};
@@ -332,12 +333,12 @@ useEffect(() => {
       }, 0),
       []
    );
-   
+
    const handleChange = (value, path) => {
       debouncedUpdate(path, value);
    };
    console.log(TableData)
-   console.log('variant tab',VariantTab2)
+   console.log('variant tab', VariantTab2)
    return (
       <>
          <Snackbar open={responseMeg} onClose={handleClose} autoHideDuration={3000} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
@@ -399,7 +400,7 @@ useEffect(() => {
                   })
 
                ) : null}
-              
+
                <Col md={12}>
                   <Button className="nextbutton me-4" onClick={(e) => handleNext(e)} style={{ background: '#362465', border: 'none', float: 'right' }}>Next</Button>
                </Col>
@@ -445,7 +446,13 @@ useEffect(() => {
                      {CategoryData.details.VariantOption.map((items) => (
                         <Col md={6} key={items}>
                            <Form.Label>{items}</Form.Label>
-                           <Form.Control value={TableData?.[0]?.[items] || ''} />
+                           <Form.Control value={TableData?.[0]?.[items] || ''} onChange={(e) =>
+                              setTableData((prev) =>
+                                 prev.map((item, index) =>
+                                    index === 0 ? { ...item, [items]: e.target.value } : item
+                                 )
+                              )
+                           } />
                         </Col>
                      ))}
                      {CategoryData.details.VariantData.map((items, idk) => (
@@ -467,7 +474,6 @@ useEffect(() => {
                                              : item
                                        )
                                     )}
-
                                  styles={{ ...customStyle, width: '100%' }}
                                  options={items.options.map(option => ({ value: option, label: option }))}
                               />
@@ -490,9 +496,13 @@ useEffect(() => {
                      <Col md={6}><Form.Label>Product Cost<span className="text-danger">*</span></Form.Label><Form.Control name="cost" value={TableData?.[0]?.cost || ''} onChange={(e) => handleTabData(e, 0)} type="number" /></Col>
                      <Col md={6}><Form.Label>Product Price<span className="text-danger">*</span></Form.Label><Form.Control name="price" value={TableData?.[0]?.price || ''} onChange={(e) => handleTabData(e, 0)} type="number" /></Col>
                      <Col md={6}><Form.Label>Discount</Form.Label><Form.Control name="discount" value={TableData?.[0]?.discount || ''} onChange={(e) => handleTabData(e, 0)} type="number" /></Col>
-                     <Col md={6} name="gst"><Form.Label>Gst(%)</Form.Label><Form.Control type="number" disabled value={TableData[0]?.gst || 0}/></Col>
-                     <Col md={6} name="margin"><Form.Label>margin</Form.Label><Form.Control type="number" disabled value={TableData[0]?.margin || 0}/></Col>
-                     <Col md={6} name='avesPrice'><Form.Label>finalPrice</Form.Label><Form.Control type="number" disabled value={TableData[0]?.finalPrice || 0}/></Col>
+                     <Col md={6} name="gst"><Form.Label>Gst(%)</Form.Label><Form.Control type="number" disabled value={TableData[0]?.gst || 0} /></Col>
+                     <Col md={6} name="margin"><Form.Label>margin</Form.Label><Form.Control type="number" disabled value={TableData[0]?.margin || 0} /></Col>
+                     <Col md={6} name='avesPrice'><Form.Label>finalPrice</Form.Label><Form.Control type="number" disabled value={TableData[0]?.finalPrice || 0} /></Col>
+
+                     <Col md={12}>
+                        <Button className="nextbutton me-4" onClick={(e) => handleNext(e)} style={{ background: '#362465', border: 'none', float: 'right' }}>Next</Button>
+                     </Col>
                   </Row>
                </div>
 

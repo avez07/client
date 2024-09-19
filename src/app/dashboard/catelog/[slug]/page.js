@@ -94,23 +94,8 @@ const SinglePage = ({ params }) => {
         const Colorfound = valueToFind.some(value => lowerCaseArray.includes(value.toLowerCase()));
         if (Colorfound) setProductColor(true)
         if (ProductData.ProductDetails.VariantCheck) setVariantTab(ProductData.VariantOption)
-        const [mainImage, ...rest] = Object.keys(ProductData.ImageData)
-    let NewVal  = ''
-    variantTab.map((item)=>{
-        const matchingKey = Object.keys(ProductData.VirtualInfo).find(
-            (key) => key.toLowerCase() === item.toLowerCase()
-        );
-        if (matchingKey) {
-            NewVal += `${ProductData.VirtualInfo[matchingKey]}/`;
-        }
-    })
-    NewVal = NewVal.slice(0,-1)
-    rest.unshift(NewVal)
-    const newOBJ = rearrangeArray(ProductData.VariantOption, rest)
-        setVariantName(newOBJ)
-
     }, [ProductData])
-    console.log(ProductData)
+    console.log(variantName)
     
     return ProductData && (
         <>
@@ -144,8 +129,8 @@ const SinglePage = ({ params }) => {
                         <div className="fs-5 fw-bold text-capitalize">{ProductData.ProductDetails.itemName}</div>
                         <div className="d-flex mt-3"><span className="star-contain">4.1 <FaStar /></span><span className="ms-2"><a href="#">91 Reviews</a></span></div>
                         <div className="mt-2"><span className="deals-span text-light fw-semibold">Limited time deal</span></div>
-                        <div className="d-flex mt-2 fs-1"><span className="text-danger me-3">-53%</span><span className="d-flex align-items-start"><span className="rs-symbols">&#8377;</span>1899</span></div>
-                        <div className="text-muted" style={{ fontSize: '14px' }}>MRP: <s>&#8377;4999</s></div>
+                        <div className="d-flex mt-2 fs-1"><span className="text-danger me-3">-{(((ProductData.VariantData[imgActive].discount)/(ProductData.VariantData[imgActive].price))*100).toFixed(2)}%</span><span className="d-flex align-items-start"><span className="rs-symbols">&#8377;</span>{ProductData.VariantData[imgActive].finalPrice.toFixed(0)}</span></div>
+                        <div className="text-muted" style={{ fontSize: '14px' }}>MRP: <s>&#8377;{ProductData.VariantData[imgActive].price}</s></div>
                         <div className="text-muted fw-semibold" style={{ fontSize: '14px' }}>Inclusive of all taxes</div>
                         <div className="d-flex mt-3">
                             <div>Quantity: </div>
@@ -168,7 +153,7 @@ const SinglePage = ({ params }) => {
                                     <div key={index}>
                                         {ProductData.ProductDetails.VariantCheck && ProductColor && (
                                             <div className="mt-3">
-                                                Color : <span className="fw-semibold">{imgActive === 0 ? ProductData.VirtualInfo?.Color : null}</span>
+                                                {variant} : <span className="fw-semibold">{imgActive === 0 ? ProductData.VirtualInfo?.Color : null}</span>
                                             </div>
                                         )}
                                         <div className="d-flex flex-row single-page-imgcollect">
@@ -207,10 +192,10 @@ const SinglePage = ({ params }) => {
                             <Button type='submit' className="btn btn-danger" style={{ width: '48%' }}>Add to Cart</Button>
                             <Link href="/cart" className="btn btn-outline-danger" style={{ width: '48%' }}>Buy Now</Link>
                         </div>
-                        <div className="fw-bold mt-3 mb-2 fs-5">Product details: </div>
+                        <div className="fw-bold mt-3 mb-2 fs-5" style={{fontFamily:'-webkit-body'}}>Product details: </div>
                         <div className="product-details text-capitalize">
                             {Object.entries(ProductData.VirtualInfo).map(([key,value])=>(
-                                <div className=" d-flex justify-content-between"  key={key}><span className="fw-semibold"style={{width:'30%'}}>{key}</span><span className="text-start" style={{width:'70%'}}>: {value}</span></div>
+                                <div className=" d-flex justify-content-between" style={{fontSize:'15px'}} key={key}><span className="fw-semibold"style={{width:'30%'}}>{key}</span><span className="text-start" style={{width:'70%'}}>: {value}</span></div>
                             ))}
                             
                         </div>
@@ -220,14 +205,14 @@ const SinglePage = ({ params }) => {
                                 <div className=" d-flex justify-content-between"  key={key}><span className="fw-semibold"style={{width:'30%'}}>{key}</span><span className="text-start" style={{width:'70%'}}>: {value}</span></div>
                             ))}
                         </div> */}
-                        <div className="fw-bold mt-3 mb-2 fs-5">Discription: </div>
-                        <div>{ProductData.Discription || ''}</div>
+                        <div className="fw-bold mt-3 mb-2 fs-5" style={{fontFamily:'-webkit-body'}}>Discription: </div>
+                        <div style={{fontSize:'16px'}}>{ProductData.Discription || ''}</div>
                         <div>
-                        <div className="fw-bold mt-3 mb-2 fs-5">About This Item: </div>
+                        <div className="fw-bold mt-3 mb-2 fs-5" style={{fontFamily:'-webkit-body'}}>About This Item: </div>
                         <div>
                         <ul>
                             {Object.values(ProductData.BulletPoints).map((points,index)=>(
-                                <li key={index}>{points}</li>
+                                <li className="my-1" key={index}>{points}</li>
 
                         ))}</ul></div>
                         </div>
@@ -236,10 +221,10 @@ const SinglePage = ({ params }) => {
                 </Row>
                 <Row>
                     <Col md={6}>
-                    <div className="fw-bold mt-3 mb-2 fs-5">Additonal Information: </div>
+                    <div className="fw-bold mt-3 mb-2 fs-5" style={{fontFamily:'-webkit-body'}}>Additonal Information: </div>
                         <div className="mt-3 additional-interformation text-capitalize">
                         {Object.entries(ProductData.MoreInfo).map(([key,value])=>(
-                                <div className=" d-flex justify-content-between"  key={key}><span className="fw-semibold"style={{width:'30%'}}>{key}</span><span className="text-start" style={{width:'70%'}}>: {value}</span></div>
+                                <div className=" d-flex justify-content-between" style={{fontSize:'15px'}}  key={key}><span className="fw-semibold"style={{width:'30%'}}>{key}</span><span className="text-start" style={{width:'70%'}}>: {value}</span></div>
                             ))}
                         </div>
                     </Col>
