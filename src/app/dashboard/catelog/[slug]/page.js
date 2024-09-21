@@ -31,6 +31,7 @@ const SinglePage = ({ params }) => {
     const [ProductColor, setProductColor] = useState(false)
     const [variantTab, setVariantTab] = useState([])
     const [variantName, setVariantName] = useState()
+    const [ImageData,setImageData] =useState({})
     const [valueToFind, setValuetofind] = useState(['color','Bottle Size','Colour', 'colors', 'shapes', 'styles', 'designs', 'Patterns', 'Finishes'])
 
 
@@ -83,9 +84,10 @@ const SinglePage = ({ params }) => {
         if (!ProductData) return
         const currentIndex = imgActive || 0
         const subIndex = subimgActive || 0
-        const url = Object.values(ProductData.ImageData)[currentIndex][subIndex].url
+        const url = Object.values(ImageData)[currentIndex][subIndex]?.url
         if(url == undefined) setSubImgActive(0)   
         if(url) setDisplayImg(url)
+            console.log(url,imgActive,subimgActive)
 
     }, [imgActive, subimgActive, ProductData])
     useEffect(() => {
@@ -93,9 +95,11 @@ const SinglePage = ({ params }) => {
         const lowerCaseArray = ProductData.VariantOption.map(item => item.toLowerCase());
         const Colorfound = valueToFind.some(value => lowerCaseArray.includes(value.toLowerCase()));
         if (Colorfound) setProductColor(true)
+            // const KeyNames_Array  = ProductData.VariantData.
         if (ProductData.ProductDetails.VariantCheck) setVariantTab(ProductData.VariantOption)
+        if (ProductData.ProductDetails.VariantCheck) setVariantName(rearrangeArray(ProductData.VariantOption,Object.keys(ProductData.ImageData)))
     }, [ProductData])
-    console.log(variantName)
+    // console.log(variantName)
     
     return ProductData && (
         <>
@@ -153,7 +157,7 @@ const SinglePage = ({ params }) => {
                                     <div key={index}>
                                         {ProductData.ProductDetails.VariantCheck && ProductColor && (
                                             <div className="mt-3">
-                                                {variant} : <span className="fw-semibold">{imgActive === 0 ? ProductData.VirtualInfo?.Color : null}</span>
+                                                {variant} : <span className="fw-semibold">{variantName[variant][imgActive]}</span>
                                             </div>
                                         )}
                                         <div className="d-flex flex-row single-page-imgcollect">
@@ -199,12 +203,7 @@ const SinglePage = ({ params }) => {
                             ))}
                             
                         </div>
-                        {/* <div className="fw-bold mt-3 mb-2 fs-5">Additonal Information: </div>
-                        <div className="mt-3 additional-interformation text-capitalize">
-                        {Object.entries(ProductData.MoreInfo).map(([key,value])=>(
-                                <div className=" d-flex justify-content-between"  key={key}><span className="fw-semibold"style={{width:'30%'}}>{key}</span><span className="text-start" style={{width:'70%'}}>: {value}</span></div>
-                            ))}
-                        </div> */}
+                        
                         <div className="fw-bold mt-3 mb-2 fs-5" style={{fontFamily:'-webkit-body'}}>Discription: </div>
                         <div style={{fontSize:'16px'}}>{ProductData.Discription || ''}</div>
                         <div>

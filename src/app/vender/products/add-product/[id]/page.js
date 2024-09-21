@@ -204,7 +204,7 @@ const AddInfo = ({ params }) => {
       setIsloading(false)
       if (res.status) setResponseMeg(res)
       setTimeout(() => {
-         router.push('../mange-products')
+         router.push('../manage-products')
       }, 3000);
       sessionStorage.clear()
    }
@@ -240,6 +240,17 @@ const AddInfo = ({ params }) => {
       if (VariantTab2.includes('mainData') || productPermit.VariantCheck) return
       if (!productPermit.VariantCheck) setVariantTab2((array) => [...array, 'mainData'])
    }, [])
+useEffect(()=>{
+   if(!VariantTab2.includes('mainData') && !TableData.map((items)=>items.variant == 'mainData')) return
+   // console.log(TableData.map((items)=>items.variant == 'mainData'))
+  const findingValue = variantOption.filter(element =>  valueToFind.map(value => value.toLowerCase()).includes(element.toLowerCase()))
+  console.log('finding Value',findingValue)
+  if(findingValue.length !==0)  setTableData((items)=>items.filter(arr=>arr.variant !== 'mainData'))
+   if(findingValue.length == 0 && !VariantTab2.includes('mainData')) setVariantTab2((arr)=>[...new Set([...arr,'mainData'])])
+  
+
+
+},[VariantTab2])
 console.log(productPermit.VariantCheck)
    useEffect(() => {
       const newArray = [...TableData]
@@ -259,7 +270,7 @@ console.log(productPermit.VariantCheck)
 
       if (filteredData.length > 0) setTableData(prevData => [...prevData, ...initialData]);
    }, [VariantTab2])
-   // console.log('object',variantOption)
+   console.log('object',TableData)
 
    useEffect(() => { //whole page validation
       const newData = { ...CategoryData };
@@ -294,10 +305,10 @@ console.log(productPermit.VariantCheck)
             setPageValidation(previousIndex => ([...previousIndex.slice(0, pagecount - 1), 1, ...previousIndex.slice(pagecount)]));
          }
       } else if (!Key && newData.details && pagecount == 4) {
-         if (!productPermit?.VariantCheck || (variantOption.filter(element => valueToFind.includes(element)).length == 0)) {
-            var imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length <= 6) && (VariantTab2.length > 0 ? VariantTab2.every((name) => uploadImages.hasOwnProperty(name)) : true)
+         if (!productPermit?.VariantCheck || !(variantOption.filter(element =>  valueToFind.map(value => value.toLowerCase()).includes(element.toLowerCase())).length == 0)) {
+            var imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length <= 6)
          } else {
-            var imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length <= 6) && (VariantTab2.length > 0 ? VariantTab2.every((name) => uploadImages.hasOwnProperty(name)) && Object.values(uploadImages).every(values => Object.keys(values).length >= 1 || Object.keys(values).length <= 4) : true)
+            var imaeValid = (VariantTab2.length > 0 ? VariantTab2.every((name) => uploadImages.hasOwnProperty(name)) && Object.values(uploadImages).every(values => Object.keys(values).length >= 1 || Object.keys(values).length <= 4) : true)
          }
          // if(variantOption.filter(element=>valueToFind.includes(element)).length == 0) {
          // var imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length <= 6) && (VariantTab2.length > 0 ? VariantTab2.every((name) => uploadImages.hasOwnProperty(name))  : true)
@@ -306,6 +317,7 @@ console.log(productPermit.VariantCheck)
          // }else{
          //    var imaeValid = (uploadImages.hasOwnProperty('mainImage') && Object.keys(uploadImages.mainImage).length <= 6) && (VariantTab2.length > 0 ? VariantTab2.every((name) => uploadImages.hasOwnProperty(name)) && Object.values(uploadImages).every(values => Object.keys(values).length >= 1 || Object.keys(values).length <=4) : true)
          // }
+         console.log(imaeValid)
          const imageValidate = Object.values(uploadImages).every(item =>
             Object.values(item).every(nested => !nested.error?.trim())
          );
@@ -490,7 +502,7 @@ console.log(productPermit.VariantCheck)
                                  } />
                               </>
                            )}
-                        </Col>
+                        </Col>   
                      ))}
                      <Col md={6}><Form.Label>Quantity<span className="text-danger">*</span></Form.Label><Form.Control name="quantity" value={TableData?.[0]?.quantity || ''} onChange={(e) => handleTabData(e, 0)} type="number" /></Col>
                      <Col md={6}><Form.Label>Product Cost<span className="text-danger">*</span></Form.Label><Form.Control name="cost" value={TableData?.[0]?.cost || ''} onChange={(e) => handleTabData(e, 0)} type="number" /></Col>
@@ -623,9 +635,9 @@ console.log(productPermit.VariantCheck)
                                           </td>
                                        ))}
                                        <td><Form.Control name="quantity" value={TableData?.[index]?.quantity || ''} onChange={(e) => handleTabData(e, index)} type="number" /></td>
-                                       <td><Form.Control name="cost" value={TableData?.[index]?.cost.toFixed(2) || ''} onChange={(e) => handleTabData(e, index)} type="number" /></td>
-                                       <td><Form.Control name="price" value={TableData?.[index]?.price.toFixed(2) || ''} onChange={(e) => handleTabData(e, index)} type="number" /></td>
-                                       <td><Form.Control name="discount" value={TableData?.[index]?.discount.toFixed(2) || ''} onChange={(e) => handleTabData(e, index)} type="number" /></td>
+                                       <td><Form.Control name="cost" value={TableData?.[index]?.cost != 0 ? TableData?.[index]?.cost : ''} onChange={(e) => handleTabData(e, index)} type="number" /></td>
+                                       <td><Form.Control name="price" value={TableData?.[index]?.price != 0 ?TableData?.[index]?.price : ''} onChange={(e) => handleTabData(e, index)} type="number" /></td>
+                                       <td><Form.Control name="discount" value={TableData?.[index]?.discount != 0 ?TableData?.[index]?.discount : ''} onChange={(e) => handleTabData(e, index)} type="number" /></td>
                                        <td name="gst">{TableData[index]?.gst.toFixed(2) || 0}%</td>
                                        <td name="margin">{TableData[index]?.margin.toFixed(2) || 0}</td>
                                        <td name='avesPrice'>{TableData[index]?.finalPrice.toFixed(2) || 0}</td>
