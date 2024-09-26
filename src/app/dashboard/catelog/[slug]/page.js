@@ -31,8 +31,10 @@ const SinglePage = ({ params }) => {
     const [ProductColor, setProductColor] = useState(false)
     const [variantTab, setVariantTab] = useState([])
     const [variantName, setVariantName] = useState()
-    const [ImageData,setImageData] =useState({})
-    const [valueToFind, setValuetofind] = useState(['color','Bottle Size','Colour', 'colors', 'shapes', 'styles', 'designs', 'Patterns', 'Finishes'])
+    const [ImageData, setImageData] = useState({})
+    const [selectVariant,setSelectVariants] = useState({})
+    const [selectedParams,setSelectedParam] = useState({value:'',variant:''})
+    const [valueToFind, setValuetofind] = useState(['color', 'Bottle Size', 'Colour', 'colors', 'shapes', 'styles', 'designs', 'Patterns', 'Finishes'])
 
 
 
@@ -81,34 +83,64 @@ const SinglePage = ({ params }) => {
 
     }, [])
     useEffect(() => {
-        if (!ProductData) return
+        if (!ProductData && !ProductData?.ImageData) return
         const currentIndex = imgActive || 0
         const subIndex = subimgActive || 0
         const url = Object.values(ImageData)[currentIndex][subIndex]?.url
-        if(url == undefined) setSubImgActive(0)   
-        if(url) setDisplayImg(url)
-            console.log(url,imgActive,subimgActive)
+        if (url == undefined) setSubImgActive(0)
+        if (url) setDisplayImg(url)
 
-    }, [imgActive, subimgActive, ProductData])
+    }, [imgActive, subimgActive, ImageData])
     useEffect(() => {
         if (!ProductData) return
         const lowerCaseArray = ProductData.VariantOption.map(item => item.toLowerCase());
         const Colorfound = valueToFind.some(value => lowerCaseArray.includes(value.toLowerCase()));
         if (Colorfound) setProductColor(true)
-            // const KeyNames_Array  = ProductData.VariantData.
+        // const KeyNames_Array  = ProductData.VariantData.
         if (ProductData.ProductDetails.VariantCheck) setVariantTab(ProductData.VariantOption)
-        if (ProductData.ProductDetails.VariantCheck) setVariantName(rearrangeArray(ProductData.VariantOption,Object.keys(ProductData.ImageData)))
+        if (ProductData.ProductDetails.VariantCheck) setVariantName(rearrangeArray(ProductData.VariantOption, Object.keys(ProductData.ImageData)))
+        if (ProductData?.ImageData) {
+            const reArrageKey = ProductData.VariantData.map((items) => items.variant)
+            const reArrageObj = reArrageKey.reduce((newobj, key) => {
+                if (ProductData.ImageData.hasOwnProperty(key)) {
+                    let filteredData = Object.entries(ProductData.ImageData[key])
+                        .filter(([key, value]) => value.url !== "")
+                        .map(([key, value], index) => [index, value]);
+
+                    let reindexedData = Object.fromEntries(filteredData);
+                    newobj[key] = reindexedData
+                }
+                return newobj
+            }, {})
+            setImageData(reArrageObj)
+        }
+        if(ProductData.ProductDetails.VariantCheck){
+            const InialData = Object.keys(ProductData.ImageData)[imgActive]
+            const ArrayKey = ProductData.VariantOption
+            const NewObj = ArrayKey.reduce((acc,key,index)=>{
+                acc[key]= InialData.split('/')[index]
+                return acc;
+            },{})
+            setSelectVariants(NewObj)
+            const ObjKeys = Object.keys(NewObj)[0]
+            setSelectedParam({value:NewObj[ObjKeys],variant:ObjKeys})
+        }
     }, [ProductData])
-    // console.log(variantName)
-    
-    return ProductData && (
+    const getHeightlight = (value)=>{
+        const varraiants = Object.keys(ImageData)
+        const filterData = varraiants.filter((items)=>items.includes(value))
+        if(filterData.length > 0) return true
+        return false        
+    }
+// getHeightlight()
+    return ProductData && Object.keys(ImageData).length > 0 && (
         <>
             <Container fluid className="my-4">
                 <Row xs={1} md={1} className="g-4 mb-5">
                     <Col md={6} xs={12} className="d-flex flex-row sticky-top" style={{ height: '540px' }}>
                         <div className="d-flex flex-column single-page-imgcollect">
-                            {Object.values(Object.values(ProductData.ImageData)[imgActive]).map((items, index) => (
-                                <img key={index} onMouseOver={() => setSubImgActive(index)} onClick={() => setSubImgActive(index)} className={`single-page-imge-view ${subimgActive == index ? 'active' : ''}`} src={process.env.NEXT_PUBLIC_PUBLIC_URL + 'uploads/' + items?.url} style={{ objectFit: 'contain' }} height={70} width={70} alt="product image" loading="lazy" />
+                            {Object.values(Object.values(ImageData)[imgActive]).map((items, index) => (
+                                <img key={index} onMouseOver={() => setSubImgActive(index)} onClick={() => setSubImgActive(index)} className={`single-page-imge-view ${subimgActive == index ? 'active' : ''}`} src={process.env.NEXT_PUBLIC_PUBLIC_URL + 'uploads/' + items?.url} style={{ objectFit: 'contain' }} height={60} width={60} alt="product image" loading="lazy" />
                             ))}
                         </div>
                         <div style={{ height: '540px', width: '100%', margin: '10px 0 0 10px', position: 'relative' }} onMouseEnter={() => setZoomin(true)} onMouseLeave={() => setZoomin(false)} onMouseMove={(e) => handleMouseMove(e)}>
@@ -133,7 +165,7 @@ const SinglePage = ({ params }) => {
                         <div className="fs-5 fw-bold text-capitalize">{ProductData.ProductDetails.itemName}</div>
                         <div className="d-flex mt-3"><span className="star-contain">4.1 <FaStar /></span><span className="ms-2"><a href="#">91 Reviews</a></span></div>
                         <div className="mt-2"><span className="deals-span text-light fw-semibold">Limited time deal</span></div>
-                        <div className="d-flex mt-2 fs-1"><span className="text-danger me-3">-{(((ProductData.VariantData[imgActive].discount)/(ProductData.VariantData[imgActive].price))*100).toFixed(2)}%</span><span className="d-flex align-items-start"><span className="rs-symbols">&#8377;</span>{ProductData.VariantData[imgActive].finalPrice.toFixed(0)}</span></div>
+                        <div className="d-flex mt-2 fs-1"><span className="text-danger me-3">-{(((ProductData.VariantData[imgActive].discount) / (ProductData.VariantData[imgActive].price)) * 100).toFixed(2)}%</span><span className="d-flex align-items-start"><span className="rs-symbols">&#8377;</span>{ProductData.VariantData[imgActive].finalPrice.toFixed(0)}</span></div>
                         <div className="text-muted" style={{ fontSize: '14px' }}>MRP: <s>&#8377;{ProductData.VariantData[imgActive].price}</s></div>
                         <div className="text-muted fw-semibold" style={{ fontSize: '14px' }}>Inclusive of all taxes</div>
                         <div className="d-flex mt-3">
@@ -162,16 +194,16 @@ const SinglePage = ({ params }) => {
                                         )}
                                         <div className="d-flex flex-row single-page-imgcollect">
                                             {ProductColor ? (
-                                                Object.values(ProductData.ImageData).map((items, idx) => (
+                                                Object.values(ImageData).map((items, idx) => (
                                                     <img
                                                         key={idx}
                                                         onClick={() => setImgActive(idx)}
                                                         className={`single-page-imge-view ${imgActive === idx ? 'active' : ''}`}
                                                         src={`${process.env.NEXT_PUBLIC_PUBLIC_URL}uploads/${items[0]?.url}`}
-                                                        height={70}
-                                                        width={70}
+                                                        height={60}
+                                                        width={60}
                                                         alt="product colors"
-                                                        style={{ objectFit: 'contain' }}
+                                                        style={{ objectFit: 'contain',opacity:`${getHeightlight()?'0.6':'1'}` }}
                                                     />
                                                 ))
                                             ) : null}
@@ -184,7 +216,7 @@ const SinglePage = ({ params }) => {
                                         <div className="mt-3" key={index}>{variant}</div>
                                         <div className="d-flex flex-wrap flex-row single-page-imgcollect available size">
                                             {variantName[variant].map((items) => (
-                                                <div className="sizetab active" key={items}>{items}</div>
+                                                <div className={`sizetab ${selectVariant[variant].toLowerCase() == items?'active':''}`} key={items}>{items}</div>
                                             ))}
                                         </div>
                                     </>
@@ -196,34 +228,34 @@ const SinglePage = ({ params }) => {
                             <Button type='submit' className="btn btn-danger" style={{ width: '48%' }}>Add to Cart</Button>
                             <Link href="/cart" className="btn btn-outline-danger" style={{ width: '48%' }}>Buy Now</Link>
                         </div>
-                        <div className="fw-bold mt-3 mb-2 fs-5" style={{fontFamily:'-webkit-body'}}>Product details: </div>
+                        <div className="fw-bold mt-3 mb-2 fs-5" style={{ fontFamily: '-webkit-body' }}>Product details: </div>
                         <div className="product-details text-capitalize">
-                            {Object.entries(ProductData.VirtualInfo).map(([key,value])=>(
-                                <div className=" d-flex justify-content-between" style={{fontSize:'15px'}} key={key}><span className="fw-semibold"style={{width:'30%'}}>{key}</span><span className="text-start" style={{width:'70%'}}>: {value}</span></div>
+                            {Object.entries(ProductData.VirtualInfo).map(([key, value]) => (
+                                <div className=" d-flex justify-content-between" style={{ fontSize: '15px' }} key={key}><span className="fw-semibold" style={{ width: '30%' }}>{key}</span><span className="text-start" style={{ width: '70%' }}>: {value}</span></div>
                             ))}
-                            
-                        </div>
-                        
-                        <div className="fw-bold mt-3 mb-2 fs-5" style={{fontFamily:'-webkit-body'}}>Discription: </div>
-                        <div style={{fontSize:'16px'}}>{ProductData.Discription || ''}</div>
-                        <div>
-                        <div className="fw-bold mt-3 mb-2 fs-5" style={{fontFamily:'-webkit-body'}}>About This Item: </div>
-                        <div>
-                        <ul>
-                            {Object.values(ProductData.BulletPoints).map((points,index)=>(
-                                <li className="my-1" key={index}>{points}</li>
 
-                        ))}</ul></div>
+                        </div>
+
+                        <div className="fw-bold mt-3 mb-2 fs-5" style={{ fontFamily: '-webkit-body' }}>Discription: </div>
+                        <div style={{ fontSize: '16px' }}>{ProductData.Discription || ''}</div>
+                        <div>
+                            <div className="fw-bold mt-3 mb-2 fs-5" style={{ fontFamily: '-webkit-body' }}>About This Item: </div>
+                            <div>
+                                <ul>
+                                    {Object.values(ProductData.BulletPoints).map((points, index) => (
+                                        <li className="my-1" key={index}>{points}</li>
+
+                                    ))}</ul></div>
                         </div>
 
                     </Col>
                 </Row>
                 <Row>
                     <Col md={6}>
-                    <div className="fw-bold mt-3 mb-2 fs-5" style={{fontFamily:'-webkit-body'}}>Additonal Information: </div>
+                        <div className="fw-bold mt-3 mb-2 fs-5" style={{ fontFamily: '-webkit-body' }}>Additonal Information: </div>
                         <div className="mt-3 additional-interformation text-capitalize">
-                        {Object.entries(ProductData.MoreInfo).map(([key,value])=>(
-                                <div className=" d-flex justify-content-between" style={{fontSize:'15px'}}  key={key}><span className="fw-semibold"style={{width:'30%'}}>{key}</span><span className="text-start" style={{width:'70%'}}>: {value}</span></div>
+                            {Object.entries(ProductData.MoreInfo).map(([key, value]) => (
+                                <div className=" d-flex justify-content-between" style={{ fontSize: '15px' }} key={key}><span className="fw-semibold" style={{ width: '30%' }}>{key}</span><span className="text-start" style={{ width: '70%' }}>: {value}</span></div>
                             ))}
                         </div>
                     </Col>
