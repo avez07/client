@@ -33,6 +33,7 @@ const SinglePage = ({ params }) => {
     const [variantName, setVariantName] = useState()
     const [ImageData, setImageData] = useState({})
     const [selectVariant, setSelectVariants] = useState({})
+    const [selectVariantParams, setSelectVariantParams] = useState({ value: '', type: '' })
     const [valueToFind, setValuetofind] = useState(['color', 'Bottle Size', 'Colour', 'colors', 'shapes', 'styles', 'designs', 'Patterns', 'Finishes'])
 
 
@@ -66,7 +67,7 @@ const SinglePage = ({ params }) => {
             <FaChevronLeft />
         </div>
     );
-    function rearrangeArray(title, variant) {
+    const rearrangeArray = (title, variant) => {
         const variantData = variant.map(item => item.split('/').map(val => val.toLowerCase())); // Convert all values to lowercase
         const uniqueValues = title.reduce((acc, currentTitle, index) => {
             const values = variantData.map(variant => variant[index]);
@@ -75,6 +76,33 @@ const SinglePage = ({ params }) => {
         }, {});
 
         return uniqueValues
+    }
+
+    const getHeightlight = (value, variantNames) => {
+        if (Object.keys(variantName).length <= 1) return true
+        if (Object.values(selectVariantParams).every((value) => value == '')) return false
+        const variants = Object.keys(ImageData);
+        const FilterData = variants.filter((items) => {
+            const indexNo = Object.keys(selectVariant).indexOf(selectVariantParams.type)
+            const data = items.split('/')[indexNo]
+            if (data.toLocaleLowerCase() == selectVariantParams.value.toLowerCase()) return items
+        })
+        const indexNo = Object.keys(selectVariant).indexOf(variantNames)
+        const check = FilterData.some((items) => {
+            const data = items.split('/')[indexNo]
+            if (value.toLowerCase() == data.toLowerCase()) return true
+        })
+        if (selectVariantParams.type != variantNames && !check) {
+            const copyObject = { ...selectVariant }
+            const indexNo = Object.keys(selectVariant).indexOf(selectVariantParams.type)
+            const ImgeIndex = variants.indexOf(FilterData[0])
+            Object.keys(copyObject).forEach((key, index) => {
+                if (index !== indexNo) copyObject[key] = FilterData[0].split('/')[index]
+            })
+           if(imgActive !== ImgeIndex) setTimeout(() => { setSelectVariants(copyObject); setImgActive(ImgeIndex) }, 0)
+
+        }
+        return check
     }
     useEffect(() => {
         const id = params.slug
@@ -86,7 +114,6 @@ const SinglePage = ({ params }) => {
         const currentIndex = imgActive || 0
         const subIndex = subimgActive || 0
         const url = Object.values(ImageData)[currentIndex][subIndex]?.url
-        if (url == undefined) setSubImgActive(0)
         if (url) setDisplayImg(url)
 
     }, [imgActive, subimgActive, ImageData])
@@ -98,7 +125,7 @@ const SinglePage = ({ params }) => {
         // const KeyNames_Array  = ProductData.VariantData.
         if (ProductData.ProductDetails.VariantCheck) setVariantTab(ProductData.VariantOption)
         if (ProductData?.ImageData) {
-            const reArrageKey = ProductData.VariantData.map((items) => items.variant)
+            const reArrageKey = ProductData.VariantData.map((items) => items.variant == 'mainData' ? 'mainImage' : items.variant)
             const reArrageObj = reArrageKey.reduce((newobj, key) => {
                 if (ProductData.ImageData.hasOwnProperty(key)) {
                     let filteredData = Object.entries(ProductData.ImageData[key])
@@ -121,43 +148,14 @@ const SinglePage = ({ params }) => {
                 return acc;
             }, {})
             setSelectVariants(NewObj)
+            setSelectVariantParams({ value: NewObj[ArrayKey[0]], type: ArrayKey[0] })
+
 
         }
     }, [ProductData])
-    const getHeightlight = (value, indexName) => {
-        const variants = Object.keys(ImageData); 
-        const matchedVariants = [];
-        
-        const result = variants.map((variant) => {
-            const singleArray = variant.split('/');
-            
-          
-            const { [indexName]: removedValue, ...remainObj } = selectVariant; 
-            
-            const valuesToCheck = Object.values(remainObj);
-            valuesToCheck.push(value);
-            
-           
-            const check = valuesToCheck.every(val => 
-                singleArray.map(item => item.toLowerCase()).includes(val.toLowerCase())
-            );
-    
-            if (check) matchedVariants.push(variant); 
-            return check;
-        });
-        console.log(matchedVariants)
-       
-        if (matchedVariants.length > 0) {
-            const indexNo = variants.indexOf(matchedVariants[0]);
-           
-            // if (indexNo !== -1 && imgActive !==indexNo) setImgActive(indexNo);
-        }
-        
-       
-        return result.includes(true);
-    }
-    
-    console.log(selectVariant)
+
+
+    // console.log(selectVariantParams)
     // console.log(variantName)
     return ProductData && Object.keys(ImageData).length > 0 && (
         <>
@@ -169,17 +167,17 @@ const SinglePage = ({ params }) => {
                                 <img key={index} onMouseOver={() => setSubImgActive(index)} onClick={() => setSubImgActive(index)} className={`single-page-imge-view ${subimgActive == index ? 'active' : ''}`} src={process.env.NEXT_PUBLIC_PUBLIC_URL + 'uploads/' + items?.url} style={{ objectFit: 'contain' }} height={60} width={60} alt="product image" loading="lazy" />
                             ))}
                         </div>
-                        <div style={{ height: '540px', width: '100%', margin: '10px 0 0 10px', position: 'relative' }} onMouseEnter={() => setZoomin(true)} onMouseLeave={() => setZoomin(false)} onMouseMove={(e) => handleMouseMove(e)}>
+                        <div style={{ height: '540px', width: '100%', margin: '10px 0 0 10px', position: 'relative' }} aria-hidden="true" onMouseEnter={() => setZoomin(true)} onMouseLeave={() => setZoomin(false)} onMouseMove={(e) => handleMouseMove(e)}>
                             <img src={`${process.env.NEXT_PUBLIC_PUBLIC_URL}uploads/${displayImge}`} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="display imag" className="single-img" />
                             {zoomin ? (
-                                <div className="hover-mouse"
+                                <div className="hover-mouse" aria-hidden="true"
                                     style={{ left: hoverPosition.x, top: hoverPosition.y }}>
                                 </div>
                             ) : null}
                         </div>
                         {zoomin ? (
-                            <div className="zoomimg-partent">
-                                <div className="zoomin-img">
+                            <div className="zoomimg-partent" aria-hidden="true">
+                                <div className="zoomin-img" aria-hidden="true">
                                     <img src={`${process.env.NEXT_PUBLIC_PUBLIC_URL}uploads/${displayImge}`} style={{ top: -hoverPosition.y * 2.3, left: -hoverPosition.x * 2.6 }} alt="large img" />
                                 </div>
                             </div>
@@ -209,52 +207,67 @@ const SinglePage = ({ params }) => {
                         ) : null}
 
 
+                    
                         {ProductData.ProductDetails.VariantCheck && variantTab.map((variant, index) => {
-                            if (valueToFind.some(value => variant.toLowerCase().includes(value.toLowerCase()))) {
+                            const containsValue = valueToFind.some(value => variant.toLowerCase().includes(value.toLowerCase()));
+
+                            if (containsValue) {
                                 return (
-                                    <div key={index}>
+                                    <div key={`${variant}-${index}`}>
                                         {ProductData.ProductDetails.VariantCheck && ProductColor && (
                                             <div className="mt-3">
                                                 {variant} : <span className="fw-semibold">{variantName[variant][imgActive]}</span>
                                             </div>
                                         )}
                                         <div className="d-flex flex-row single-page-imgcollect">
-                                            {ProductColor ? (
-                                                Object.values(ImageData).map((items, idx) => (
-                                                    <div onClick={(e)=>setSelectVariants(prevVariants => ({...prevVariants,[variant]: variantName[variant][idx]}))}>
-                                                        <img
-                                                            key={idx}
-                                                            onClick={() => setImgActive(idx)}
-                                                            className={`single-page-imge-view ${imgActive === idx ? 'active' : ''}`}
-                                                            src={`${process.env.NEXT_PUBLIC_PUBLIC_URL}uploads/${items[0]?.url}`}
-                                                            height={60}
-                                                            width={60}
-                                                            alt="product colors"
-                                                            style={{ objectFit: 'contain', opacity: `${getHeightlight(variantName[variant][idx], variant) ? '1' : '0.6'}` }}
-                                                        />
-                                                    </div>
-                                                ))
-                                            ) : null}
+                                            {ProductColor && Object.values(ImageData).map((items, idx) => (
+                                                <div key={`${variant}-${items[0]?.url}`}>
+                                                    <img
+                                                        onClick={() => {
+                                                            setSelectVariants(prevVariants => ({ ...prevVariants, [variant]: variantName[variant][idx] }));
+                                                            setSelectVariantParams({ value: variantName[variant][idx], type: variant });
+                                                            setTimeout(() => setImgActive(idx), 0);
+                                                        }}
+                                                        className={`single-page-imge-view ${imgActive === idx ? 'active' : ''}`}
+                                                        src={`${process.env.NEXT_PUBLIC_PUBLIC_URL}uploads/${items[0]?.url}`}
+                                                        height={60}
+                                                        width={60}
+                                                        alt="product colors"
+                                                        style={{ objectFit: 'contain', opacity: `${getHeightlight(variantName[variant][idx], variant) ? '1' : '0.6'}` }}
+                                                    />
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
                                 );
                             } else {
                                 return (
-                                    <>
-                                        <div className="mt-3" key={index}>{variant}</div>
+                                    <div key={`${variant}-${index}`}>
+                                        <div className="mt-3">{variant}</div>
                                         <div className="d-flex flex-wrap flex-row single-page-imgcollect available size">
-                                            {variantName[variant].map((items) => (
-                                                <div onClick={(e)=>setSelectVariants(prevVariants => ({...prevVariants,[variant]: items}))} className={`sizetab ${selectVariant[variant].toLowerCase() == items ? 'active' : ''}`} style={{ opacity: `${getHeightlight(items, variant) ? '1' : '0.6'}`}} key={items}>{items}</div>
+                                            {variantName[variant].map((items, idx) => (
+                                                <div
+                                                    key={`${variant}-${items}-${idx}`}
+                                                    onClick={() => {
+                                                        setSelectVariants(prevVariants => ({ ...prevVariants, [variant]: items }));
+                                                        setSelectVariantParams({ value: items, type: variant });
+                                                        setTimeout(() => { }, 0);
+                                                    }}
+                                                    className={`sizetab ${selectVariant[variant].toLowerCase() === items.toLowerCase() ? 'active' : ''}`}
+                                                    style={{ opacity: `${getHeightlight(items, variant) ? '1' : '0.6'}` }}
+                                                >
+                                                    {items}
+                                                </div>
                                             ))}
                                         </div>
-                                    </>
-                                )
-
+                                    </div>
+                                );
                             }
                         })}
+
                         <div className="d-flex flex-wrap flex-md-row flex-column  justify-content-between mt-3 cart-button">
                             <Button type='submit' className="btn btn-danger" style={{ width: '48%' }}>Add to Cart</Button>
-                            <Link href="/cart" className="btn btn-outline-danger" style={{ width: '48%' }}>Buy Now</Link>
+                            <Link href="/dashboard/myCart" className="btn btn-outline-danger" style={{ width: '48%' }}>Buy Now</Link>
                         </div>
                         <div className="fw-bold mt-3 mb-2 fs-5" style={{ fontFamily: '-webkit-body' }}>Product details: </div>
                         <div className="product-details text-capitalize">
@@ -271,7 +284,7 @@ const SinglePage = ({ params }) => {
                             <div>
                                 <ul>
                                     {Object.values(ProductData.BulletPoints).map((points, index) => (
-                                        <li className="my-1" key={index}>{points}</li>
+                                        <li className="my-1" key={'list_' + index}>{points}</li>
 
                                     ))}</ul></div>
                         </div>
@@ -288,8 +301,8 @@ const SinglePage = ({ params }) => {
                         </div>
                     </Col>
                 </Row>
-                <Row xs={1} className="g-4">
-                    <Col style={{ overflow: 'hidden' }}>
+                <Row xs={1} className="g-4 mt-3">
+                    {/* <Col style={{ overflow: 'hidden' }}>
                         <div className="fw-bold mt-3 ms-3 mb-4 fs-4">Customers also viewed: </div>
                         <div className="slider-container">
                             <Slider {...{
@@ -326,7 +339,7 @@ const SinglePage = ({ params }) => {
                                 ))}
                             </Slider>
                         </div>
-                    </Col>
+                    </Col> */}
                     <Col style={{ overflow: 'hidden', padding: '30px 0 0 0', background: '#f7f0f1' }} >
                         <div className="fw-semibold mt-3 ms-3 mb-4 fs-4 text-capitalize">Top reviews from India : </div>
                         <div className="slider-container reviews">

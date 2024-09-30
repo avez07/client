@@ -70,7 +70,7 @@ const  Header = () => {
             }>
             <div className='me-4 text-center' style={{ cursor: 'pointer' }}><FaUser className='fs-4' /><p className='fw-normal m-0'>{loginData?`${capitalizeEveryWord(loginData.name)}`:'Guest'}</p></div>
           </OverlayTrigger>
-          <Link href="/dashboard/add-to-cart" className="text-dark text-decoration-none me-3"><FaShoppingCart className='fs-4' /><p className='fw-normal m-0' style={{ fontSize: '15px' }}>Cart</p></Link>
+          <Link href="/dashboard/myCart" className="text-dark text-decoration-none me-3"><FaShoppingCart className='fs-4' /><p className='fw-normal m-0' style={{ fontSize: '15px' }}>Cart</p></Link>
         </Nav>
       </Navbar>
 
