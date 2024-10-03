@@ -37,7 +37,7 @@ body {
 
 .carousel-control-prev,
 .carousel-control-next {
-  display: none;
+  display: none !important;
 }
 
 .footer-image {
@@ -1136,14 +1136,20 @@ form label {
   width: 135px;
 }
 .cart-sidebar {
-  background: rebeccapurple;
+  background: #fff;
   height: 100vh;
   width: 15%;
   max-width: 15%;
   position: fixed;
   right: 0;
-  padding-top: 50px;
+  padding-top:0;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  font-family: 'Times New Roman', Times, serif;
+
   transition: transform 0.3s ease; /* Smooth sliding effect */
   transform: translateX(100%); /* Initially offscreen */
 }
@@ -1158,10 +1164,33 @@ form label {
 
 .cart-close-btn {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 0px;
+  right: 0px;
   cursor: pointer;
-  color: white;
+  color: #000;
   font-size: 24px;
+}
+.cart-slider-container{
+  position: relative;
+  padding-top: 40px;
+}
+.arrow-up {
+  border-style: solid;
+  _border-style: dashed;
+  border-width: 9px;
+  border-color: transparent;
+  border-bottom: 25px solid #fff;
+  border-top-width: 0;
+  width: 0;
+  height: 0;
+  font-size: 0;
+  line-height: 0;
+  content: " ";
+  position: absolute;
+  top: 60px;
+  right: 31px;
+  /* left: 8px; */
+  display: block;
+  z-index: 84;
 }
 
