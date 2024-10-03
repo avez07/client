@@ -1135,3 +1135,33 @@ form label {
   left: 25%;
   width: 135px;
 }
+.cart-sidebar {
+  background: rebeccapurple;
+  height: 100vh;
+  width: 15%;
+  max-width: 15%;
+  position: fixed;
+  right: 0;
+  padding-top: 50px;
+  z-index: 1;
+  transition: transform 0.3s ease; /* Smooth sliding effect */
+  transform: translateX(100%); /* Initially offscreen */
+}
+
+.cart-sidebar.active {
+  transform: translateX(0); /* Slide in when active */
+}
+
+.cart-sidebar.close {
+  transform: translateX(100%); /* Slide out when inactive */
+}
+
+.cart-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  color: white;
+  font-size: 24px;
+}
+

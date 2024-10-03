@@ -24,8 +24,9 @@ const  Header = () => {
     setLoginData(null)
   }
   return (
+    <>
     <Container fluid className='p-0'>
-      <Navbar expand='lg' className=' justify-content-between px-2' style={{ background: "#f7c8d4", height: '80px' }}>
+      <Navbar expand='lg' className=' justify-content-between px-2' style={{ background: "#f7c8d4", height: '80px',zIndex:'2' }}>
         <Link href={'/dashboard'} style={{ width: '21%' }}><Image src={brandImage} priority={true} alt='bramg img' height={70} /><span className={`${playball.className} text-dark website-name`}>Sweet delight</span></Link>
         <Form className="d-flex justify-content-around" style={{ width: '50%' }}>
           <div style={{ width: '60%' }}>
@@ -73,8 +74,13 @@ const  Header = () => {
           <Link href="/dashboard/myCart" className="text-dark text-decoration-none me-3"><FaShoppingCart className='fs-4' /><p className='fw-normal m-0' style={{ fontSize: '15px' }}>Cart</p></Link>
         </Nav>
       </Navbar>
+     
 
     </Container>
+     <div>
+        
+     </div>
+     </>
     // </Navbar>
   );
 }

@@ -10,6 +10,7 @@ import '/public/css/Layout.css'
 import '/public/css/datatable.css'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import CartSidebar from '../common/cart-sidebar'
 
 
 
@@ -23,6 +24,7 @@ export default function ClientLayout({ children }) {
 const pathname =  usePathname()
   return  (
     <>
+    {pathname !== '/dashboard/checkout' ? <CartSidebar />: ''} 
      {pathname !== '/dashboard/checkout' ? <Header />: ''} 
         {children}
         {pathname !== '/dashboard/checkout' ? <Footer />: ''} 

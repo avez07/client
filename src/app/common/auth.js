@@ -20,6 +20,8 @@ export const AuthProvider = ({ children }) => {
   const [nightmode, setNightmode] = useState(false);
   const [loginData, setLoginData] = useState(null);
   const [active, setactive] = useState(true);
+  const [CartSlider, setCartSlider] = useState(true);
+
   const pathname = usePathname();
 
   const fetchData = async () => {
@@ -58,7 +60,8 @@ export const AuthProvider = ({ children }) => {
     iserror, setError,
     nightmode, setNightmode,
     loginData, setLoginData,
-    setIsopen, setModalMessage
+    setIsopen, setModalMessage,
+    CartSlider,setCartSlider
   };
 
   return (
