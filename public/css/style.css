@@ -1193,4 +1193,47 @@ form label {
   display: block;
   z-index: 84;
 }
+.CartScroll{
+  overflow-y: auto;
+  max-height: 260px;
+  /* scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;  */
+   
+}
+.CartScroll::-webkit-scrollbar{
+ width: 6px;
+ background-color: #fff;
+}
+.CartScroll::-webkit-scrollbar-thumb{
+  background-color: #c2c2c2;
+  border-radius: 20px;
+}
+.Quantity-Drop{
+  border-color: #d5d9d9;
+  border-radius: 8px;
+  padding: 4px 7px;
+  font-size: 13px;
+  background-color: #f0f2f2;
+  cursor: pointer;
+  position: relative;
+}
+.Quantity-Drop span{
+  margin-right: 6px;
+}
+.CartDropDown{
+  position: absolute;
+  border: 1px solid #d5d9d9;
+  background: #fafafa;
+  padding: 0;
+  z-index: 2;
+  list-style: none;
+  border-radius: 8px;
+}
+.CartDropDown li{
+  padding: 4px 20px;
+}
+.CartDropDown li:hover{
+background :#f83c3c;
+color: #fff;
+}
 

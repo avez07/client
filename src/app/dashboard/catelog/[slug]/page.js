@@ -49,14 +49,15 @@ const SinglePage = ({ params }) => {
         setIsloading(true)
         if(!loginData) return router.push('/auth/login')
             if(qty<=0 || isNaN(qty) || !qty) return false
-        const variant = Object.values(selectVariant).join('/')
+        const variant = Object.values(selectVariant).join('/') || 'mainData'
         const token = Cookies.get('token')
         if(!token) return false
         const Body = {
             UserId:loginData.loginId,
             ProductId:params.slug,
             Quantity:qty,
-            Variant:variant
+            Variant:variant,
+            CartType:1
         }
         const response = await UnRetuenFunc('AddToCart',JSON.stringify(Body),token)
         console.log(response)
