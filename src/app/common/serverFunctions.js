@@ -22,6 +22,7 @@ export const GetFetchAPI = async(url,authorization)=>{
         }
         
     })
+    // console.log(response)
     return await response.json();
 }
 

@@ -3,15 +3,15 @@ import React, { createContext, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import 'sweetalert2/src/sweetalert2.scss';
 import Cookies from 'js-cookie';
-import { GetData } from './serverFunctions';
-import {SwalMessage} from './swal';
+import { GetData, GetFetchAPI } from './serverFunctions';
+import { SwalMessage } from './swal';
 import { useRouter, usePathname } from 'next/navigation';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isopen, setIsopen] = useState(false);
-  const [modalMessage,setModalMessage] = useState('')
+  const [modalMessage, setModalMessage] = useState('')
   const [isMobile, setIsMobile] = useState('');
   const [paymentMethod, setPaymentMethod] = useState(null);
   const [discount, setDiscount] = useState(null);
@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
   const [nightmode, setNightmode] = useState(false);
   const [loginData, setLoginData] = useState(null);
   const [active, setactive] = useState(true);
-  const [CartSlider, setCartSlider] = useState(true);
+  const [CartSlider, setCartSlider] = useState(false);
 
   const pathname = usePathname();
 
@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
         if (data.status === 404 || data.status == 401) {
           setIsopen(true);
           setModalMessage(data.message)
-          Cookies.remove('token')          
+          Cookies.remove('token')
         } else {
           setLoginData(data.data);
         }
@@ -42,6 +42,15 @@ export const AuthProvider = ({ children }) => {
       }
     }
   };
+  const CartData = async () => {
+    const token = Cookies.get('token')
+    const loginId = loginData?.loginId
+    if (!token || !loginId) return
+    if(pathname == '/dashboard/myCart') return
+    const response = await GetFetchAPI(`CartCount?id=${loginId}`, token)
+    if (response.status == 200) return setCartSlider(true)
+      return setCartSlider(false)
+  }
 
   useEffect(() => {
     if (active) {
@@ -49,6 +58,9 @@ export const AuthProvider = ({ children }) => {
       fetchData();
     }
   }, [loginData]);
+  useEffect(()=>{
+CartData()
+  },[loginData])
 
 
   const exportData = {
@@ -61,7 +73,7 @@ export const AuthProvider = ({ children }) => {
     nightmode, setNightmode,
     loginData, setLoginData,
     setIsopen, setModalMessage,
-    CartSlider,setCartSlider
+    CartSlider, setCartSlider
   };
 
   return (
@@ -73,7 +85,7 @@ export const AuthProvider = ({ children }) => {
           onHide={() => setIsopen(false)}
           message={modalMessage}
         />
-      ):null}
+      ) : null}
     </AuthContext.Provider>
   );
 };

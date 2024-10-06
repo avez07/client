@@ -24,7 +24,7 @@ export default function ClientLayout({ children }) {
 const pathname =  usePathname()
   return  (
     <>
-    {pathname !== '/dashboard/checkout' ? <CartSidebar />: ''} 
+    {pathname !== '/dashboard/checkout' || pathname !== '/dashboard/myCart' ? <CartSidebar />: ''} 
      {pathname !== '/dashboard/checkout' ? <Header />: ''} 
         {children}
         {pathname !== '/dashboard/checkout' ? <Footer />: ''} 

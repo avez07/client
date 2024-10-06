@@ -1236,4 +1236,15 @@ form label {
 background :#f83c3c;
 color: #fff;
 }
+.CartDelete img,.CartDelete span,.CartDelete h6,.CartDelete{
+  height: 0;
+  width: 0;
+  font-size: 0;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  transition: all 0.7s ease;
+}
+
+.CartPartition{display: none;}
 

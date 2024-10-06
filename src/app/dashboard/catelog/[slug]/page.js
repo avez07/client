@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import Slider from "react-slick";
-import {FadeLoader} from "react-spinners"
+import { FadeLoader } from "react-spinners"
 import { FaStar, FaRegStar, FaCamera } from "react-icons/fa";
 import { IoStar, IoStarOutline } from "react-icons/io5";
 import Link from 'next/link'
@@ -22,8 +22,8 @@ import Cookies from "js-cookie";
 
 
 const SinglePage = ({ params }) => {
-    const {loginData,setCartSlider}  = useContext(AuthContext)
-    const [isloading,setIsloading] = useState(false)
+    const { loginData, setCartSlider } = useContext(AuthContext)
+    const [isloading, setIsloading] = useState(false)
     const [imgActive, setImgActive] = React.useState(0);
     const [subimgActive, setSubImgActive] = React.useState(0);
     const [displayImge, setDisplayImg] = useState('')
@@ -45,26 +45,25 @@ const SinglePage = ({ params }) => {
 
 
 
-    const AddtoCart = async ()=>{
+    const AddtoCart = async () => {
         setIsloading(true)
-        if(!loginData) return router.push('/auth/login')
-            if(qty<=0 || isNaN(qty) || !qty) return false
+        if (!loginData) return router.push('/auth/login')
+        if (qty <= 0 || isNaN(qty) || !qty) return false
         const variant = Object.values(selectVariant).join('/') || 'mainData'
         const token = Cookies.get('token')
-        if(!token) return false
+        if (!token) return false
         const Body = {
-            UserId:loginData.loginId,
-            ProductId:params.slug,
-            Quantity:qty,
-            Variant:variant,
-            CartType:1
+            UserId: loginData.loginId,
+            ProductId: params.slug,
+            Quantity: qty,
+            Variant: variant,
+            CartType: 1
         }
-        const response = await UnRetuenFunc('AddToCart',JSON.stringify(Body),token)
-        console.log(response)
+        const response = await UnRetuenFunc('AddToCart', JSON.stringify(Body), token)
         if (response == 'suceess') return window.location.reload()
-            alert('SomeThing Went Worng Try Again Later !')
+        alert('SomeThing Went Worng Try Again Later !')
     }
-    
+
     const handleMouseMove = (e) => {
         const rect = e.currentTarget.getBoundingClientRect();
         const scaleX = e.currentTarget.offsetWidth / rect.width;
@@ -125,7 +124,7 @@ const SinglePage = ({ params }) => {
             Object.keys(copyObject).forEach((key, index) => {
                 if (index !== indexNo) copyObject[key] = FilterData[0].split('/')[index]
             })
-           if(imgActive !== ImgeIndex) setTimeout(() => { setSelectVariants(copyObject); setImgActive(ImgeIndex) }, 0)
+            if (imgActive !== ImgeIndex) setTimeout(() => { setSelectVariants(copyObject); setImgActive(ImgeIndex) }, 0)
 
         }
         return check
@@ -186,7 +185,7 @@ const SinglePage = ({ params }) => {
     return ProductData && Object.keys(ImageData).length > 0 && (
         <>
             <Container fluid className="my-4">
-            {/* <div className={`overlap ${!isloading ? 'd-none' : ''}`}><div className="fadeloader"><FadeLoader color="#ccc" /></div></div> */}
+                {/* <div className={`overlap ${!isloading ? 'd-none' : ''}`}><div className="fadeloader"><FadeLoader color="#ccc" /></div></div> */}
                 <Row xs={1} md={1} className="g-4 mb-5">
                     <Col md={6} xs={12} className="d-flex flex-row sticky-top" style={{ height: '540px' }}>
                         <div className="d-flex flex-column single-page-imgcollect">
@@ -234,7 +233,7 @@ const SinglePage = ({ params }) => {
                         ) : null}
 
 
-                    
+
                         {ProductData.ProductDetails.VariantCheck && variantTab.map((variant, index) => {
                             const containsValue = valueToFind.some(value => variant.toLowerCase().includes(value.toLowerCase()));
 
@@ -292,10 +291,10 @@ const SinglePage = ({ params }) => {
                             }
                         })}
 
-                        <div className="d-flex flex-wrap flex-md-row flex-column  justify-content-between mt-3 cart-button">
-                            <Button type='submit' className="btn btn-danger" style={{ width: '48%' }} onClick={()=>AddtoCart()}>Add to Cart</Button>
+                        {ProductData.VariantData[imgActive].price ? (<div className="d-flex flex-wrap flex-md-row flex-column  justify-content-between mt-3 cart-button">
+                            <Button type='submit' className="btn btn-danger" style={{ width: '48%' }} onClick={() => AddtoCart()}>Add to Cart</Button>
                             <Link href="/dashboard/myCart" className="btn btn-outline-danger" style={{ width: '48%' }}>Buy Now</Link>
-                        </div>
+                        </div>) : <div>Out Of Stock</div>}
                         <div className="fw-bold mt-3 mb-2 fs-5" style={{ fontFamily: '-webkit-body' }}>Product details: </div>
                         <div className="product-details text-capitalize">
                             {Object.entries(ProductData.VirtualInfo).map(([key, value]) => (
@@ -306,15 +305,16 @@ const SinglePage = ({ params }) => {
 
                         <div className="fw-bold mt-3 mb-2 fs-5" style={{ fontFamily: '-webkit-body' }}>Discription: </div>
                         <div style={{ fontSize: '16px' }}>{ProductData.Discription || ''}</div>
-                        <div>
+                        {ProductData?.BulletPoints &&(<div>
                             <div className="fw-bold mt-3 mb-2 fs-5" style={{ fontFamily: '-webkit-body' }}>About This Item: </div>
                             <div>
                                 <ul>
                                     {Object.values(ProductData.BulletPoints).map((points, index) => (
                                         <li className="my-1" key={'list_' + index}>{points}</li>
 
-                                    ))}</ul></div>
-                        </div>
+                                    ))}</ul>
+                            </div>
+                        </div>)}
 
                     </Col>
                 </Row>
