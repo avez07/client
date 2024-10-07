@@ -1,4 +1,5 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
+import Cookies from 'js-cookie'
 import { Button, Card } from 'react-bootstrap';
 import { AuthContext } from './auth'
 import { Box, Stepper, Step, StepLabel, StepContent, Typography, useTheme, useMediaQuery } from '@mui/material';
@@ -10,6 +11,7 @@ import defaul_cake_img from '/public/assets/Butterscotch-Cakes.jpg';
 
 import { Address, Discount, Payment } from "./checkout-data";
 import Image from "next/image";
+import { GetFetchAPI } from "./serverFunctions";
 
 const CustomStepIcon = ({ active, completed, icon }) => {
   return completed ? <IoIosCheckmarkCircleOutline style={{ fontSize: '30px', color: 'green' }} /> : icon;
@@ -18,11 +20,28 @@ const CustomStepIcon = ({ active, completed, icon }) => {
 
 export default function VerticalLinearStepper() {
   const [activeStep, setActiveStep] = React.useState(0);
-  const { isopen, setIsopen, address, paymentMethod, setError } = useContext(AuthContext);
+  const { isopen, setIsopen, address, paymentMethod, setError, loginData } = useContext(AuthContext);
+  const [CartData, setCartData] = useState([])
+  const [subtotal, setSubTotal] = useState(0)
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  const handleCartData = async () => {
 
+    const token = Cookies.get('token')
+    if (!token || !loginData) return
+    const Response = await GetFetchAPI(`getCartData?id=${loginData.loginId}`, token)
+    if (Response.status == 200) {
+      setCartData(Response.Data);
+    }
+
+  }
+  useEffect(() => {
+    handleCartData()
+  }, [loginData])
+  useEffect(() => {
+    CalculateSubTotal()
+  }, [CartData])
 
   const handleNext = () => {
     const CheckOutErorr = (activeStep == 0 && address === '') || (activeStep == 0 && address === null)
@@ -35,6 +54,14 @@ export default function VerticalLinearStepper() {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
   };
+  const CalculateSubTotal = () => {
+    const total = CartData.reduce((acc, items) => {
+      return acc + (parseFloat(items.Quantity) * parseFloat(items.Price))
+
+    }, 0)
+    setSubTotal(Math.ceil(total))
+  }
+
 
   const steps = [
     {
@@ -80,6 +107,7 @@ export default function VerticalLinearStepper() {
       ),
     },
   ];
+  console.log(CartData)
 
   return (
     <>
@@ -102,28 +130,33 @@ export default function VerticalLinearStepper() {
           <div className="mt-4 ms-3" style={{ width: '25%' }}>
             <Card className="border-0">
               <Card.Body className="text-capitalize">
-                <div className="d-flex justify-content-between"><span>subtotal:</span><span>&#8377; 2000</span></div>
+                <div className="d-flex justify-content-between"><span>subtotal:</span><span>&#8377; {subtotal}</span></div>
                 <div className="d-flex justify-content-between"><span>shipping:</span><span>&#8377; 210</span></div>
                 <div className="d-flex justify-content-between"><span>gst:</span><span>00.00</span></div>
 
                 <hr />
-                <div className="d-flex justify-content-between"><span>total:</span><span className="fw-semibold fs-5">&#8377; 5000</span></div>
+                <div className="d-flex justify-content-between"><span>total:</span><span className="fw-semibold fs-5">&#8377; {subtotal + 210}</span></div>
                 <Button onClick={(e) => setActiveStep(4)} variant="warning" className="fw-semibold mt-2" disabled={activeStep !== 3 ? true : false} style={{ float: 'right' }}>Continue to Pay</Button>
               </Card.Body>
             </Card>
             <div className="mt-4">
-              <h4>Items(2)</h4>
-              <div className="d-flex">
-                <div>
-                  <Image src={defaul_cake_img} alt="card img" priority={true} height={60} />
+              <h4>Items({CartData.length})</h4>
+              {CartData.map((items, index) => (
+                <>
+                <div key={index} className="d-flex ">
+                  <div>
+                    <img src={`${process.env.NEXT_PUBLIC_PUBLIC_URL}uploads/${items.Image}`} style={{objectFit:'contain'}} alt="card img" loading="lazy" height={60} width={60} />
+                  </div>
+                  <div className="ms-2 w-100" style={{ overflow: 'hidden' }}>
+                    <p className="checkout-items m-0">{items.title}</p>
+                    {items.Options.map((variant,idx)=>(
+                    <p className="other-features"><b>{variant}:</b> {items.variant.split('/')[idx]}</p>
+                    ))}
+                  </div>
                 </div>
-                <div className="ms-2" style={{ overflow: 'hidden' }}>
-                  <p className="checkout-items m-0">AmazonBasics Laptop Bag Sleeve Case Cover Pouch For 15-Inches, 15.6-Inches Laptop For Men And Women | Slim Profile Neoprene,</p>
-                  <p className="other-features"><b>Color:</b> cream</p>
-                  <p className="other-features"><b>flavour:</b> cream</p>
-                  <p className="other-features"><b>size:</b> 500gm</p>
-                </div>
-              </div>
+                    <hr/>
+                    </>
+              ))}
             </div>
           </div>
         </Box>
