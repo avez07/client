@@ -117,8 +117,8 @@ if(CartData.length == 0)  setTimeout(()=>{setCartSlider(false)},300)
           <hr className="mx-3 mt-2" />
           <div className="CartScroll">
             {CartData.length !== 0 ? CartData.map((items, idx) => (
-              <>
-                <div className={`Cartitems ${DeletedCart == items.id ? 'CartDelete':''}`} key={items.id}>
+              <div key={items.id}>
+                <div className={`Cartitems ${DeletedCart == items.id ? 'CartDelete':''}`}>
                   <img src={`${process.env.NEXT_PUBLIC_PUBLIC_URL}uploads/${items.Image}`} style={{ objectFit: 'contain' }} height={90} width={90} alt="CartItems" />
                   <h6>{items.Price}</h6>
                   {isUpdating == items.id &&(<Spinner animation="border" size="sm" variant="primary"/>)}
@@ -140,7 +140,7 @@ if(CartData.length == 0)  setTimeout(()=>{setCartSlider(false)},300)
                   </div>
                 </div>
                 <hr className={`mx-3 ${DeletedCart == items.id ? 'CartPartition':''}`} />
-              </>
+              </div>
             )) : null}
           </div>
 

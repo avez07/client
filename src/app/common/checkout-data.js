@@ -20,14 +20,15 @@ import { AuthContext } from './auth'
 import { MdAdd } from "react-icons/md";
 import Image from "next/image";
 import { Col, Container, Form, Modal, Row } from "react-bootstrap";
+import { GetFetchAPI } from "./serverFunctions";
 
 const Addressvalidatation_schema = yup.object({
-  countryName: yup.string().required('this feild is Required'),
-  stateName: yup.string().required('this feild is Required'),
-  cityName: yup.string().required('this feild is Required'),
-  fullName: yup.string().required('this feild is Required'),
-  Phonenumber: yup.string().required('this feild is Required').max(10, 'Invalid Phone Number'),
-  Pincode: yup.string().required('this feild is Required'),
+  CountryName: yup.string().required('this feild is Required'),
+  State: yup.string().required('this feild is Required'),
+  City: yup.string().required('this feild is Required'),
+  FullName: yup.string().required('this feild is Required'),
+  PhoneNo: yup.string().required('this feild is Required').max(10, 'Invalid Phone Number').min(10,'Invalid Phone Number'),
+  Pincode: yup.string().required('this feild is Required').max(6,'Invalid Pincode').min(6,'InValid Pincode'),
   Addressline1: yup.string().required('this feild is Required').max(30, 'address should be smaller than 30 characters'),
   Addressline2: yup.string().required('this feild is Required').max(30, 'address should be smaller than 30 characters'),
   Addressline3: yup.string().required('this feild is Required').max(30, 'address should be smaller than 30 characters'),
@@ -61,14 +62,28 @@ const Address = () => {
       Pincode: '',
       City: '',
       State: '',
-
-
-
     }, validationSchema: Addressvalidatation_schema,
     onSubmit: (value) => {
       console.log('values....', value)
-    }
+    },    
   })
+  const handleFindCityState = async(e)=>{
+    
+
+    if(e.target.value.length !== 6) return false
+     const response = await GetFetchAPI(`FindCityState/${e.target.value}`,'no token')
+console.log(response)
+     if(response.status !== 200) {
+      formmik.setFieldError('Pincode','Invalid Pincode')
+    formmik.setFieldTouched('Pincode',true)
+    return
+     }
+     formmik.setFieldValue('City',response.Data.City)
+     formmik.setFieldValue('State',response.Data.State)
+
+    
+  }
+
   return (
     <div>
       {selectedAddress.length > 0 ? (
@@ -95,7 +110,7 @@ const Address = () => {
       <Modal show={AddressModel} style={{border:'2px solid #000'}}>
         <Modal.Header style={{background:'#ebebeb'}} closeButton>Enter New Address</Modal.Header>
         <Modal.Body>
-          <form>
+          <form onSubmit={formmik.handleSubmit}>
             <Row>
               <Col md={12}>
                 <Form.Label>Country Name</Form.Label>
@@ -134,24 +149,27 @@ const Address = () => {
               </Col>
               <Col md={12} className="my-2">
                 <Form.Label>Pincode</Form.Label>
-                <Form.Control type="text" onChange={formmik.handleChange} onBlur={formmik.handleBlur} value={formmik.values.Pincode} size="sm" name="Pincode" />
+                <Form.Control type="text" maxLength={6} onChange={(e)=>{formmik.handleChange(e),handleFindCityState(e)}} onBlur={formmik.handleBlur} value={formmik.values.Pincode} size="sm" name="Pincode" />
                 {formmik.touched.Pincode && formmik.errors.Pincode ? (
                   <div className="text-danger">{formmik.errors.Pincode}</div>
                 ) : null}
               </Col>
               <Col md={6} className="my-2">
                 <Form.Label>City</Form.Label>
-                <Form.Control type="text" onChange={formmik.handleChange} onBlur={formmik.handleBlur} value={formmik.values.City} size="sm" name="City" />
+                <Form.Control type="text" disabled onChange={formmik.handleChange} onBlur={formmik.handleBlur} value={formmik.values.City} size="sm" name="City" />
                 {formmik.touched.City && formmik.errors.City ? (
                   <div className="text-danger">{formmik.errors.City}</div>
                 ) : null}
               </Col>
               <Col md={6} className="my-2">
                 <Form.Label>State</Form.Label>
-                <Form.Control type="text" onChange={formmik.handleChange} onBlur={formmik.handleBlur} value={formmik.values.State} size="sm" name="State" />
+                <Form.Control type="text" disabled onChange={formmik.handleChange} onBlur={formmik.handleBlur} value={formmik.values.State} size="sm" name="State" />
                 {formmik.touched.State && formmik.errors.State ? (
                   <div className="text-danger">{formmik.errors.State}</div>
                 ) : null}
+              </Col>
+              <Col md={12}>
+              <Button variant="contained" type="submit" color="warning" sx={{width:'100%'}}>Save</Button>
               </Col>
             </Row>
           </form>
