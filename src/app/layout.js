@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
   return (
 
     <html lang="en">
-      <body className={inter.className} suppressHydrationWarning={false} aria-hidden={true}>
+      <body className={inter.className} suppressHydrationWarning={false} >
 
         <AuthProvider>
           <NextTopLoader />

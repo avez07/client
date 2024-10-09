@@ -255,7 +255,7 @@ body {
 
 .model-body #demo-select-small {
   border: 1px solid #888C8C !important;
-  height: 14px;
+  /* height: 14px; */
   padding: 5px 15px;
 }
 
