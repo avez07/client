@@ -27,7 +27,6 @@ export const AuthProvider = ({ children }) => {
   const fetchData = async () => {
     const token = Cookies.get('token');
     if (!loginData && token && pathname !== 'auth/login') {
-      // console.log('this is auth')
       try {
         const data = await GetData(token);
         if (data.status === 404 || data.status == 401) {

@@ -22,7 +22,7 @@ import CartSidebar from '../common/cart-sidebar'
 
 export default function ClientLayout({ children }) {
 const pathname =  usePathname()
-console.log(pathname)
+
   return  (
     <>
     {pathname !== '/dashboard/checkout' && pathname !== '/dashboard/myCart' ? <CartSidebar />: ''} 

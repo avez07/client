@@ -1,11 +1,16 @@
 "use client"
-import React from "react";
+import React, { useState } from "react";
 import CouponModel from "@/app/common/cupoan-model";
-import { Row, Col, Container, Card, Form, Button, Alert } from 'react-bootstrap'
-import { FaBell, FaThumbsUp, FaShareAlt } from "react-icons/fa";
+import { Row, Col, Container, Card, Form, Button, Alert, Modal } from 'react-bootstrap'
+import { FaBell, FaThumbsUp, FaShareAlt, FaPlus } from "react-icons/fa";
 import { HiOutlineShare } from "react-icons/hi";
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import Link from "next/link";
+import { GetFetchAPI, PostApi } from "@/app/common/serverFunctions";
+import Cookies from "js-cookie";
+import { PulseLoader } from "react-spinners";
+import { useEffect } from "react";
 
 
 const schema = yup.object().shape({
@@ -27,11 +32,57 @@ const schema = yup.object().shape({
 
 
 });
+const CategoryModel = (props) => {
+    const [Category, setCategory] = useState(null)
+    const [isloading, setisLoading] = useState(false)
+
+    const handleSaveCategory = async () => {
+        setisLoading(true)
+        const token = Cookies.get('token')
+        const body = { name: Category }
+        const response = await PostApi('AddRateCategory', JSON.stringify(body), token)
+        console.log(response)
+        if (response.status !== 200) alert('Something Went Worng Try Again !')
+        setTimeout(() => {
+            props.onHide()
+            setCategory('')
+            setisLoading(false)
+        }, 2000);
+    }
+    return (
+        <Modal
+            {...props}
+            size="md"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+        >
+            <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-vcenter">
+                    Add Category
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Form.Control type="text" value={Category} onChange={(e) => setCategory(e.target.value)} />
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={props.onHide}>Close</Button>
+                {isloading ? (
+                    <Button style={{ background: '#3e2d68', border: 'none' }}><PulseLoader size={5} color="#fff" /></Button>
+                ) : (
+                    <Button style={{ background: '#3e2d68', border: 'none' }} onClick={(e) => handleSaveCategory()}>Save</Button>
+                )}
+            </Modal.Footer>
+        </Modal>
+    )
+}
 
 const Setting = () => {
     const [active, setActive] = React.useState(1);
-    const [additionalRate, setAdditionalRate] = React.useState(0);
+    const [ratesActive, setratesActive] = React.useState(1);
     const [modalShow, setModalShow] = React.useState(false);
+    const [CategoryModelShow, setCategoryModelShow] = useState(false)
+    const [RateCategory, setRateCategory] = useState([])
+
 
     const formik = useFormik({
         initialValues: {
@@ -55,7 +106,11 @@ const Setting = () => {
         }
 
     })
-    // console.log(formik.values);
+    useEffect(() => {
+        if (active !== 3) return
+        const token = Cookies.get('token')
+        GetFetchAPI('FetchRatesCategory', token).then((response) => setRateCategory(response.data)).catch(err => console.log('Error while Fetching Data...', err))
+    }, [active, CategoryModelShow])
     return (
         <Container>
             <Row xs={1} md={2} className="g-4">
@@ -64,11 +119,13 @@ const Setting = () => {
                     <ul className="setting-list-group">
                         <li onClick={(e) => setActive(1)} className={`${active == 1 ? 'active' : ''}`}>store detail</li>
                         <li onClick={(e) => setActive(2)} className={`${active == 2 ? 'active' : ''}`}>Coupons</li>
-                        <li onClick={(e) => setActive(3)} className={`${active == 3 ? 'active' : ''}`}>shipping and delivery</li>
-                        <li onClick={(e) => setActive(4)} className={`${active == 4 ? 'active' : ''}`}>Carrier allowed</li>
+                        <li onClick={(e) => setActive(3)} className={`${active == 3 ? 'active' : ''}`}>RateCategory</li>
+                        <li onClick={(e) => setActive(4)} className={`${active == 4 ? 'active' : ''}`}>Carier Rates</li>
+                        <li onClick={(e) => setActive(5)} className={`${active == 5 ? 'active' : ''}`}>shipping and delivery</li>
+                        <li onClick={(e) => setActive(6)} className={`${active == 6 ? 'active' : ''}`}>Carrier allowed</li>
                     </ul>
                 </Col>
-                <Col md={8} className={`store ${active == 1 ? 'd-block' : 'd-none'} `}>
+                {active == 1 && (<Col md={8} className={`store ${active == 1 ? 'd-block' : 'd-none'} `}>
                     <form onSubmit={formik.handleSubmit}>
                         <div className="store detail">
                             <Card>
@@ -267,8 +324,8 @@ const Setting = () => {
                             <Button style={{ background: '#3e2d68', border: 'none' }} className="mt-2" type="submit">Save</Button>
                         </div>
                     </form>
-                </Col>
-                <Col md={8} className={`cuopens ${active == 2 ? 'd-block' : 'd-none'} `}>
+                </Col>)}
+                {active == 2 && (<Col md={8} className={`cuopens ${active == 2 ? 'd-block' : 'd-none'} `}>
                     <div className="store-detail">
                         <div className="coupons-button d-flex justify-content-end">
                             <Button style={{ background: '#3e2d68', border: 'none', fontSize: '15px' }} onClick={() => setModalShow(true)} className="mb-3 text-capitalize" >create coupons</Button>
@@ -307,90 +364,106 @@ const Setting = () => {
                             </Card.Body>
                         </Card>
                     </div>
-                </Col>
-                <Col md={8} className={`store ${active == 3 ? 'd-block' : 'd-none'} `}>
-                    <form>
-                        <div className="store detail">
-                            <Card>
-                                <Card.Body>
-                                    <Card.Title>Shipping Zone</Card.Title>
-                                    <Row xs={1} md={1} className="g-4 mt-2">
-                                        <Col md={12}>
-                                            <p>Domestic Rates</p>
-                                            <table className="shipRates-Table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Mode</th>
-                                                        <th>Weight(min)</th>
-                                                        <th>With in City</th>
-                                                        <th>With in state</th>
-                                                        <th>Rest of India</th>
-                                                        <th>J & k</th>
-                                                        <th>additional  charges</th>
+                </Col>)}
+                {active == 3 && (<Col md={8} className={`store ${active == 3 ? 'd-block' : 'd-none'} `}>
+                    <div className="store detail">
+                        <div className="d-flex justify-content-end"><Button type="button" className="my-2" style={{ background: '#3e2d68', border: 'none' }} onClick={(e) => setCategoryModelShow(true)} ><FaPlus className="me-2" />Add Category</Button></div>
+                        <CategoryModel show={CategoryModelShow} onHide={() => setCategoryModelShow(false)} />
+                        <Card>
+                            <Card.Body>
+                                <Card.Title>Shipping Zone</Card.Title>
+                                <Row xs={1} md={1} className="g-4 mt-2">
+                                    <Col md={12}>
+                                        <p>Domestic Rates</p>
+                                        <table className="shipRates-Table">
+                                            <thead>
+                                                <tr>
+                                                    <th>RateId</th>
+                                                    <th>Rate Category</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {RateCategory.map((items) => (
+                                                    <tr key={items._id}>
+                                                        <td>{items.RateId}</td>
+                                                        <td>{items.RateCategory}</td>
+
                                                     </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>Standard</td>
-                                                        <td>0.5kg</td>
-                                                        <td>47</td>
-                                                        <td>56</td>
-                                                        <td>85</td>
-                                                        <td>113</td>
-                                                        <td>
-                                                            <Form.Control
-                                                                type="number"
-                                                                name="dom_std"
-                                                                value={additionalRate}
-                                                                onChange={(e) => setAdditionalRate(e.target.value)}
-                                                            />
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Economy</td>
-                                                        <td>1kg</td>
-                                                        <td>47</td>
-                                                        <td>56</td>
-                                                        <td>85</td>
-                                                        <td>113</td>
-                                                        <td>
-                                                            <Form.Control
-                                                                type="number"
-                                                                name="dom_std"
-                                                                value={additionalRate}
-                                                                onChange={(e) => setAdditionalRate(e.target.value)}
-                                                            />
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Cargo</td>
-                                                        <td>3kg</td>
-                                                        <td>47</td>
-                                                        <td>56</td>
-                                                        <td>85</td>
-                                                        <td>113</td>
-                                                        <td>
-                                                            <Form.Control
-                                                                type="number"
-                                                                name="dom_std"
-                                                                value={additionalRate}
-                                                                onChange={(e) => setAdditionalRate(e.target.value)}
-                                                            />
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </Col>
-                                    </Row>
-                                </Card.Body>
-                            </Card>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </Col>
+                                </Row>
+                            </Card.Body>
+                        </Card>
+                    </div>
+                </Col>)}
+                {active == 5 && (<Col md={8} className={`store ${active == 5 ? 'd-block' : 'd-none'} `}>
+                    <div className="store detail">
+                        <div className="shippingRates">
+                            <div onClick={(e) => setratesActive(1)} className={`rate_list ${ratesActive == 1 ? 'RateListActive' : ''}`}><div>Standard</div><div className="ActiveLine"></div></div>
+                            <div onClick={(e) => setratesActive(2)} className={`rate_list ${ratesActive == 2 ? 'RateListActive' : ''}`}><div>Economy</div><div className="ActiveLine"></div></div>
+                            <div onClick={(e) => setratesActive(3)} className={`rate_list ${ratesActive == 3 ? 'RateListActive' : ''}`}><div>Cargo</div><div className="ActiveLine"></div></div>
                         </div>
-                        <div className="d-flex justify-content-end">
-                            <Button style={{ background: '#3e2d68', border: 'none' }} className="mt-2" type="submit">Save</Button>
-                        </div>
-                    </form>
-                </Col>
-                <Col md={8} className={`store ${active == 4 ? 'd-block' : 'd-none'} `}>
+                        <Card>
+                            <Card.Body>
+                                <Card.Title>Shipping Zone</Card.Title>
+                                <Row xs={1} md={1} className="g-4 mt-2">
+                                    <Col md={12}>
+                                        <p>Domestic Rates</p>
+                                        <table className="shipRates-Table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Mode</th>
+                                                    <th>Weight(min)</th>
+                                                    <th>With in City</th>
+                                                    <th>With in state</th>
+                                                    <th>Rest of India</th>
+                                                    <th>J & k</th>
+                                                    <th>Carrier</th>
+                                                    <th>RateId</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Standard</td>
+                                                    <td>0.5kg</td>
+                                                    <td>47</td>
+                                                    <td>56</td>
+                                                    <td>85</td>
+                                                    <td>113</td>
+                                                    <td>BlueDart</td>
+                                                    <td><Link href='#'>2</Link></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Economy</td>
+                                                    <td>1kg</td>
+                                                    <td>47</td>
+                                                    <td>56</td>
+                                                    <td>85</td>
+                                                    <td>113</td>
+                                                    <td>BlueDart</td>
+                                                    <td><Link href='#'>2</Link></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Cargo</td>
+                                                    <td>3kg</td>
+                                                    <td>47</td>
+                                                    <td>56</td>
+                                                    <td>85</td>
+                                                    <td>113</td>
+                                                    <td>BlueDart</td>
+                                                    <td><Link href='#'>2</Link></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </Col>
+                                </Row>
+                            </Card.Body>
+                        </Card>
+                    </div>
+                </Col>)}
+                {active == 6 && (<Col md={8} className={`store ${active == 6 ? 'd-block' : 'd-none'} `}>
                     <form>
                         <div className="store detail">
                             <Card>
@@ -436,7 +509,7 @@ const Setting = () => {
                             <Button style={{ background: '#3e2d68', border: 'none' }} className="mt-2" type="submit">Save</Button>
                         </div>
                     </form>
-                </Col>
+                </Col>)}
             </Row>
         </Container>
 

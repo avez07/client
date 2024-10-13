@@ -48,10 +48,10 @@ const handleLogout=()=>{
               <Link href="/admin/Products" onClick={()=>handleactive(2)} ><span className="menu-items"><FaBoxOpen /></span>Products</Link>
             </li>
             <li className={`${active == 3? 'active': ''}`}>
-              <Link href="/admin/seller" onClick={()=>handleactive(2)} ><span className="menu-items"><FaBoxOpen /></span>Seller</Link>
+              <Link href="/admin/seller" onClick={()=>handleactive(3)} ><span className="menu-items"><FaBoxOpen /></span>Seller</Link>
             </li>
             <li className={`${active == 4? 'active': ''}`} >
-              <Link href="/admin/orders" onClick={()=>handleactive(3)} ><span className="menu-items"><FaCartPlus /></span>Orders<span className="ms-auto right-arrow"><FaAngleRight/></span></Link>
+              <Link href="/admin/orders" onClick={()=>handleactive(4)} ><span className="menu-items"><FaCartPlus /></span>Orders<span className="ms-auto right-arrow"><FaAngleRight/></span></Link>
               <ul className="list-dropdwon p-0">
                 <li className={`${subActive == 1? 'sub-active': ''}`} onClick={()=>handleSubactive(1)}><Link href='/admin/orders'>List Orders</Link></li>
                 <li className={`${subActive == 2? 'sub-active': ''}`} onClick={()=>handleSubactive(2)}><Link href='/admin/orders/pending-orders'>Pending Orders</Link></li>
@@ -59,14 +59,14 @@ const handleLogout=()=>{
               </ul>
             </li>
             <li className={`${active == 5? 'active': ''}`}>
-              <Link href="/admin/customers" onClick={()=>handleactive(4)} ><span className="menu-items"><FaBoxOpen /></span>Customer</Link>
+              <Link href="/admin/customers" onClick={()=>handleactive(5)} ><span className="menu-items"><FaBoxOpen /></span>Customer</Link>
             </li>
            
             <li className={`${active == 6? 'active': ''}`} >
-              <Link href="/admin/reviews" onClick={()=>handleactive(5)}><span className="menu-items"><FaStar /></span>Reviews</Link>
+              <Link href="/admin/reviews" onClick={()=>handleactive(6)}><span className="menu-items"><FaStar /></span>Reviews</Link>
             </li>
             <li className={`${active == 7? 'active': ''}`} >
-              <Link href="/admin/logistic" onClick={()=>handleactive(6)}><span className="menu-items"><FaTruckMoving /></span>Logistic<span className="ms-auto right-arrow"><FaAngleRight/></span></Link>
+              <Link href="/admin/logistic" onClick={()=>handleactive(7)}><span className="menu-items"><FaTruckMoving /></span>Logistic<span className="ms-auto right-arrow"><FaAngleRight/></span></Link>
               <ul className="list-dropdwon p-0">
                 <li className={`${subActive == 1? 'sub-active': ''}`} onClick={()=>handleSubactive(1)}><Link href='/admin/logistic'>Carriers List</Link></li>
                 <li className={`${subActive == 2? 'sub-active': ''}`} onClick={()=>handleSubactive(2)}><Link href='/admin/logistic/pending-orders'>Pending Orders</Link></li>
@@ -74,7 +74,7 @@ const handleLogout=()=>{
               </ul>
             </li>
             <li className={`${active == 8? 'active': ''}`} >
-              <Link href="/admin/setting" onClick={()=>handleactive(7)}><span className="menu-items"><FaGear /></span>settings</Link>
+              <Link href="/admin/setting" onClick={()=>handleactive(8)}><span className="menu-items"><FaGear /></span>settings</Link>
             </li>
             <li className={`${active == 9? 'active': ''}`} >
               <Link href="auth/login" onClick={()=>handleLogout()}><span className="menu-items"><RiLogoutBoxFill /></span>Logout</Link>

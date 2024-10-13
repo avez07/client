@@ -1,8 +1,7 @@
 
 import { Inter } from 'next/font/google'
 import { AuthProvider } from '/src/app/common/auth'
-import NextTopLoader from 'nextjs-toploader'
-import SwalMessage from './common/swal'
+
 // import './globals.css'
 import '/public/css/style.css'
 import '/public/css/Layout.css'
@@ -25,7 +24,6 @@ export default function RootLayout({ children }) {
       <body className={inter.className} suppressHydrationWarning={false} >
 
         <AuthProvider>
-          <NextTopLoader />
           {children}
         </AuthProvider>
       </body>

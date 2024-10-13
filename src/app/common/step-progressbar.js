@@ -107,7 +107,6 @@ export default function VerticalLinearStepper() {
       ),
     },
   ];
-  console.log(CartData)
 
   return (
     <>
