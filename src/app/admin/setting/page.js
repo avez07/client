@@ -1,8 +1,9 @@
 "use client"
 import React, { useState } from "react";
 import CouponModel from "@/app/common/cupoan-model";
+import { AddRateModel } from '@/app/common/Modals'
 import { Row, Col, Container, Card, Form, Button, Alert, Modal } from 'react-bootstrap'
-import { FaBell, FaThumbsUp, FaShareAlt, FaPlus } from "react-icons/fa";
+import { FaBell, FaThumbsUp, FaShareAlt, FaPlus, FaThumbsDown } from "react-icons/fa";
 import { HiOutlineShare } from "react-icons/hi";
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -47,7 +48,7 @@ const CategoryModel = (props) => {
             props.onHide()
             setCategory('')
             setisLoading(false)
-        }, 2000);
+        }, 1000);
     }
     return (
         <Modal
@@ -75,13 +76,74 @@ const CategoryModel = (props) => {
         </Modal>
     )
 }
+const CarrierAddingModel = (props) => {
+    const [Category, setCategory] = useState(null)
+    const [ShipClass, setShipClass] = useState(1)
+    const [isloading, setisLoading] = useState(false)
+
+    const handleSaveCategory = async () => {
+        setisLoading(true)
+        const token = Cookies.get('token')
+        const body = { name: Category, shipclass: ShipClass }
+        const response = await PostApi('AddCarrier', JSON.stringify(body), token)
+        console.log(response)
+        if (response.status !== 200) alert(response.message || 'Something Went Worng Try Again !')
+        setTimeout(() => {
+            props.onHide()
+            setCategory('')
+            setisLoading(false)
+        }, 1000);
+    }
+    return (
+        <Modal
+            {...props}
+            size="md"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+        >
+            <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-vcenter">
+                    Add Category
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Form.Label>Carrier Name</Form.Label>
+                <Form.Control type="text" value={Category} onChange={(e) => setCategory(e.target.value)} />
+                <Form.Label className="my-2">ShipClass</Form.Label>
+                <Form.Select value={ShipClass} onChange={(e) => setShipClass(e.target.value)}>
+                    <option value={1}>Standard</option>
+                    <option value={2}>Economy</option>
+                    <option value={3}>Cargo</option>
+
+                </Form.Select>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={props.onHide}>Close</Button>
+                {isloading ? (
+                    <Button style={{ background: '#3e2d68', border: 'none' }}><PulseLoader size={5} color="#fff" /></Button>
+                ) : (
+                    <Button style={{ background: '#3e2d68', border: 'none' }} onClick={(e) => handleSaveCategory()}>Save</Button>
+                )}
+            </Modal.Footer>
+        </Modal>
+    )
+}
+
 
 const Setting = () => {
     const [active, setActive] = React.useState(1);
     const [ratesActive, setratesActive] = React.useState(1);
     const [modalShow, setModalShow] = React.useState(false);
     const [CategoryModelShow, setCategoryModelShow] = useState(false)
+    const [CarrierModelShow, setCarrierModelShow] = useState(false)
+    const [AddRateModelShow, setAddRateModelShow] = useState(false)
+
     const [RateCategory, setRateCategory] = useState([])
+    const [CarrierData, setCarrierData] = useState([])
+    const [RateSpData, setRateSpData] = useState([])
+    const [RateEcoData, setRateEcoData] = useState([])
+    const [RateCargoData, setRateCargoData] = useState([])
+
 
 
     const formik = useFormik({
@@ -106,11 +168,43 @@ const Setting = () => {
         }
 
     })
+    const handleCarrierActions = (id) => {
+        // return console.log(id)
+        const token = Cookies.get('token')
+        GetFetchAPI(`CarrierAction/${id._id}`, token).then((response) => {
+            console.log(response)
+            if (response.status !== 200) return alert(response.message || 'SomeThing Went Worng Try Again !')
+            const Obj = [...CarrierData]
+            Obj.map((items) => {
+                if (items._id == id._id) items.isBlock = !items.isBlock
+                return items
+            })
+            return setCarrierData(Obj)
+        }).catch(err => console.error('Error While Fetching...'.err))
+    }
     useEffect(() => {
-        if (active !== 3) return
+        if (active !== 6 && active !== 5) return
+        const token = Cookies.get('token')
+        GetFetchAPI('fetchCarrer', token).then((response) => setCarrierData(response.data)).catch(err => console.log('Error while Fetching Data...', err))
+    }, [active, CarrierModelShow])
+    useEffect(() => {
+        if (active !== 3 && active !== 5) return
         const token = Cookies.get('token')
         GetFetchAPI('FetchRatesCategory', token).then((response) => setRateCategory(response.data)).catch(err => console.log('Error while Fetching Data...', err))
     }, [active, CategoryModelShow])
+
+    useEffect(() => {
+        if (active !== 5 || ratesActive > 3) return
+        const token = Cookies.get('token')
+        const url = ratesActive == 1 ? 'FetchRatesSp' : ratesActive == 2 ? 'FetchRatesEco' : ratesActive == 3 ? 'FetchRatesCargo' : null
+        GetFetchAPI(url, token).then((response) => {
+            if (response.status !== 200) return alert(response.message || 'Some THing Went Worng Try Again !')
+            if (ratesActive == 1) return setRateSpData(response.data)
+            if (ratesActive == 2) return setRateEcoData(response.data)
+            if (ratesActive == 3) return setRateCargoData(response.data)
+
+        }).catch(err => console.log('Error While Fetching Data...', err))
+    })
     return (
         <Container>
             <Row xs={1} md={2} className="g-4">
@@ -371,10 +465,9 @@ const Setting = () => {
                         <CategoryModel show={CategoryModelShow} onHide={() => setCategoryModelShow(false)} />
                         <Card>
                             <Card.Body>
-                                <Card.Title>Shipping Zone</Card.Title>
+                                <Card.Title>Rate Category</Card.Title>
                                 <Row xs={1} md={1} className="g-4 mt-2">
                                     <Col md={12}>
-                                        <p>Domestic Rates</p>
                                         <table className="shipRates-Table">
                                             <thead>
                                                 <tr>
@@ -387,7 +480,6 @@ const Setting = () => {
                                                     <tr key={items._id}>
                                                         <td>{items.RateId}</td>
                                                         <td>{items.RateCategory}</td>
-
                                                     </tr>
                                                 ))}
                                             </tbody>
@@ -407,11 +499,14 @@ const Setting = () => {
                         </div>
                         <Card>
                             <Card.Body>
-                                <Card.Title>Shipping Zone</Card.Title>
+                                <div className="d-flex justify-content-between">
+                                    <Card.Title>Shipping Rate</Card.Title>
+                                    <Button type="button" onClick={(e) => setAddRateModelShow(true)} style={{ background: '#3e2d68', border: 'none' }}>ADD {ratesActive == 1 ? 'Standard' : ratesActive == 2 ? 'Economy' : ratesActive == 3 ? 'Cargo' : ''} Rates</Button>
+                                </div>
                                 <Row xs={1} md={1} className="g-4 mt-2">
                                     <Col md={12}>
                                         <p>Domestic Rates</p>
-                                        <table className="shipRates-Table">
+                                        {ratesActive == 1 && (<table className="shipRates-Table">
                                             <thead>
                                                 <tr>
                                                     <th>Mode</th>
@@ -456,7 +551,100 @@ const Setting = () => {
                                                     <td><Link href='#'>2</Link></td>
                                                 </tr>
                                             </tbody>
-                                        </table>
+                                        </table>)}
+                                        {ratesActive == 2 && (<table className="shipRates-Table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Mode</th>
+                                                    <th>Weight(min)</th>
+                                                    <th>With in City</th>
+                                                    <th>With in state</th>
+                                                    <th>Rest of India</th>
+                                                    <th>J & k</th>
+                                                    <th>Carrier</th>
+                                                    <th>RateId</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Standard</td>
+                                                    <td>0.5kg</td>
+                                                    <td>47</td>
+                                                    <td>56</td>
+                                                    <td>85</td>
+                                                    <td>113</td>
+                                                    <td>BlueDart</td>
+                                                    <td><Link href='#'>2</Link></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Economy</td>
+                                                    <td>1kg</td>
+                                                    <td>47</td>
+                                                    <td>56</td>
+                                                    <td>85</td>
+                                                    <td>113</td>
+                                                    <td>BlueDart</td>
+                                                    <td><Link href='#'>2</Link></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Cargo</td>
+                                                    <td>3kg</td>
+                                                    <td>47</td>
+                                                    <td>56</td>
+                                                    <td>85</td>
+                                                    <td>113</td>
+                                                    <td>BlueDart</td>
+                                                    <td><Link href='#'>2</Link></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>)}
+                                        {ratesActive == 3 && (<table className="shipRates-Table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Mode</th>
+                                                    <th>Weight(min)</th>
+                                                    <th>With in City</th>
+                                                    <th>With in state</th>
+                                                    <th>Rest of India</th>
+                                                    <th>J & k</th>
+                                                    <th>Carrier</th>
+                                                    <th>RateId</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Standard</td>
+                                                    <td>0.5kg</td>
+                                                    <td>47</td>
+                                                    <td>56</td>
+                                                    <td>85</td>
+                                                    <td>113</td>
+                                                    <td>BlueDart</td>
+                                                    <td><Link href='#'>2</Link></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Economy</td>
+                                                    <td>1kg</td>
+                                                    <td>47</td>
+                                                    <td>56</td>
+                                                    <td>85</td>
+                                                    <td>113</td>
+                                                    <td>BlueDart</td>
+                                                    <td><Link href='#'>2</Link></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Cargo</td>
+                                                    <td>3kg</td>
+                                                    <td>47</td>
+                                                    <td>56</td>
+                                                    <td>85</td>
+                                                    <td>113</td>
+                                                    <td>BlueDart</td>
+                                                    <td><Link href='#'>2</Link></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>)}
+                                        <AddRateModel show={AddRateModelShow} shipclass={ratesActive} RateID={RateCategory} Carrier={CarrierData} onHide={() => setAddRateModelShow(false)} />
                                     </Col>
                                 </Row>
                             </Card.Body>
@@ -464,51 +652,52 @@ const Setting = () => {
                     </div>
                 </Col>)}
                 {active == 6 && (<Col md={8} className={`store ${active == 6 ? 'd-block' : 'd-none'} `}>
-                    <form>
-                        <div className="store detail">
-                            <Card>
-                                <Card.Body>
-                                    <Card.Title>Carriers</Card.Title>
-                                    <Row xs={1} md={1} className="g-4 mt-2">
-                                        <Col md={12}>
-                                            <p>Domestic Carriers</p>
-                                            <table className="shipRates-Table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Carrier</th>
-                                                        <th>Mode</th>
-                                                        <th>weight(min)</th>
-                                                        <th>Status</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td rowSpan='3'>Bludart</td>
-                                                        <td>Standard</td>
-                                                        <td>47</td>
-                                                        <td><FaThumbsUp /></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Economy</td>
-                                                        <td>47</td>
-                                                        <td><FaThumbsUp /></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Cargo</td>
-                                                        <td>3kg</td>
-                                                        <td><FaThumbsUp /></td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </Col>
-                                    </Row>
-                                </Card.Body>
-                            </Card>
-                        </div>
-                        <div className="d-flex justify-content-end">
-                            <Button style={{ background: '#3e2d68', border: 'none' }} className="mt-2" type="submit">Save</Button>
-                        </div>
-                    </form>
+                    <div className="store detail">
+                        <div className="d-flex justify-content-end"><Button type="button" className="my-2" style={{ background: '#3e2d68', border: 'none' }} onClick={(e) => setCarrierModelShow(true)} ><FaPlus className="me-2" />Add Carrier</Button></div>
+                        <Card>
+                            <Card.Body>
+                                <Card.Title>Carriers</Card.Title>
+                                <Row xs={1} md={1} className="g-4 mt-2">
+                                    <Col md={12}>
+                                        <p>Domestic Carriers</p>
+                                        <table className="shipRates-Table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Carrier</th>
+                                                    <th>CarrierID</th>
+                                                    <th>Mode</th>
+                                                    <th>IS Block</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {CarrierData.map((carrier, index) => {
+                                                    // Only show the carrier name with rowspan on the first occurrence of that carrier name
+                                                    const isFirstOccurrence = index === 0 || CarrierData[index - 1].CarrierName !== carrier.CarrierName;
+                                                    const mode = carrier.ShipClass == '1' ? 'Standard' : carrier.ShipClass == '2' ? 'Economy' : carrier.ShipClass == '3' ? 'Cargo' : 'N/A'
+
+                                                    return (
+                                                        <React.Fragment key={index}>
+                                                            <tr>
+                                                                {/* Render the CarrierName only for the first occurrence with appropriate rowspan */}
+                                                                {isFirstOccurrence && (
+                                                                    <td rowSpan={carrier.count}>{carrier.CarrierName}</td>
+                                                                )}
+                                                                <td>{carrier.CarrierID}</td> {/* Adjusted for Weight, if applicable */}
+                                                                <td>{mode}</td>
+                                                                <td>{carrier.isBlock ? (<FaThumbsUp style={{ cursor: 'pointer' }} onClick={(e) => handleCarrierActions(carrier, 'block')} />) : (<FaThumbsDown style={{ cursor: 'pointer' }} onClick={(e) => handleCarrierActions(carrier, 'block')} />)}</td>
+                                                            </tr>
+                                                        </React.Fragment>
+                                                    );
+                                                })}
+                                            </tbody>
+
+                                        </table>
+                                    </Col>
+                                </Row>
+                            </Card.Body>
+                        </Card>
+                    </div>
+                    <CarrierAddingModel show={CarrierModelShow} onHide={() => setCarrierModelShow(false)} />
                 </Col>)}
             </Row>
         </Container>

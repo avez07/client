@@ -11,7 +11,7 @@ import { FaBell, FaThumbsUp, } from "react-icons/fa";
 import { HiOutlineShare } from "react-icons/hi";
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import ShareCoupen from "@/app/common/coupenShare";
+import {ShareCoupen} from "@/app/common/Modals";
 import { GetFetchAPI } from "@/app/common/serverFunctions";
 import { AuthContext } from "@/app/common/auth";
 import Cookies from "js-cookie";
