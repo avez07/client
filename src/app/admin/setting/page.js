@@ -12,6 +12,7 @@ import { GetFetchAPI, PostApi } from "@/app/common/serverFunctions";
 import Cookies from "js-cookie";
 import { PulseLoader } from "react-spinners";
 import { useEffect } from "react";
+import { Pagination, Stack } from "@mui/material";
 
 
 const schema = yup.object().shape({
@@ -42,7 +43,7 @@ const CategoryModel = (props) => {
         const token = Cookies.get('token')
         const body = { name: Category }
         const response = await PostApi('AddRateCategory', JSON.stringify(body), token)
-        console.log(response)
+        // console.log(response)
         if (response.status !== 200) alert('Something Went Worng Try Again !')
         setTimeout(() => {
             props.onHide()
@@ -86,7 +87,7 @@ const CarrierAddingModel = (props) => {
         const token = Cookies.get('token')
         const body = { name: Category, shipclass: ShipClass }
         const response = await PostApi('AddCarrier', JSON.stringify(body), token)
-        console.log(response)
+        // console.log(response)
         if (response.status !== 200) alert(response.message || 'Something Went Worng Try Again !')
         setTimeout(() => {
             props.onHide()
@@ -143,6 +144,8 @@ const Setting = () => {
     const [RateSpData, setRateSpData] = useState([])
     const [RateEcoData, setRateEcoData] = useState([])
     const [RateCargoData, setRateCargoData] = useState([])
+    const [totalPages,setTotalPages] = useState()
+    const [Pages,setpages] = useState(1)
 
 
 
@@ -172,7 +175,7 @@ const Setting = () => {
         // return console.log(id)
         const token = Cookies.get('token')
         GetFetchAPI(`CarrierAction/${id._id}`, token).then((response) => {
-            console.log(response)
+            // console.log(response)
             if (response.status !== 200) return alert(response.message || 'SomeThing Went Worng Try Again !')
             const Obj = [...CarrierData]
             Obj.map((items) => {
@@ -186,25 +189,29 @@ const Setting = () => {
         if (active !== 6 && active !== 5) return
         const token = Cookies.get('token')
         GetFetchAPI('fetchCarrer', token).then((response) => setCarrierData(response.data)).catch(err => console.log('Error while Fetching Data...', err))
-    }, [active, CarrierModelShow])
+    }, [active])
     useEffect(() => {
         if (active !== 3 && active !== 5) return
         const token = Cookies.get('token')
         GetFetchAPI('FetchRatesCategory', token).then((response) => setRateCategory(response.data)).catch(err => console.log('Error while Fetching Data...', err))
-    }, [active, CategoryModelShow])
+    }, [active])
 
     useEffect(() => {
         if (active !== 5 || ratesActive > 3) return
+        if (ratesActive == 1)  setRateSpData([])
+            if (ratesActive == 2)  setRateEcoData([])
+            if (ratesActive == 3)  setRateCargoData([])
         const token = Cookies.get('token')
         const url = ratesActive == 1 ? 'FetchRatesSp' : ratesActive == 2 ? 'FetchRatesEco' : ratesActive == 3 ? 'FetchRatesCargo' : null
-        GetFetchAPI(url, token).then((response) => {
+        GetFetchAPI(`${url}?page=${Pages}&limit=5`, token).then((response) => {
             if (response.status !== 200) return alert(response.message || 'Some THing Went Worng Try Again !')
-            if (ratesActive == 1) return setRateSpData(response.data)
-            if (ratesActive == 2) return setRateEcoData(response.data)
-            if (ratesActive == 3) return setRateCargoData(response.data)
+            if (ratesActive == 1)  setRateSpData(response.data)
+            if (ratesActive == 2)  setRateEcoData(response.data)
+            if (ratesActive == 3)  setRateCargoData(response.data)
+              return   setTotalPages(response.totalPages)
 
         }).catch(err => console.log('Error While Fetching Data...', err))
-    })
+    }, [AddRateModelShow, ratesActive,Pages])
     return (
         <Container>
             <Row xs={1} md={2} className="g-4">
@@ -214,7 +221,6 @@ const Setting = () => {
                         <li onClick={(e) => setActive(1)} className={`${active == 1 ? 'active' : ''}`}>store detail</li>
                         <li onClick={(e) => setActive(2)} className={`${active == 2 ? 'active' : ''}`}>Coupons</li>
                         <li onClick={(e) => setActive(3)} className={`${active == 3 ? 'active' : ''}`}>RateCategory</li>
-                        <li onClick={(e) => setActive(4)} className={`${active == 4 ? 'active' : ''}`}>Carier Rates</li>
                         <li onClick={(e) => setActive(5)} className={`${active == 5 ? 'active' : ''}`}>shipping and delivery</li>
                         <li onClick={(e) => setActive(6)} className={`${active == 6 ? 'active' : ''}`}>Carrier allowed</li>
                     </ul>
@@ -493,9 +499,9 @@ const Setting = () => {
                 {active == 5 && (<Col md={8} className={`store ${active == 5 ? 'd-block' : 'd-none'} `}>
                     <div className="store detail">
                         <div className="shippingRates">
-                            <div onClick={(e) => setratesActive(1)} className={`rate_list ${ratesActive == 1 ? 'RateListActive' : ''}`}><div>Standard</div><div className="ActiveLine"></div></div>
-                            <div onClick={(e) => setratesActive(2)} className={`rate_list ${ratesActive == 2 ? 'RateListActive' : ''}`}><div>Economy</div><div className="ActiveLine"></div></div>
-                            <div onClick={(e) => setratesActive(3)} className={`rate_list ${ratesActive == 3 ? 'RateListActive' : ''}`}><div>Cargo</div><div className="ActiveLine"></div></div>
+                            <div onClick={(e) => {setratesActive(1),setTotalPages(1),setpages(1)}} className={`rate_list ${ratesActive == 1 ? 'RateListActive' : ''}`}><div>Standard</div><div className="ActiveLine"></div></div>
+                            <div onClick={(e) => {setratesActive(2),setTotalPages(1),setpages(1)}} className={`rate_list ${ratesActive == 2 ? 'RateListActive' : ''}`}><div>Economy</div><div className="ActiveLine"></div></div>
+                            <div onClick={(e) => {setratesActive(3),setTotalPages(1),setpages(1)}} className={`rate_list ${ratesActive == 3 ? 'RateListActive' : ''}`}><div>Cargo</div><div className="ActiveLine"></div></div>
                         </div>
                         <Card>
                             <Card.Body>
@@ -509,142 +515,110 @@ const Setting = () => {
                                         {ratesActive == 1 && (<table className="shipRates-Table">
                                             <thead>
                                                 <tr>
-                                                    <th>Mode</th>
+                                                    <th>Sr No.</th>
                                                     <th>Weight(min)</th>
                                                     <th>With in City</th>
                                                     <th>With in state</th>
-                                                    <th>Rest of India</th>
+                                                    <th>Metro</th>
                                                     <th>J & k</th>
+                                                    <th>Rest of India</th>
                                                     <th>Carrier</th>
-                                                    <th>RateId</th>
+                                                    <th>Rate</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>Standard</td>
-                                                    <td>0.5kg</td>
-                                                    <td>47</td>
-                                                    <td>56</td>
-                                                    <td>85</td>
-                                                    <td>113</td>
-                                                    <td>BlueDart</td>
-                                                    <td><Link href='#'>2</Link></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Economy</td>
-                                                    <td>1kg</td>
-                                                    <td>47</td>
-                                                    <td>56</td>
-                                                    <td>85</td>
-                                                    <td>113</td>
-                                                    <td>BlueDart</td>
-                                                    <td><Link href='#'>2</Link></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Cargo</td>
-                                                    <td>3kg</td>
-                                                    <td>47</td>
-                                                    <td>56</td>
-                                                    <td>85</td>
-                                                    <td>113</td>
-                                                    <td>BlueDart</td>
-                                                    <td><Link href='#'>2</Link></td>
-                                                </tr>
+                                                {RateSpData.map((items, index) => (
+                                                    <tr>
+                                                        <td>{((Pages-1)*5)+(index + 1)}</td>
+                                                        <td>{items.minWeight}</td>
+                                                        <td>{items.withInCity}</td>
+                                                        <td>{items.withInState}</td>
+                                                        <td>{items.metroCity}</td>
+                                                        <td>{items.J_and_k}</td>
+                                                        <td>{items.ROI}</td>
+                                                        <td>{items.CarrierName}</td>
+                                                        <td><Link href='#'>{items.RateCategory}</Link></td>
+                                                    </tr>
+                                                ))}
+
                                             </tbody>
                                         </table>)}
                                         {ratesActive == 2 && (<table className="shipRates-Table">
                                             <thead>
                                                 <tr>
-                                                    <th>Mode</th>
+                                                    <th>Sr No.</th>
                                                     <th>Weight(min)</th>
                                                     <th>With in City</th>
                                                     <th>With in state</th>
-                                                    <th>Rest of India</th>
+                                                    <th>Metro</th>
                                                     <th>J & k</th>
+                                                    <th>Rest of India</th>
                                                     <th>Carrier</th>
-                                                    <th>RateId</th>
+                                                    <th>Rate</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>Standard</td>
-                                                    <td>0.5kg</td>
-                                                    <td>47</td>
-                                                    <td>56</td>
-                                                    <td>85</td>
-                                                    <td>113</td>
-                                                    <td>BlueDart</td>
-                                                    <td><Link href='#'>2</Link></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Economy</td>
-                                                    <td>1kg</td>
-                                                    <td>47</td>
-                                                    <td>56</td>
-                                                    <td>85</td>
-                                                    <td>113</td>
-                                                    <td>BlueDart</td>
-                                                    <td><Link href='#'>2</Link></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Cargo</td>
-                                                    <td>3kg</td>
-                                                    <td>47</td>
-                                                    <td>56</td>
-                                                    <td>85</td>
-                                                    <td>113</td>
-                                                    <td>BlueDart</td>
-                                                    <td><Link href='#'>2</Link></td>
-                                                </tr>
+                                                {RateEcoData.map((items, index) => (
+                                                    <tr>
+                                                        <td>{((Pages-1)*5)+(index + 1)}</td>
+                                                        <td>{items.minWeight}</td>
+                                                        <td>{items.withInCity}</td>
+                                                        <td>{items.withInState}</td>
+                                                        <td>{items.metroCity}</td>
+                                                        <td>{items.J_and_k}</td>
+                                                        <td>{items.ROI}</td>
+                                                        <td>{items.CarrierName}</td>
+                                                        <td><Link href='#'>{items.RateCategory}</Link></td>
+                                                    </tr>
+                                                ))}
+
                                             </tbody>
                                         </table>)}
                                         {ratesActive == 3 && (<table className="shipRates-Table">
                                             <thead>
                                                 <tr>
-                                                    <th>Mode</th>
+                                                    <th>Sr No.</th>
                                                     <th>Weight(min)</th>
                                                     <th>With in City</th>
                                                     <th>With in state</th>
-                                                    <th>Rest of India</th>
+                                                    <th>Metro</th>
                                                     <th>J & k</th>
+                                                    <th>Rest of India</th>
                                                     <th>Carrier</th>
-                                                    <th>RateId</th>
+                                                    <th>Rate</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>Standard</td>
-                                                    <td>0.5kg</td>
-                                                    <td>47</td>
-                                                    <td>56</td>
-                                                    <td>85</td>
-                                                    <td>113</td>
-                                                    <td>BlueDart</td>
-                                                    <td><Link href='#'>2</Link></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Economy</td>
-                                                    <td>1kg</td>
-                                                    <td>47</td>
-                                                    <td>56</td>
-                                                    <td>85</td>
-                                                    <td>113</td>
-                                                    <td>BlueDart</td>
-                                                    <td><Link href='#'>2</Link></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Cargo</td>
-                                                    <td>3kg</td>
-                                                    <td>47</td>
-                                                    <td>56</td>
-                                                    <td>85</td>
-                                                    <td>113</td>
-                                                    <td>BlueDart</td>
-                                                    <td><Link href='#'>2</Link></td>
-                                                </tr>
+                                                {RateCargoData.map((items, index) => (
+                                                    <tr>
+                                                        <td>{((Pages-1)*5)+(index + 1)}</td>
+                                                        <td>{items.minWeight}</td>
+                                                        <td>{items.withInCity}</td>
+                                                        <td>{items.withInState}</td>
+                                                        <td>{items.metroCity}</td>
+                                                        <td>{items.J_and_k}</td>
+                                                        <td>{items.ROI}</td>
+                                                        <td>{items.CarrierName}</td>
+                                                        <td><Link href='#'>{items.RateCategory}</Link></td>
+                                                    </tr>
+                                                ))}
+
                                             </tbody>
                                         </table>)}
                                         <AddRateModel show={AddRateModelShow} shipclass={ratesActive} RateID={RateCategory} Carrier={CarrierData} onHide={() => setAddRateModelShow(false)} />
+                                    </Col>
+                                    <Col md={12}>
+                                       {totalPages > 1 && (<Stack style={{ float: 'right' }}>
+                                            <Pagination count={totalPages || 1} page={Pages} sx={{
+                                                '& .MuiPaginationItem-root': {
+                                                    color: '#000000', // Change to your custom color
+                                                },
+                                                '& .MuiPaginationItem-root.Mui-selected': {
+                                                    backgroundColor: '#3d257e', // Change to your selected color
+                                                    color: 'white', // Change text color if needed
+                                                },
+                                            }} onChange={(event,value)=>setpages(value)} />
+                                        </Stack>)}
                                     </Col>
                                 </Row>
                             </Card.Body>

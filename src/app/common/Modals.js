@@ -182,7 +182,7 @@ const AddRateModel = (props) => {
         onSubmit: (values) => {
             setisLoading(true)
             const token = Cookies.get('token')
-            const url = shipclass == 1 ? 'AddRateCargo' : shipclass == 2 ? 'AddRateEco' : shipclass == 3 ? 'AddRateCargo' : null
+            const url = shipclass == 1 ? 'AddRateSp' : shipclass == 2 ? 'AddRateEco' : shipclass == 3 ? 'AddRateCargo' : null
             PostApi(url,JSON.stringify(values),token).then((response)=>{
                 if(response.status !== 200) alert(response.message || 'something Went Worng Try Again!')
                 setTimeout(() => {
@@ -194,7 +194,7 @@ const AddRateModel = (props) => {
             console.log('values...', values)
         }
     })
-    console.log(Carrier)
+    // console.log(Carrier)
     return (
         <>
             <Modal {...rest} size="lg">
